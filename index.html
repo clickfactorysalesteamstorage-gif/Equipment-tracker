@@ -637,13 +637,14 @@
 
     <!-- MOBILE TOP HEADER BAR -->
     <header class="mobile-header">
-        <div style="font-weight: 800; font-size: 1.1rem; display: flex; align-items: center; gap: 6px;">
+        <div style="font-weight: 800; font-size: 1.05rem; display: flex; align-items: center; gap: 6px;">
             <span>📦 Gear Control</span>
-            <span class="version-badge">v3.3</span>
+            <span id="mobileActiveRoleBadge" class="role-pill role-admin" style="font-size: 0.6rem; padding: 1px 6px;">Admin</span>
         </div>
-        <div style="display: flex; gap: 6px;">
-            <button class="btn btn-sm btn-secondary" onclick="switchProfileModal()">Profile</button>
-            <button class="btn btn-sm btn-danger" onclick="logoutUser()">Logout</button>
+        <div style="display: flex; gap: 6px; align-items: center;">
+            <span id="mobileActiveUserName" style="font-size: 0.75rem; color: #cbd5e1; font-weight: 600; max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Admin</span>
+            <button class="btn btn-sm btn-secondary" style="padding: 4px 8px; font-size: 0.75rem; min-height: 32px;" onclick="switchProfileModal()">Profile</button>
+            <button class="btn btn-sm btn-danger" style="padding: 4px 8px; font-size: 0.75rem; min-height: 32px;" onclick="logoutUser()">Logout</button>
         </div>
     </header>
 
@@ -1399,8 +1400,10 @@
     function applyRolePermissions(role) {
         const userName = currentUserNameSession || (role === 'admin' ? (SafeStorage.getItem('appAdminDisplayName') || 'Administrator') : 'Staff Member');
         document.getElementById('activeUserName').innerText = userName;
+        document.getElementById('mobileActiveUserName').innerText = userName;
         
         const badge = document.getElementById('activeRoleBadge');
+        const mobBadge = document.getElementById('mobileActiveRoleBadge');
         const adminSelector = document.getElementById('adminMethodSelector');
         const currentProfileObj = userProfiles.find(u => u.name === userName);
         const hasFullAccess = role === 'admin' || (currentProfileObj && currentProfileObj.permissions === 'full');
@@ -1408,6 +1411,9 @@
         if (role === 'admin') {
             badge.innerText = 'Admin';
             badge.className = 'role-pill role-admin';
+            mobBadge.innerText = 'Admin';
+            mobBadge.className = 'role-pill role-admin';
+
             adminSelector.style.display = allowManualCheckout ? 'flex' : 'none';
             document.getElementById('adminMetricsGrid').style.display = 'grid';
             document.getElementById('tabOverviewBtn').style.display = 'flex';
@@ -1425,8 +1431,12 @@
             renderUserPermissionsTable();
             switchTab('dashboard-tab');
         } else {
-            badge.innerText = hasFullAccess ? 'Staff (Full)' : 'Staff User';
+            const roleLabel = hasFullAccess ? 'Staff (Full)' : 'Staff User';
+            badge.innerText = roleLabel;
             badge.className = 'role-pill role-user';
+            mobBadge.innerText = roleLabel;
+            mobBadge.className = 'role-pill role-user';
+
             adminSelector.style.display = 'none';
             
             document.getElementById('adminMetricsGrid').style.display = 'grid';
@@ -1459,6 +1469,7 @@
         if (nameVal) {
             SafeStorage.setItem('appAdminDisplayName', nameVal);
             document.getElementById('activeUserName').innerText = nameVal;
+            document.getElementById('mobileActiveUserName').innerText = nameVal;
         }
 
         if (newPass || currentPass) {
