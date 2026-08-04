@@ -2,17 +2,2704 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Website Under Construction</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Universal Equipment Management Dashboard v3.3</title>
+    <!-- JsBarcode Library with local fallback safeguard -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.12.3/JsBarcode.all.min.js"></script>
     <style>
-        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background-color: #f0f0f0; }
-        .card { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; }
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --primary-light: #eff6ff;
+            --bg: #f8fafc;
+            --sidebar-bg: #0f172a;
+            --sidebar-hover: #1e293b;
+            --card-bg: #ffffff;
+            --border: #e2e8f0;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --success: #10b981;
+            --success-light: #d1fae5;
+            --warning: #f59e0b;
+            --warning-light: #fef3c7;
+            --danger: #ef4444;
+            --danger-light: #fee2e2;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+            --shadow-lg: 0 10px 25px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: var(--bg); 
+            color: var(--text-dark); 
+            line-height: 1.5;
+            padding-bottom: 75px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        @media (min-width: 900px) {
+            body { padding-bottom: 0; }
+        }
+
+        .app-layout {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        @media (min-width: 900px) {
+            .app-layout { flex-direction: row; }
+        }
+
+        .mobile-header {
+            background-color: var(--sidebar-bg);
+            color: white;
+            padding: 14px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 90;
+            box-shadow: var(--shadow-md);
+        }
+
+        @media (min-width: 900px) {
+            .mobile-header { display: none; }
+        }
+
+        .sidebar {
+            background-color: var(--sidebar-bg);
+            color: white;
+            padding: 20px 16px;
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 20px;
+            z-index: 100;
+        }
+
+        @media (min-width: 900px) {
+            .sidebar {
+                display: flex;
+                width: 270px;
+                min-width: 270px;
+                min-height: 100vh;
+                position: sticky;
+                top: 0;
+                padding: 28px 18px;
+            }
+        }
+
+        .sidebar-brand {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            letter-spacing: -0.02em;
+        }
+
+        .version-badge {
+            background: rgba(37, 99, 235, 0.25);
+            color: #60a5fa;
+            border: 1px solid rgba(96, 165, 250, 0.3);
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-weight: 700;
+        }
+
+        .developer-badge {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-menu { 
+            display: flex; 
+            flex-direction: column;
+            gap: 8px; 
+            width: 100%; 
+        }
+
+        .nav-btn { 
+            padding: 12px 16px; 
+            background: transparent; 
+            border: 1px solid transparent; 
+            border-radius: var(--radius-sm); 
+            font-weight: 600; 
+            cursor: pointer; 
+            color: #94a3b8; 
+            white-space: nowrap;
+            font-size: 0.875rem;
+            flex: 1;
+            text-align: left;
+            min-height: 46px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-btn:hover { background: var(--sidebar-hover); color: white; }
+        .nav-btn.active { 
+            background: var(--primary); 
+            color: white; 
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100vw;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(12px);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 8px 4px;
+            border-top: 1px solid #334155;
+            z-index: 999;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        @media (min-width: 900px) {
+            .bottom-nav { display: none; }
+        }
+
+        .bottom-nav-btn {
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            flex: 1;
+            padding: 6px 2px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .bottom-nav-btn span.icon { font-size: 1.25rem; }
+        .bottom-nav-btn.active { color: #60a5fa; }
+
+        .user-profile-box {
+            background: #1e293b;
+            border: 1px solid #334155;
+            padding: 14px;
+            border-radius: var(--radius-md);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 16px;
+            max-width: 1320px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        @media (min-width: 900px) { .main-content { padding: 28px; } }
+
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(15, 23, 42, 0.75); 
+            backdrop-filter: blur(6px);
+            display: flex; align-items: center; justify-content: center; 
+            z-index: 1000; padding: 12px;
+        }
+
+        .dialog-card {
+            background: white; 
+            padding: 20px; 
+            border-radius: var(--radius-md); 
+            width: 100%; 
+            max-width: 650px; 
+            text-align: left; 
+            box-shadow: var(--shadow-lg);
+            max-height: 92vh; 
+            overflow-y: auto;
+            border: 1px solid var(--border);
+        }
+
+        @media (min-width: 640px) { .dialog-card { padding: 32px; border-radius: var(--radius-lg); } }
+
+        .role-option {
+            padding: 16px; 
+            margin: 10px 0; 
+            border: 1px solid var(--border); 
+            border-radius: var(--radius-md); 
+            cursor: pointer; 
+            font-weight: 700; 
+            transition: var(--transition); 
+            text-align: left;
+            background: #f8fafc;
+        }
+        .role-option:active, .role-option:hover { 
+            border-color: var(--primary); 
+            background: var(--primary-light); 
+            transform: translateY(-1px);
+        }
+
+        .role-pill { padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: white; display: inline-block; }
+        .role-admin { background: #8b5cf6; }
+        .role-user { background: var(--primary); }
+
+        .metrics-grid { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 12px; 
+            margin-bottom: 20px; 
+        }
+
+        @media (min-width: 600px) { .metrics-grid { gap: 18px; margin-bottom: 24px; } }
+
+        .metric-card { 
+            background: var(--card-bg); 
+            padding: 16px; 
+            border-radius: var(--radius-md); 
+            border: 1px solid var(--border); 
+            box-shadow: var(--shadow-sm); 
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .metric-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        @media (min-width: 600px) {
+            .metric-card { padding: 18px; text-align: left; }
+        }
+
+        .metric-card h3 { font-size: 0.7rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+        .metric-card p { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; }
+
+        @media (min-width: 600px) {
+            .metric-card h3 { font-size: 0.75rem; margin-bottom: 6px; }
+            .metric-card p { font-size: 1.85rem; }
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        .content-card { 
+            background: var(--card-bg); 
+            border-radius: var(--radius-md); 
+            border: 1px solid var(--border); 
+            padding: 18px; 
+            box-shadow: var(--shadow-sm); 
+            margin-bottom: 20px; 
+        }
+
+        @media (min-width: 768px) { .content-card { padding: 26px; border-radius: var(--radius-lg); margin-bottom: 24px; } }
+        
+        .form-grid { 
+            display: grid; 
+            grid-template-columns: repeat(1, 1fr); 
+            gap: 12px; 
+            margin-bottom: 18px; 
+        }
+
+        @media (min-width: 600px) { .form-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; } }
+        @media (min-width: 1024px) { .form-grid { grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 22px; } }
+
+        .input-group { display: flex; flex-direction: column; text-align: left; }
+        .input-group label { font-size: 0.75rem; font-weight: 700; margin-bottom: 6px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.03em; }
+        .input-group input, .input-group select { 
+            padding: 12px 14px; 
+            border: 1px solid var(--border); 
+            border-radius: var(--radius-sm); 
+            font-size: 0.95rem; 
+            width: 100%;
+            min-height: 48px;
+            background: #ffffff;
+            transition: var(--transition);
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        .admin-method-toggle {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 18px;
+            background: #f1f5f9;
+            padding: 6px;
+            border-radius: var(--radius-sm);
+        }
+
+        .method-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            background: transparent;
+            color: var(--text-muted);
+            transition: var(--transition);
+            min-height: 44px;
+        }
+
+        .method-btn.active { background: white; color: var(--primary); box-shadow: var(--shadow-sm); }
+
+        .detail-header {
+            border-bottom: 2px solid var(--primary-light);
+            padding-bottom: 12px;
+            margin-bottom: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 10px;
+            background: #f8fafc;
+            padding: 16px;
+            border-radius: var(--radius-sm);
+            margin-bottom: 18px;
+            font-size: 0.85rem;
+            border: 1px solid var(--border);
+        }
+
+        .detail-item { display: flex; flex-direction: column; }
+        .detail-item span { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
+        .detail-item strong { color: var(--text-dark); margin-top: 2px; }
+
+        .progress-bar-bg {
+            background: #e2e8f0;
+            border-radius: 10px;
+            height: 8px;
+            width: 100%;
+            overflow: hidden;
+            margin-top: 6px;
+        }
+
+        .progress-bar-fill { height: 100%; border-radius: 10px; transition: width 0.3s ease; }
+
+        .scanner-card {
+            background: #0f172a;
+            color: white;
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 580px;
+            padding: 22px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            max-height: 95vh;
+            overflow-y: auto;
+            border: 1px solid #334155;
+        }
+
+        .scan-terminal { 
+            background: #1e293b; 
+            border-left: 4px solid var(--primary); 
+            padding: 12px 14px; 
+            border-radius: 6px; 
+            font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace; 
+            font-size: 0.825rem; 
+            max-height: 150px; 
+            overflow-y: auto; 
+            margin-top: 14px; 
+            word-break: break-all;
+            color: #e2e8f0;
+            line-height: 1.6;
+        }
+
+        .table-responsive { 
+            overflow-x: auto; 
+            max-height: 480px; 
+            overflow-y: auto; 
+            border: 1px solid var(--border); 
+            border-radius: var(--radius-sm); 
+            -webkit-overflow-scrolling: touch;
+        }
+
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.875rem; }
+
+        th { background-color: #0f172a; color: white; padding: 14px 12px; position: sticky; top: 0; z-index: 10; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; }
+        td { padding: 12px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+        tr:nth-child(even) { background-color: #f8fafc; }
+        tr.selected-row { background-color: #dbeafe !important; }
+        tr.scanned-checkout { background-color: #dbeafe !important; }
+        tr.scanned-checkin { background-color: #d1fae5 !important; }
+        tr.editing-row { background-color: #fef9c3 !important; }
+        tr.disabled-stock-row { background-color: #f1f5f9 !important; opacity: 0.6; }
+
+        .inline-edit-input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid var(--primary);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            background: white;
+            margin-bottom: 4px;
+            min-height: 40px;
+        }
+
+        .gear-edit-box {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 10px;
+            margin-top: 6px;
+            max-height: 160px;
+            overflow-y: auto;
+        }
+
+        .gear-edit-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .status-tag { padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-align: center; display: inline-block; white-space: nowrap; }
+        .status-out { background: var(--warning-light); color: #92400e; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .status-returned { background: var(--success-light); color: #065f46; border: 1px solid rgba(16, 185, 129, 0.3); }
+
+        .btn { 
+            padding: 10px 16px; 
+            border: none; 
+            border-radius: var(--radius-sm); 
+            font-weight: 700; 
+            cursor: pointer; 
+            font-size: 0.875rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            min-height: 42px;
+            white-space: nowrap;
+            transition: var(--transition);
+        }
+
+        .btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+        .btn:active { transform: translateY(0); }
+
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-success { background: var(--success); color: white; }
+        .btn-secondary { background: #64748b; color: white; }
+        .btn-warning { background: var(--warning); color: #78350f; }
+        .btn-sm { padding: 6px 12px; font-size: 0.8rem; min-height: 36px; }
+        .btn-danger { background: var(--danger); color: white; }
+
+        .actions-bar { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+        .time-text { font-size: 0.75rem; color: var(--text-muted); display: block; margin-top: 2px; }
+
+        .table-action-cell {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            align-items: stretch;
+            justify-content: center;
+        }
+
+        @media (min-width: 900px) {
+            .table-action-cell {
+                flex-direction: row;
+                flex-wrap: nowrap;
+                align-items: center;
+                justify-content: flex-start;
+                gap: 6px;
+            }
+
+            .table-action-cell .btn {
+                min-height: 36px;
+                padding: 6px 12px;
+                font-size: 0.8rem;
+            }
+        }
+
+        .barcode-badge {
+            display: inline-block;
+            font-family: SFMono-Regular, Consolas, monospace;
+            background: #f1f5f9;
+            color: #0f172a;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.75rem;
+            border: 1px solid var(--border);
+        }
+
+        .toggle-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f8fafc;
+            padding: 16px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            margin-bottom: 12px;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 52px;
+            height: 28px;
+        }
+
+        .switch input { 
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #cbd5e1;
+            transition: .3s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(24px);
+        }
+
+        @media print {
+            .sidebar, .bottom-nav, .mobile-header, .actions-bar, .metrics-grid, .admin-method-toggle, .no-print { display: none !important; }
+            body { padding: 0; background: white; }
+            .dialog-card { max-width: 100%; border: none; box-shadow: none; padding: 0; }
+            .overlay { position: static; background: none; padding: 0; }
+        }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h1>Under Construction</h1>
-        <p>We are working hard to bring you a new experience.</p>
+
+<div class="app-layout">
+
+    <!-- MOBILE TOP HEADER BAR -->
+    <header class="mobile-header">
+        <div style="font-weight: 800; font-size: 1.1rem; display: flex; align-items: center; gap: 6px;">
+            <span>📦 Gear Control</span>
+            <span class="version-badge">v3.3</span>
+        </div>
+        <div style="display: flex; gap: 6px;">
+            <button class="btn btn-sm btn-secondary" onclick="switchProfileModal()">Profile</button>
+            <button class="btn btn-sm btn-danger" onclick="logoutUser()">Logout</button>
+        </div>
+    </header>
+
+    <!-- DESKTOP SIDEBAR NAVIGATION -->
+    <aside class="sidebar">
+        <div>
+            <div class="sidebar-brand">
+                <span>📦 Gear Control</span>
+                <span class="version-badge">v3.3</span>
+            </div>
+            <div class="developer-badge">
+                <span>Dev: <strong>Satish</strong></span>
+                <a href="#" onclick="openDevInfoModal(); return false;" style="color: #60a5fa; text-decoration: underline; font-size: 0.7rem;">Info Docs</a>
+            </div>
+            
+            <nav class="nav-menu" id="tabNavigation">
+                <button class="nav-btn active" id="tabOverviewBtn" onclick="switchTab('dashboard-tab')">📊 Overview Logs</button>
+                <button class="nav-btn" id="tabNewSheetBtn" onclick="switchTab('new-entry-tab')">📋 New Checkout Sheet</button>
+                <button class="nav-btn" id="tabEquipmentBtn" onclick="switchTab('equipment-tab')">🎥 Add Equipment</button>
+                <button class="nav-btn" id="tabUsersBtn" onclick="switchTab('users-tab')">👤 User Profiles</button>
+                <button class="nav-btn" id="tabAdminControlsBtn" onclick="switchTab('admin-controls-tab')">⚙️ Admin Controls</button>
+            </nav>
+        </div>
+
+        <div class="user-profile-box">
+            <div style="font-size: 0.75rem; color: #94a3b8; font-weight: 700; text-transform: uppercase;">Active Operator</div>
+            <div style="font-weight: 800; font-size: 0.95rem; color: white;" id="activeUserName">Administrator</div>
+            <div><span id="activeRoleBadge" class="role-pill role-admin">Admin</span></div>
+            <button class="btn btn-sm btn-secondary" style="width: 100%; margin-top: 4px;" onclick="switchProfileModal()">Switch Profile</button>
+            <button class="btn btn-sm btn-danger" style="width: 100%; margin-top: 2px;" onclick="logoutUser()">🚪 Logout</button>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="main-content">
+
+        <!-- METRICS GRID -->
+        <div class="metrics-grid" id="adminMetricsGrid">
+            <div class="metric-card">
+                <h3 id="metric-total-label">Total Outings</h3>
+                <p id="metric-total">0</p>
+            </div>
+            <div class="metric-card">
+                <h3 id="metric-out-label">Out On Shoot</h3>
+                <p id="metric-out" style="color: var(--warning);">0</p>
+            </div>
+            <div class="metric-card">
+                <h3 id="metric-returned-label">Returned</h3>
+                <p id="metric-returned" style="color: var(--success);">0</p>
+            </div>
+        </div>
+
+        <!-- TAB 1: OVERVIEW LOGS & DASHBOARD CHECK-IN -->
+        <div id="dashboard-tab" class="tab-content active">
+            
+            <!-- LIVE EQUIPMENT AVAILABILITY PANEL -->
+            <div class="content-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
+                    <h3>📦 Live Equipment Availability Status</h3>
+                    <input type="text" id="availabilitySearchInput" onkeyup="filterAvailability()" placeholder="Search gear or barcode..." style="padding: 10px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.875rem; width: 100%; max-width: 250px; min-height: 40px;">
+                </div>
+
+                <div class="table-responsive" style="max-height: 280px;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 40px; text-align: center;">S.No</th>
+                                <th>Barcode Code</th>
+                                <th>Equipment Name</th>
+                                <th style="width: 70px; text-align: center;">In Stock</th>
+                                <th style="width: 100px; text-align: center;">Out On Shoot</th>
+                                <th style="width: 70px; text-align: center;">Total</th>
+                                <th style="width: 110px; text-align: center;">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="availabilityTableBody">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- DASHBOARD RECENT SHOOTS & GEAR LOGS -->
+            <div class="content-card">
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
+                    <h3 id="logSectionTitle">Recent Shoots & Gear Logs</h3>
+                    <input type="text" id="searchInput" onkeyup="filterLogs()" placeholder="Search client, event, or team..." style="padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); width: 100%; min-height: 44px;">
+                </div>
+                
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Client / Event</th>
+                                <th>Team / Incharge</th>
+                                <th>Time Out</th>
+                                <th>Time In (Returned)</th>
+                                <th>Status</th>
+                                <th id="actionsHeader" style="min-width: 180px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logsTableBody">
+                            <!-- Dynamic Logs -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: NEW CHECKOUT ENTRY SHEET (CHECK-OUT ONLY) -->
+        <div id="new-entry-tab" class="tab-content">
+            <div class="content-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
+                    <div>
+                        <h3>📋 New Booking Check-Out Sheet</h3>
+                        <p style="color: var(--text-muted); font-size: 0.8rem;">Assign available gear using scanner or checkbox list.</p>
+                    </div>
+                    <span class="status-tag status-out" style="font-size: 0.75rem;">CHECK-OUT</span>
+                </div>
+                
+                <!-- ADMIN ENTRY METHOD TOGGLE -->
+                <div id="adminMethodSelector" class="admin-method-toggle" style="display: none;">
+                    <button type="button" id="adminScannerModeBtn" class="method-btn active" onclick="setAdminEntryMethod('scanner')">🔌 Scanner</button>
+                    <button type="button" id="adminManualModeBtn" class="method-btn" onclick="setAdminEntryMethod('manual')">✏️ Checkbox</button>
+                </div>
+
+                <form id="checklistForm">
+                    <div class="form-grid">
+                        <div class="input-group"><label>Client Name</label><input type="text" id="clientName" required></div>
+                        <div class="input-group"><label>Client ID</label><input type="text" id="clientId"></div>
+                        <div class="input-group"><label>Team</label><input type="text" id="team"></div>
+                        <div class="input-group"><label>Event Date</label><input type="date" id="date"></div>
+                        <div class="input-group"><label>Place</label><input type="text" id="place"></div>
+                        <div class="input-group"><label>Event</label><input type="text" id="event"></div>
+                        <div class="input-group"><label>Shoot Incharge</label><input type="text" id="shootIncharge"></div>
+                        <div class="input-group"><label>Mobile Number</label><input type="tel" id="mobileNumber"></div>
+                        
+                        <div class="input-group"><label>Time Out Date</label><input type="date" id="timeOutDate"></div>
+                        <div class="input-group"><label>Time Out Time</label><input type="time" id="timeOutTime"></div>
+                    </div>
+
+                    <!-- TRIGGER BUTTON FOR NEW BOOKING CHECK-OUT SCANNER -->
+                    <div id="scannerConsoleTrigger" style="margin-bottom: 15px;">
+                        <button type="button" class="btn btn-primary" style="width: 100%; padding: 14px; font-size: 0.95rem;" onclick="openCheckoutScannerModal()">🔌 Open Barcode Scanner Terminal</button>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table>
+                            <thead id="checklistHeader">
+                                <!-- Dynamic Table Header -->
+                            </thead>
+                            <tbody id="equipmentItemsBody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="actions-bar">
+                        <button type="button" class="btn btn-primary" style="width: 100%; padding: 14px;" onclick="promptSaveRecordConfirmation()">💾 Save Booking & Dispatch</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- TAB 3: ADD UPCOMING EQUIPMENT MASTER (ADMIN ONLY) -->
+        <div id="equipment-tab" class="tab-content">
+            <div class="content-card">
+                <h3>Add New Upcoming Equipment</h3>
+                <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 12px;">Register gear with auto-generated barcode tags.</p>
+
+                <div style="display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap;">
+                    <input type="text" id="newEquipmentName" placeholder="Equipment name..." style="flex: 2; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); min-width: 160px; min-height: 44px;">
+                    <input type="number" id="newEquipmentStock" placeholder="Stock (Default: 5)" min="1" style="flex: 1; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); min-width: 100px; min-height: 44px;">
+                    <button class="btn btn-primary" style="width: 100%;" onclick="addNewEquipmentItem()">+ Add Equipment</button>
+                </div>
+
+                <h4>Current Registered Inventory (<span id="totalEquipmentCount">0</span> Items)</h4>
+                <div class="table-responsive" style="margin-top: 10px; max-height: 380px;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 40px; text-align: center;">S.No</th>
+                                <th>Barcode</th>
+                                <th>Equipment Name</th>
+                                <th style="width: 70px; text-align: center;">Stock</th>
+                                <th style="width: 130px; text-align: center;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="masterEquipmentTableBody">
+                            <!-- Dynamic Inventory List -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: USER PROFILES -->
+        <div id="users-tab" class="tab-content">
+            <div class="content-card">
+                <h3>Add New Staff Profile</h3>
+                <div class="form-grid" style="margin-top: 10px;">
+                    <div class="input-group"><label>Staff Full Name</label><input type="text" id="newStaffName"></div>
+                    <div class="input-group"><label>Mobile Number</label><input type="tel" id="newStaffMobile"></div>
+                    <div class="input-group"><label>Staff ID</label><input type="text" id="newStaffId"></div>
+                    <div class="input-group"><label>Team</label><input type="text" id="newStaffTeam"></div>
+                </div>
+                <button class="btn btn-primary" style="width: 100%;" onclick="createNewUserProfile()">Create Profile</button>
+            </div>
+        </div>
+
+        <!-- TAB 5: FINE-TUNED ADMIN CONTROLS & ACCESS SECURITY -->
+        <div id="admin-controls-tab" class="tab-content">
+            
+            <!-- PANEL 1: SYSTEM OPERATIONAL CONTROLS -->
+            <div class="content-card">
+                <h3 style="margin-bottom: 12px;">⚙️ System Operational Controls</h3>
+                
+                <div class="toggle-box">
+                    <div>
+                        <strong style="display: block; font-size: 0.95rem; color: var(--text-dark);">Manual Check-Out Mode Override</strong>
+                        <span style="font-size: 0.75rem; color: var(--text-muted);" id="manualCheckoutToggleStatus">OFF (Scanner required for all check-outs)</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="adminManualCheckoutSwitch" onchange="toggleManualCheckoutSetting(this.checked)">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
+                    <button class="btn btn-secondary" style="flex: 1;" onclick="exportAuditLogBackup()">📥 Export System Audit Logs (JSON Backup)</button>
+                </div>
+            </div>
+
+            <!-- PANEL 2: ADMIN CREDENTIALS SECURITY -->
+            <div class="content-card">
+                <h3 style="margin-bottom: 12px;">👑 Administrator Display & Password Authorization</h3>
+                <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 15px;">Update display credentials and secure authorization password.</p>
+
+                <div class="form-grid">
+                    <div class="input-group"><label>Admin Display Name</label><input type="text" id="adminDisplayNameInput" placeholder="Administrator"></div>
+                    <div class="input-group"><label>Current Password</label><input type="password" id="adminCurrentPassInput" placeholder="Current pass"></div>
+                    <div class="input-group"><label>New Password</label><input type="password" id="adminNewPassInput" placeholder="New pass"></div>
+                    <div class="input-group"><label>Confirm Password</label><input type="password" id="adminConfirmPassInput" placeholder="Confirm pass"></div>
+                </div>
+                <button class="btn btn-primary" style="width: 100%; padding: 12px;" onclick="updateAdminProfileCredentials()">💾 Save Admin Security Settings</button>
+            </div>
+
+            <!-- PANEL 3: STAFF PERMISSIONS MATRIX -->
+            <div class="content-card">
+                <h3 style="margin-bottom: 12px;">🛡️ Manage User Access Permission Matrix</h3>
+                <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 15px;">Assign Full Access or Restricted permissions to active staff members.</p>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Staff ID</th>
+                                <th>Staff Name</th>
+                                <th>Permission Level</th>
+                                <th style="width: 120px; text-align: center;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminUserPermissionsTableBody">
+                            <!-- Dynamically populated -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- PANEL 4: TECHNICAL SPECIFICATIONS -->
+            <div class="content-card" style="background: #f8fafc;">
+                <strong>💻 Technical Specs & Storage Metrics</strong>
+                <div style="margin-top: 8px; color: var(--text-muted); font-size: 0.8rem; line-height: 1.6;">
+                    • <strong>Version:</strong> v3.3 (Production Public-Host Edition)<br>
+                    • <strong>Developer:</strong> Satish<br>
+                    • <strong>Engine:</strong> Client-side offline Single Page Application (SPA) with fallback memory storage.<br>
+                    • <strong>Storage Status:</strong> Synchronized with browser LocalStorage / Fallback Memory.
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<!-- FIXED BOTTOM NAVIGATION BAR FOR MOBILE SMARTPHONES -->
+<nav class="bottom-nav">
+    <button class="bottom-nav-btn active" id="mobTabOverviewBtn" onclick="switchTab('dashboard-tab')">
+        <span class="icon">📊</span>
+        <span>Overview</span>
+    </button>
+    <button class="bottom-nav-btn" id="mobTabNewSheetBtn" onclick="switchTab('new-entry-tab')">
+        <span class="icon">📋</span>
+        <span>New Booking</span>
+    </button>
+    <button class="bottom-nav-btn" id="mobTabEquipmentBtn" onclick="switchTab('equipment-tab')">
+        <span class="icon">🎥</span>
+        <span>Inventory</span>
+    </button>
+    <button class="bottom-nav-btn" id="mobTabUsersBtn" onclick="switchTab('users-tab')">
+        <span class="icon">👤</span>
+        <span>Users</span>
+    </button>
+    <button class="bottom-nav-btn" id="mobTabAdminControlsBtn" onclick="switchTab('admin-controls-tab')">
+        <span class="icon">⚙️</span>
+        <span>Admin</span>
+    </button>
+</nav>
+
+<!-- CUSTOM CONFIRMATION POPUP MODAL -->
+<div id="confirmationModal" class="overlay" style="display: none; z-index: 2000;">
+    <div class="dialog-card" style="max-width: 440px; text-align: center;">
+        <div style="font-size: 2.5rem; margin-bottom: 8px;" id="confirmIcon">📋</div>
+        <h3 id="confirmTitle" style="margin-bottom: 8px; font-size: 1.15rem;">Confirm Action</h3>
+        <p id="confirmMessage" style="color: var(--text-dark); font-size: 0.9rem; margin-bottom: 20px; line-height: 1.5; white-space: pre-line; text-align: left; background: #f8fafc; padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border);"></p>
+        
+        <div style="display: flex; gap: 10px; justify-content: center;">
+            <button class="btn btn-secondary" style="flex: 1;" onclick="closeConfirmationModal(false)">Cancel</button>
+            <button class="btn btn-primary" id="confirmActionBtn" style="flex: 1;" onclick="closeConfirmationModal(true)">Confirm & Save</button>
+        </div>
     </div>
+</div>
+
+<!-- DEVELOPER INFO MODAL -->
+<div id="devInfoModal" class="overlay" style="display: none;">
+    <div class="dialog-card" style="max-width: 500px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 15px;">
+            <h3>💻 Developer & Version Info</h3>
+            <button class="btn btn-secondary btn-sm" onclick="closeDevInfoModal()">✕ Close</button>
+        </div>
+        <div style="font-size: 0.85rem; line-height: 1.6; color: var(--text-dark);">
+            <div style="background: #f1f5f9; padding: 12px; border-radius: var(--radius-sm); margin-bottom: 12px;">
+                <p><strong>System Name:</strong> Equipment Management Dashboard</p>
+                <p><strong>Version:</strong> <span class="version-badge">v3.3 Production</span></p>
+                <p><strong>Lead Application Developer:</strong> Satish</p>
+            </div>
+            
+            <h4 style="margin-bottom: 6px;">Features:</h4>
+            <ul style="padding-left: 20px; font-size: 0.8rem; color: var(--text-muted);">
+                <li>Reliable inline profile switching across all public cloud hosts.</li>
+                <li>Safe storage fallbacks for restricted browsing/hosting environments.</li>
+                <li>Download generated barcodes directly as PNG images.</li>
+                <li>Synchronized Stock Reservation Guard across Scanner & Manual Modes.</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- LOGIN OVERLAY -->
+<div id="loginOverlay" class="overlay" style="display: flex;">
+    <div class="dialog-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 12px;">
+            <h2 style="font-size: 1.1rem;">Workspace Login</h2>
+            <button class="btn btn-secondary btn-sm" onclick="closeLoginModal()">✕ Close</button>
+        </div>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 12px; text-align: center;">Select profile to access logs</p>
+        
+        <div class="role-option" onclick="showAdminPasswordInput()">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span>👑 Admin Profile</span>
+                <span class="role-pill role-admin">Full Access</span>
+            </div>
+        </div>
+
+        <div id="adminPassBox" style="display: none; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); text-align: left;">
+            <label style="font-size: 0.75rem; font-weight: bold; color: var(--text-muted);">ADMIN PASSWORD:</label>
+            <input type="password" id="adminPasswordInput" placeholder="Default: admin123" style="width: 100%; padding: 10px; margin: 6px 0 10px 0; border: 1px solid var(--border); border-radius: var(--radius-sm);" onkeypress="handleAdminLoginKey(event)">
+            <button class="btn btn-primary btn-sm" style="width: 100%;" onclick="validateAdminPassword()">Login as Admin</button>
+            <div id="loginError" style="color: var(--danger); font-size: 0.75rem; margin-top: 6px; font-weight: bold;"></div>
+        </div>
+
+        <div style="margin: 12px 0 6px 0; font-size: 0.75rem; color: var(--text-muted); font-weight: bold; text-align: left; text-transform: uppercase;">Staff Profiles</div>
+        <div id="loginUserList"></div>
+    </div>
+</div>
+
+<!-- CHECK-OUT BARCODE SCANNER MODAL -->
+<div id="checkoutScannerModalOverlay" class="overlay" style="display: none;">
+    <div class="scanner-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 10px;">
+            <div>
+                <h3 style="font-size: 1rem; color: white;">📤 Check-Out Scanner</h3>
+                <span style="font-size: 0.75rem; color: #94a3b8;">Trigger gun scanner to add items</span>
+            </div>
+            <button class="btn btn-danger btn-sm" onclick="closeCheckoutScannerModal()">✕ Close</button>
+        </div>
+
+        <div style="margin: 12px 0;">
+            <input type="text" id="checkoutBarcodeListener" placeholder="Ready to scan barcodes..." style="width: 100%; padding: 12px; border-radius: var(--radius-sm); border: 2px solid var(--primary); background: #1e293b; color: #60a5fa; font-size: 0.95rem; font-weight: bold;" onkeypress="handleCheckoutBarcodeScanner(event)" autofocus>
+        </div>
+
+        <div class="scan-terminal" id="checkoutTerminalLog">> Handheld scanner ready for booking check-out...</div>
+        
+        <button class="btn btn-secondary btn-sm" style="width: 100%; margin-top: 12px;" onclick="closeCheckoutScannerModal()">Done Scanning</button>
+    </div>
+</div>
+
+<!-- DASHBOARD DIRECT CHECK-IN SCANNER MODAL -->
+<div id="dashboardCheckinModalOverlay" class="overlay" style="display: none;">
+    <div class="scanner-card" style="max-width: 550px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 10px;">
+            <div>
+                <h3 style="font-size: 1rem; color: #10b981;">↩ Direct Check-In Terminal</h3>
+                <span style="font-size: 0.75rem; color: #94a3b8;">Client: <strong id="dashCheckinClientName" style="color: white;">-</strong></span>
+            </div>
+            <button class="btn btn-danger btn-sm" onclick="closeDashboardCheckinModal()">✕ Close</button>
+        </div>
+
+        <div style="margin: 12px 0;">
+            <input type="text" id="dashboardCheckinListener" placeholder="Scan item barcode..." style="width: 100%; padding: 12px; border-radius: var(--radius-sm); border: 2px solid var(--success); background: #1e293b; color: #34d399; font-size: 0.95rem; font-weight: bold;" onkeypress="handleDashboardCheckinScanner(event)" autofocus>
+        </div>
+
+        <h4 style="margin: 8px 0 4px 0; color: #94a3b8; font-size: 0.8rem;">Checked-Out Items Remaining:</h4>
+        <div class="table-responsive" style="max-height: 180px; margin-bottom: 8px;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Barcode</th>
+                        <th>Item Name</th>
+                        <th style="width: 60px; text-align: center;">Qty</th>
+                        <th style="width: 100px; text-align: center;">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="dashboardCheckinItemsTableBody">
+                    <!-- Populated dynamically -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="scan-terminal" id="dashboardCheckinTerminalLog">> Matching scanned gear against shoot items...</div>
+        
+        <div class="actions-bar" style="margin-top: 12px;">
+            <button class="btn btn-success btn-sm" style="width: 100%;" onclick="completeDashboardCheckinProcess()">✅ Return All Items to Inventory</button>
+        </div>
+    </div>
+</div>
+
+<!-- LOG DETAIL VIEW MODAL -->
+<div id="detailModal" class="overlay" style="display: none;">
+    <div class="dialog-card">
+        <div class="detail-header">
+            <div>
+                <h3 id="detailClientName">Client Name</h3>
+                <span id="detailStatusTag" class="status-tag status-out">OUT ON SHOOT</span>
+            </div>
+            <button class="btn btn-secondary btn-sm no-print" onclick="closeDetailModal()">✕ Close</button>
+        </div>
+
+        <div class="detail-grid">
+            <div class="detail-item"><span>Client ID</span><strong id="detailClientId">-</strong></div>
+            <div class="detail-item"><span>Event / Place</span><strong id="detailEventPlace">-</strong></div>
+            <div class="detail-item"><span>Team</span><strong id="detailTeam">-</strong></div>
+            <div class="detail-item"><span>Shoot Incharge</span><strong id="detailIncharge">-</strong></div>
+            <div class="detail-item"><span>Contact</span><strong id="detailMobile">-</strong></div>
+            <div class="detail-item"><span>Time Out</span><strong id="detailTimeOut">-</strong></div>
+            <div class="detail-item"><span>Time In</span><strong id="detailTimeIn">-</strong></div>
+            <div class="detail-item"><span>Logged By</span><strong id="detailCreatedBy">-</strong></div>
+        </div>
+
+        <h4 style="margin-bottom: 8px;">Dispatched Items List</h4>
+        <div class="table-responsive" style="max-height: 220px; margin-bottom: 12px;">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 40px; text-align: center;">S.No</th>
+                        <th>Barcode</th>
+                        <th>Item Name</th>
+                        <th style="width: 80px; text-align: center;">Qty</th>
+                    </tr>
+                </thead>
+                <tbody id="detailItemsTableBody">
+                    <!-- Populated dynamically -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="actions-bar no-print">
+            <button class="btn btn-primary" onclick="window.print()">🖨️ Print Sheet</button>
+        </div>
+    </div>
+</div>
+
+<!-- PRINT BARCODE LABEL MODAL -->
+<div id="barcodePrintModal" class="overlay" style="display: none;">
+    <div class="dialog-card" style="max-width: 380px; text-align: center;">
+        <h3 id="printItemName">Equipment Barcode</h3>
+        <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 12px;">Inventory Tag</p>
+        
+        <div style="background: white; padding: 15px; border: 1px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 12px;">
+            <svg id="barcodePrintSvg"></svg>
+        </div>
+
+        <div class="actions-bar no-print" style="justify-content: center; gap: 8px;">
+            <button class="btn btn-primary" onclick="downloadBarcodeAsPNG()">💾 Download PNG</button>
+            <button class="btn btn-secondary" onclick="window.print()">🖨️ Print Label</button>
+            <button class="btn btn-secondary" onclick="closeBarcodePrintModal()">✕ Close</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const SafeStorage = {
+        getItem(key) {
+            try { return localStorage.getItem(key); } catch (e) { return window._memStore?.[key] || null; }
+        },
+        setItem(key, val) {
+            try { localStorage.setItem(key, val); } catch (e) {
+                window._memStore = window._memStore || {};
+                window._memStore[key] = val;
+            }
+        },
+        removeItem(key) {
+            try { localStorage.removeItem(key); } catch (e) {
+                if (window._memStore) delete window._memStore[key];
+            }
+        }
+    };
+
+    let pendingConfirmCallback = null;
+    let allowManualCheckout = SafeStorage.getItem('appAllowManualCheckout') === 'true';
+    let currentBarcodePrintMeta = { barcode: '', name: '' };
+
+    function showConfirmationModal({ title, message, icon = '⚠️', confirmBtnText = 'Confirm', confirmBtnClass = 'btn-primary', onConfirm }) {
+        document.getElementById('confirmTitle').innerText = title;
+        document.getElementById('confirmMessage').innerText = message;
+        document.getElementById('confirmIcon').innerText = icon;
+        
+        const actionBtn = document.getElementById('confirmActionBtn');
+        actionBtn.innerText = confirmBtnText;
+        actionBtn.className = `btn ${confirmBtnClass}`;
+
+        pendingConfirmCallback = onConfirm;
+        document.getElementById('confirmationModal').style.display = 'flex';
+    }
+
+    function closeConfirmationModal(userConfirmed) {
+        document.getElementById('confirmationModal').style.display = 'none';
+        if (userConfirmed && typeof pendingConfirmCallback === 'function') {
+            pendingConfirmCallback();
+        }
+        pendingConfirmCallback = null;
+    }
+
+    function toggleManualCheckoutSetting(isEnabled) {
+        allowManualCheckout = isEnabled;
+        SafeStorage.setItem('appAllowManualCheckout', isEnabled ? 'true' : 'false');
+        
+        const statusText = document.getElementById('manualCheckoutToggleStatus');
+        if (statusText) {
+            statusText.innerText = isEnabled ? 
+                'ON (Manual checkboxes allowed for check-out)' : 
+                'OFF (Scanner required for all check-outs)';
+        }
+
+        updateEntryInterface();
+    }
+
+    function exportAuditLogBackup() {
+        const auditData = {
+            exportDate: new Date().toISOString(),
+            version: 'v3.3',
+            masterEquipment: masterEquipment,
+            gearLogs: gearLogs,
+            userProfiles: userProfiles
+        };
+
+        const blob = new Blob([JSON.stringify(auditData, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `GearControl_Backup_${new Date().toISOString().split('T')[0]}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    function openDevInfoModal() { document.getElementById('devInfoModal').style.display = 'flex'; }
+    function closeDevInfoModal() { document.getElementById('devInfoModal').style.display = 'none'; }
+    function switchProfileModal() { document.getElementById('loginOverlay').style.display = 'flex'; }
+
+    function logoutUser() {
+        showConfirmationModal({
+            title: 'Logout Active Operator?',
+            message: 'Are you sure you want to log out of the current profile?',
+            icon: '🚪',
+            confirmBtnText: 'Logout',
+            confirmBtnClass: 'btn-danger',
+            onConfirm: () => {
+                SafeStorage.removeItem('appUserRole');
+                SafeStorage.removeItem('appUserName');
+                SafeStorage.removeItem('appUserMobile');
+                currentRole = null;
+                currentUserNameSession = null;
+                document.getElementById('loginOverlay').style.display = 'flex';
+            }
+        });
+    }
+
+    function generateUniqueBarcodeId(existingItems) {
+        let code = '';
+        let isUnique = false;
+        while (!isUnique) {
+            const randomNum = Math.floor(100000 + Math.random() * 900000);
+            code = `EQP-${randomNum}`;
+            isUnique = !existingItems.some(item => item.barcode === code);
+        }
+        return code;
+    }
+
+    const defaultMasterItems = [
+        { barcode: "EQP-100101", name: "5D MARK 4", stock: 5 }, 
+        { barcode: "EQP-100102", name: "CANON R6 CAM", stock: 5 }, 
+        { barcode: "EQP-100103", name: "CANON R5 CAM", stock: 5 }, 
+        { barcode: "EQP-100104", name: "CANON R6 MARK 2", stock: 5 }, 
+        { barcode: "EQP-100105", name: "SONY FX 30 VIDEO CAM", stock: 4 }, 
+        { barcode: "EQP-100106", name: "SONY Z 150 VIDEO CAM", stock: 4 }, 
+        { barcode: "EQP-100107", name: "SONY 18-105 mm", stock: 6 }, 
+        { barcode: "EQP-100108", name: "CANON 70-200 mm RF/EF", stock: 6 }, 
+        { barcode: "EQP-100109", name: "CANON 24-105 mm RF/EF", stock: 6 }, 
+        { barcode: "EQP-100110", name: "CANON 85 mm RF/SIGMA", stock: 5 }, 
+        { barcode: "EQP-100111", name: "CANON 50 mm RF/EF", stock: 5 }, 
+        { barcode: "EQP-100112", name: "CANON 35 mm RF/EF", stock: 5 }, 
+        { barcode: "EQP-100113", name: "CANON 16 mm RF/EF", stock: 4 }, 
+        { barcode: "EQP-100114", name: "CANON BATTERY & CHARGER (B- / C-)", stock: 10 }, 
+        { barcode: "EQP-100115", name: "SONY BATTERY & CHARGER (B- / C-)", stock: 10 }, 
+        { barcode: "EQP-100116", name: "CANON M CARDS 128 GB/64GB", stock: 15 }, 
+        { barcode: "EQP-100117", name: "SONY M CARDS 128 GB/64GB", stock: 15 }, 
+        { barcode: "EQP-100118", name: "SK 400", stock: 4 }, 
+        { barcode: "EQP-100119", name: "SUNGUN", stock: 6 }, 
+        { barcode: "EQP-100120", name: "FLASH (F- / B-)", stock: 8 }, 
+        { barcode: "EQP-100121", name: "LC 500", stock: 4 }, 
+        { barcode: "EQP-100122", name: "AD 600", stock: 4 }, 
+        { barcode: "EQP-100123", name: "AD 400", stock: 4 }, 
+        { barcode: "EQP-100124", name: "AD 200", stock: 4 }, 
+        { barcode: "EQP-100125", name: "PANEL LIGHTS (B- / C-)", stock: 8 }, 
+        { barcode: "EQP-100126", name: "X1+X2 TRIGGER", stock: 6 }, 
+        { barcode: "EQP-100127", name: "UNIVERSAL TRIGGER", stock: 6 }, 
+        { barcode: "EQP-100128", name: "WIRELESS MIC", stock: 8 }, 
+        { barcode: "EQP-100129", name: "WIRE MIC", stock: 8 }, 
+        { barcode: "EQP-100130", name: "ROHIN GIMBAL SC", stock: 3 }, 
+        { barcode: "EQP-100131", name: "ROHIN GIMBAL S2", stock: 3 }, 
+        { barcode: "EQP-100132", name: "ROHIN GIMBAL S3", stock: 3 }, 
+        { barcode: "EQP-100133", name: "MONT FRONT TRIPAD", stock: 6 }, 
+        { barcode: "EQP-100134", name: "SIMPEX TRIPAD", stock: 6 }, 
+        { barcode: "EQP-100135", name: "VIDEO TRIPAD & UMBERELLA (T- / U-)", stock: 6 }, 
+        { barcode: "EQP-100136", name: "GODEX & BEAUTY SOFTBOX (85mm- / 65mm-)", stock: 6 }, 
+        { barcode: "EQP-100137", name: "MAVIC AIR DRONE 4 PRO", stock: 2 }, 
+        { barcode: "EQP-100138", name: "MAVIC AIR 2", stock: 2 }, 
+        { barcode: "EQP-100139", name: "DJI AVATA", stock: 2 }, 
+        { barcode: "EQP-100140", name: "PHANTOM 4PRO", stock: 2 }, 
+        { barcode: "EQP-100141", name: "GEL KIT", stock: 5 }, 
+        { barcode: "EQP-100142", name: "LED TV", stock: 4 }, 
+        { barcode: "EQP-100143", name: "LED NAME BOARD", stock: 4 }, 
+        { barcode: "EQP-100144", name: "EXTENSION BOX", stock: 10 }, 
+        { barcode: "EQP-100145", name: "HARD DISK", stock: 8 }, 
+        { barcode: "EQP-100146", name: "CARD READER", stock: 10 }, 
+        { barcode: "EQP-100147", name: "360", stock: 2 }, 
+        { barcode: "EQP-100148", name: "SELFI BOOTH", stock: 2 }, 
+        { barcode: "EQP-100149", name: "JACKETS", stock: 10 }
+    ];
+
+    let masterEquipment = JSON.parse(SafeStorage.getItem('gearMasterEquipmentObj')) || defaultMasterItems;
+    
+    masterEquipment = masterEquipment.map(item => {
+        if (!item.barcode) {
+            item.barcode = generateUniqueBarcodeId(masterEquipment);
+        }
+        return item;
+    });
+    SafeStorage.setItem('gearMasterEquipmentObj', JSON.stringify(masterEquipment));
+
+    let itemsList = masterEquipment.map(item => item.name);
+
+    let currentRole = SafeStorage.getItem('appUserRole') || null;
+    let currentUserNameSession = SafeStorage.getItem('appUserName') || null;
+
+    let gearLogs = JSON.parse(SafeStorage.getItem('gearDashboardLogs')) || [];
+    
+    gearLogs = gearLogs.map(log => {
+        if (log.status === 'OUT') log.status = 'OUT ON SHOOT';
+        return log;
+    });
+    SafeStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
+
+    let userProfiles = JSON.parse(SafeStorage.getItem('gearUserProfiles')) || [
+        { id: 'STAFF-1', name: 'Standard Staff Operator', mobile: '9876543210', team: 'Camera Crew', permissions: 'restricted' }
+    ];
+
+    let adminEntryMethod = 'scanner';
+    let scannedQuantities = {};
+    let editingIndex = -1;
+    let editingLogId = null;
+    let activeTempGearList = [];
+    let editingUserId = null;
+    let activeDashboardCheckinLogId = null;
+
+    document.addEventListener("DOMContentLoaded", () => {
+        renderLoginUserList();
+        
+        if (!currentRole) {
+            document.getElementById('loginOverlay').style.display = 'flex';
+        } else {
+            document.getElementById('loginOverlay').style.display = 'none';
+            applyRolePermissions(currentRole);
+        }
+
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('date').value = today;
+        document.getElementById('timeOutDate').value = today;
+        
+        const toggleSwitch = document.getElementById('adminManualCheckoutSwitch');
+        if (toggleSwitch) {
+            toggleSwitch.checked = allowManualCheckout;
+            toggleManualCheckoutSetting(allowManualCheckout);
+        }
+
+        renderMasterEquipmentTable();
+        renderDashboard();
+    });
+
+    function closeLoginModal() {
+        if (!currentRole) {
+            alert("Please select a profile to continue.");
+            return;
+        }
+        document.getElementById('loginOverlay').style.display = 'none';
+    }
+
+    function renderLoginUserList() {
+        const container = document.getElementById('loginUserList');
+        container.innerHTML = userProfiles.map(u => `
+            <div class="role-option" onclick="selectProfile('user', '${u.name}', '${u.mobile || ''}')">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span>👤 ${u.name}</span>
+                    <span class="role-pill role-user">${u.id}</span>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function selectProfile(role, name, mobile) {
+        currentRole = role;
+        currentUserNameSession = name;
+
+        SafeStorage.setItem('appUserRole', role);
+        SafeStorage.setItem('appUserName', name);
+        SafeStorage.setItem('appUserMobile', mobile || '');
+
+        document.getElementById('loginOverlay').style.display = 'none';
+        applyRolePermissions(role);
+    }
+
+    function applyRolePermissions(role) {
+        const userName = currentUserNameSession || (role === 'admin' ? (SafeStorage.getItem('appAdminDisplayName') || 'Administrator') : 'Staff Member');
+        document.getElementById('activeUserName').innerText = userName;
+        
+        const badge = document.getElementById('activeRoleBadge');
+        const adminSelector = document.getElementById('adminMethodSelector');
+        const currentProfileObj = userProfiles.find(u => u.name === userName);
+        const hasFullAccess = role === 'admin' || (currentProfileObj && currentProfileObj.permissions === 'full');
+
+        if (role === 'admin') {
+            badge.innerText = 'Admin';
+            badge.className = 'role-pill role-admin';
+            adminSelector.style.display = allowManualCheckout ? 'flex' : 'none';
+            document.getElementById('adminMetricsGrid').style.display = 'grid';
+            document.getElementById('tabOverviewBtn').style.display = 'flex';
+            document.getElementById('tabOverviewBtn').innerText = '📊 Overview Logs';
+            document.getElementById('tabEquipmentBtn').style.display = 'flex';
+            document.getElementById('tabUsersBtn').style.display = 'flex';
+            document.getElementById('tabAdminControlsBtn').style.display = 'flex';
+            
+            document.getElementById('metric-total-label').innerText = 'Total Outings';
+            document.getElementById('metric-out-label').innerText = 'Out On Shoot';
+            document.getElementById('metric-returned-label').innerText = 'Returned';
+            document.getElementById('logSectionTitle').innerText = 'Recent Shoots & Gear Logs';
+
+            document.getElementById('adminDisplayNameInput').value = SafeStorage.getItem('appAdminDisplayName') || 'Administrator';
+            renderUserPermissionsTable();
+            switchTab('dashboard-tab');
+        } else {
+            badge.innerText = hasFullAccess ? 'Staff (Full)' : 'Staff User';
+            badge.className = 'role-pill role-user';
+            adminSelector.style.display = 'none';
+            
+            document.getElementById('adminMetricsGrid').style.display = 'grid';
+            document.getElementById('tabOverviewBtn').style.display = 'flex';
+            document.getElementById('tabOverviewBtn').innerText = '📊 My Outing Logs';
+            document.getElementById('tabEquipmentBtn').style.display = hasFullAccess ? 'flex' : 'none';
+            document.getElementById('tabUsersBtn').style.display = hasFullAccess ? 'flex' : 'none';
+            document.getElementById('tabAdminControlsBtn').style.display = 'none';
+
+            document.getElementById('metric-total-label').innerText = 'My Total Outings';
+            document.getElementById('metric-out-label').innerText = 'My Gear Out On Shoot';
+            document.getElementById('metric-returned-label').innerText = 'My Returned';
+            document.getElementById('logSectionTitle').innerText = `Personal Logs: ${userName}`;
+
+            switchTab('new-entry-tab');
+        }
+        
+        updateEntryInterface();
+        renderDashboard();
+    }
+
+    function updateAdminProfileCredentials() {
+        const nameVal = document.getElementById('adminDisplayNameInput').value.trim();
+        const currentPass = document.getElementById('adminCurrentPassInput').value;
+        const newPass = document.getElementById('adminNewPassInput').value;
+        const confirmPass = document.getElementById('adminConfirmPassInput').value;
+
+        const storedPass = SafeStorage.getItem('appAdminPassword') || 'admin123';
+
+        if (nameVal) {
+            SafeStorage.setItem('appAdminDisplayName', nameVal);
+            document.getElementById('activeUserName').innerText = nameVal;
+        }
+
+        if (newPass || currentPass) {
+            if (currentPass !== storedPass) {
+                alert('Current Admin Password is incorrect!');
+                return;
+            }
+            if (newPass.length < 4) {
+                alert('New password must be at least 4 characters long.');
+                return;
+            }
+            if (newPass !== confirmPass) {
+                alert('New Password and Confirm Password do not match!');
+                return;
+            }
+
+            SafeStorage.setItem('appAdminPassword', newPass);
+            document.getElementById('adminCurrentPassInput').value = '';
+            document.getElementById('adminNewPassInput').value = '';
+            document.getElementById('adminConfirmPassInput').value = '';
+            alert('Admin Password updated successfully!');
+            return;
+        }
+
+        alert('Admin Profile settings saved!');
+    }
+
+    function editUserProfile(userId) {
+        editingUserId = userId;
+        renderUserPermissionsTable();
+    }
+
+    function cancelEditUserProfile() {
+        editingUserId = null;
+        renderUserPermissionsTable();
+    }
+
+    function saveEditUserProfile(userId) {
+        const idInput = document.getElementById(`edit-user-id-${userId}`);
+        const nameInput = document.getElementById(`edit-user-name-${userId}`);
+        const teamInput = document.getElementById(`edit-user-team-${userId}`);
+        const permSelect = document.getElementById(`edit-user-perm-${userId}`);
+
+        if (!idInput || !nameInput) return;
+
+        const newId = idInput.value.trim();
+        const newName = nameInput.value.trim();
+        const newTeam = teamInput ? teamInput.value.trim() : '';
+        const newPerm = permSelect ? permSelect.value : 'restricted';
+
+        if (!newId || !newName) {
+            alert('Staff ID and Staff Name cannot be empty.');
+            return;
+        }
+
+        userProfiles = userProfiles.map(u => {
+            if (u.id === userId) {
+                return { ...u, id: newId, name: newName, team: newTeam, permissions: newPerm };
+            }
+            return u;
+        });
+
+        SafeStorage.setItem('gearUserProfiles', JSON.stringify(userProfiles));
+        editingUserId = null;
+        renderLoginUserList();
+        renderUserPermissionsTable();
+    }
+
+    function changeUserPermissionLevel(userId, newPerm) {
+        userProfiles = userProfiles.map(u => {
+            if (u.id === userId) u.permissions = newPerm;
+            return u;
+        });
+        SafeStorage.setItem('gearUserProfiles', JSON.stringify(userProfiles));
+        renderUserPermissionsTable();
+    }
+
+    function renderUserPermissionsTable() {
+        const tbody = document.getElementById('adminUserPermissionsTableBody');
+        if (!tbody) return;
+
+        tbody.innerHTML = userProfiles.map(u => {
+            if (editingUserId === u.id) {
+                return `
+                    <tr class="editing-row">
+                        <td><input type="text" id="edit-user-id-${u.id}" class="inline-edit-input" value="${u.id}"></td>
+                        <td><input type="text" id="edit-user-name-${u.id}" class="inline-edit-input" value="${u.name}"></td>
+                        <td style="text-align: center;">
+                            <select id="edit-user-perm-${u.id}" class="inline-edit-input">
+                                <option value="restricted" ${u.permissions !== 'full' ? 'selected' : ''}>Restricted Staff</option>
+                                <option value="full" ${u.permissions === 'full' ? 'selected' : ''}>Full Access</option>
+                            </select>
+                        </td>
+                        <td>
+                            <div class="table-action-cell">
+                                <button class="btn btn-sm btn-primary" onclick="saveEditUserProfile('${u.id}')">💾 Save</button>
+                                <button class="btn btn-sm btn-secondary" onclick="cancelEditUserProfile()">✕ Cancel</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                return `
+                    <tr>
+                        <td><strong>${u.id}</strong></td>
+                        <td>${u.name}</td>
+                        <td style="text-align: center;">
+                            <select class="inline-edit-input" onchange="changeUserPermissionLevel('${u.id}', this.value)">
+                                <option value="restricted" ${u.permissions !== 'full' ? 'selected' : ''}>Restricted Staff</option>
+                                <option value="full" ${u.permissions === 'full' ? 'selected' : ''}>Full Access</option>
+                            </select>
+                        </td>
+                        <td>
+                            <div class="table-action-cell">
+                                <button class="btn btn-sm btn-warning" onclick="editUserProfile('${u.id}')">✏️ Edit</button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteUserProfile('${u.id}')">🗑️ Delete</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }
+        }).join('');
+    }
+
+    function deleteUserProfile(userId) {
+        const profile = userProfiles.find(u => u.id === userId);
+        showConfirmationModal({
+            title: 'Delete Staff Profile?',
+            message: `Are you sure you want to delete profile "${profile ? profile.name : userId}"?`,
+            icon: '👤',
+            confirmBtnText: 'Delete Profile',
+            confirmBtnClass: 'btn-danger',
+            onConfirm: () => {
+                userProfiles = userProfiles.filter(u => u.id !== userId);
+                SafeStorage.setItem('gearUserProfiles', JSON.stringify(userProfiles));
+                renderLoginUserList();
+                renderUserPermissionsTable();
+            }
+        });
+    }
+
+    function setAdminEntryMethod(method) {
+        if (!allowManualCheckout && method === 'manual') {
+            alert('Manual Check-Out mode is disabled by Admin Control settings.');
+            method = 'scanner';
+        }
+
+        adminEntryMethod = method;
+        const scanBtn = document.getElementById('adminScannerModeBtn');
+        const manualBtn = document.getElementById('adminManualModeBtn');
+
+        if (method === 'scanner') {
+            if (scanBtn) scanBtn.className = 'method-btn active';
+            if (manualBtn) manualBtn.className = 'method-btn';
+        } else {
+            if (scanBtn) scanBtn.className = 'method-btn';
+            if (manualBtn) manualBtn.className = 'method-btn active';
+            closeCheckoutScannerModal();
+        }
+        updateEntryInterface();
+    }
+
+    function updateEntryInterface() {
+        const triggerArea = document.getElementById('scannerConsoleTrigger');
+        const adminSelector = document.getElementById('adminMethodSelector');
+        
+        if (adminSelector) {
+            adminSelector.style.display = (currentRole === 'admin' && allowManualCheckout) ? 'flex' : 'none';
+        }
+
+        const useScanner = (!allowManualCheckout) || (currentRole === 'user') || (currentRole === 'admin' && adminEntryMethod === 'scanner');
+
+        if (useScanner) {
+            triggerArea.style.display = 'block';
+        } else {
+            triggerArea.style.display = 'none';
+        }
+
+        populateChecklistTable(useScanner);
+    }
+
+    function getCurrentlyDispatchedMap() {
+        let map = {};
+        gearLogs.forEach(log => {
+            if (log.status === 'OUT ON SHOOT') {
+                log.gear.forEach(g => {
+                    const nameUpper = g.name.toUpperCase();
+                    const qtyNum = parseInt(g.qty, 10) || 1;
+                    map[nameUpper] = (map[nameUpper] || 0) + qtyNum;
+                });
+            }
+        });
+        return map;
+    }
+
+    function populateChecklistTable(isScannerMode) {
+        const thead = document.getElementById('checklistHeader');
+        const tbody = document.getElementById('equipmentItemsBody');
+        const dispatchedMap = getCurrentlyDispatchedMap();
+
+        if (!isScannerMode) {
+            thead.innerHTML = `
+                <tr>
+                    <th style="width: 50px; text-align: center;">Select</th>
+                    <th style="width: 40px; text-align: center;">S.No</th>
+                    <th>Barcode</th>
+                    <th>Item Description</th>
+                    <th style="width: 110px;">Available / Qty</th>
+                </tr>
+            `;
+
+            tbody.innerHTML = masterEquipment.map((item, index) => {
+                const nameUpper = item.name.toUpperCase();
+                const outQty = dispatchedMap[nameUpper] || 0;
+                const totalStock = item.stock || 5;
+                const inStock = Math.max(0, totalStock - outQty);
+                const isOutOfStock = inStock <= 0;
+
+                return `
+                    <tr id="item-row-${index}" class="${isOutOfStock ? 'disabled-stock-row' : ''}">
+                        <td style="text-align: center;">
+                            <input type="checkbox" class="item-select" id="select-check-${index}" onchange="toggleAdminRow(${index})" style="width:18px; height:18px; cursor:pointer;" ${isOutOfStock ? 'disabled' : ''}>
+                        </td>
+                        <td style="text-align: center;">${index + 1}</td>
+                        <td><span class="barcode-badge">${item.barcode}</span></td>
+                        <td>
+                            <strong>${item.name}</strong>
+                            ${isOutOfStock ? `<span class="status-tag" style="background:#fee2e2; color:#991b1b; font-size:0.65rem; margin-left:6px;">Out On Shoot</span>` : ''}
+                        </td>
+                        <td>
+                            <input type="text" class="item-qty" id="qty-input-${index}" style="width:100%; padding:6px;" placeholder="${inStock} / ${totalStock}" disabled data-max-stock="${inStock}">
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        } else {
+            thead.innerHTML = `
+                <tr>
+                    <th style="width: 40px; text-align: center;">S.No</th>
+                    <th>Barcode</th>
+                    <th>Item Description</th>
+                    <th style="width: 90px; text-align: center;">In Stock / Total</th>
+                    <th style="width: 70px; text-align: center;">Out Qty</th>
+                    <th style="width: 100px; text-align: center;">Status</th>
+                </tr>
+            `;
+
+            tbody.innerHTML = masterEquipment.map((item, index) => {
+                const nameUpper = item.name.toUpperCase();
+                const outQty = dispatchedMap[nameUpper] || 0;
+                const totalStock = item.stock || 5;
+                const inStock = Math.max(0, totalStock - outQty);
+                const isOutOfStock = inStock <= 0;
+
+                scannedQuantities[index] = scannedQuantities[index] || 0;
+                return `
+                    <tr id="item-row-${index}" class="${isOutOfStock && scannedQuantities[index] === 0 ? 'disabled-stock-row' : ''}">
+                        <td style="text-align: center;">${index + 1}</td>
+                        <td><span class="barcode-badge">${item.barcode}</span></td>
+                        <td>
+                            <strong>${item.name}</strong>
+                            ${isOutOfStock && scannedQuantities[index] === 0 ? `<span class="status-tag" style="background:#fee2e2; color:#991b1b; font-size:0.65rem; margin-left:6px;">Out On Shoot</span>` : ''}
+                        </td>
+                        <td style="text-align: center; font-weight: bold; color: ${inStock > 0 ? 'var(--success)' : 'var(--danger)'};">
+                            ${inStock} / ${totalStock}
+                        </td>
+                        <td style="text-align: center; font-weight: bold;" id="qty-count-${index}">${scannedQuantities[index]}</td>
+                        <td style="text-align: center;" id="scan-status-${index}">
+                            ${scannedQuantities[index] > 0 ? `<span style="color: var(--primary); font-weight:bold;">Checked Out</span>` : `<span style="color: #94a3b8; font-size: 0.8rem;">Unscanned</span>`}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+    }
+
+    function toggleAdminRow(index) {
+        const row = document.getElementById(`item-row-${index}`);
+        const selectCheckbox = document.getElementById(`select-check-${index}`);
+        const qtyInput = document.getElementById(`qty-input-${index}`);
+
+        if (selectCheckbox.checked) {
+            const maxStock = parseInt(qtyInput.getAttribute('data-max-stock'), 10) || 1;
+            if (maxStock <= 0) {
+                alert('This item is currently out on another shoot booking!');
+                selectCheckbox.checked = false;
+                return;
+            }
+            row.classList.add('selected-row');
+            qtyInput.disabled = false;
+            if (!qtyInput.value) qtyInput.value = '1';
+        } else {
+            row.classList.remove('selected-row');
+            qtyInput.disabled = true;
+            qtyInput.value = '';
+        }
+    }
+
+    function openCheckoutScannerModal() {
+        document.getElementById('checkoutScannerModalOverlay').style.display = 'flex';
+        const input = document.getElementById('checkoutBarcodeListener');
+        input.focus();
+        input.select();
+    }
+
+    function closeCheckoutScannerModal() {
+        document.getElementById('checkoutScannerModalOverlay').style.display = 'none';
+    }
+
+    function handleCheckoutBarcodeScanner(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            executeCheckoutScan(e.target.value);
+            e.target.value = '';
+        }
+    }
+
+    function executeCheckoutScan(scannedCode) {
+        if (!scannedCode || !scannedCode.trim()) return;
+        const query = scannedCode.trim().toLowerCase();
+        
+        let targetIndex = masterEquipment.findIndex(item => 
+            item.barcode.toLowerCase() === query || 
+            item.name.toLowerCase().includes(query) || 
+            query.includes(item.name.toLowerCase())
+        );
+
+        if (targetIndex !== -1) {
+            const item = masterEquipment[targetIndex];
+            const dispatchedMap = getCurrentlyDispatchedMap();
+            const outOnOtherShoots = dispatchedMap[item.name.toUpperCase()] || 0;
+            const totalStock = item.stock || 5;
+            const availableStock = Math.max(0, totalStock - outOnOtherShoots);
+
+            const alreadyScannedInSession = scannedQuantities[targetIndex] || 0;
+
+            if (alreadyScannedInSession + 1 > availableStock) {
+                logCheckoutTerminal(`<span style="color: #f87171;">✕ CHECK-OUT REJECTED: ${item.name} is out of stock! (Available: ${availableStock}, Out on Shoots: ${outOnOtherShoots})</span>`);
+                alert(`Cannot check out ${item.name}! Item is already assigned to another active shoot booking.`);
+                return;
+            }
+
+            const row = document.getElementById(`item-row-${targetIndex}`);
+            const qtyCell = document.getElementById(`qty-count-${targetIndex}`);
+            const statusCell = document.getElementById(`scan-status-${targetIndex}`);
+
+            scannedQuantities[targetIndex] = alreadyScannedInSession + 1;
+            if(row) row.className = "scanned-checkout";
+            if(statusCell) statusCell.innerHTML = `<span style="color: var(--primary); font-weight:bold;">Checked Out</span>`;
+            if(qtyCell) qtyCell.innerText = scannedQuantities[targetIndex];
+            
+            logCheckoutTerminal(`✓ CHECK-OUT: ${item.name} [${item.barcode}] (Dispatched: ${scannedQuantities[targetIndex]} / Max Available: ${availableStock})`);
+            if(row) row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+            logCheckoutTerminal(`✕ UNKNOWN ITEM: "${scannedCode}" not found in inventory.`);
+        }
+    }
+
+    function logCheckoutTerminal(msg) {
+        const terminal = document.getElementById('checkoutTerminalLog');
+        if (terminal) terminal.innerHTML = `${msg}<br>${terminal.innerHTML}`;
+    }
+
+    function openDashboardCheckinModal(logId) {
+        activeDashboardCheckinLogId = logId;
+        const log = gearLogs.find(l => l.id === logId);
+        if (!log) return;
+
+        document.getElementById('dashCheckinClientName').innerText = log.clientName;
+        
+        renderDashboardCheckinItemsTable();
+        document.getElementById('dashboardCheckinModalOverlay').style.display = 'flex';
+        
+        const input = document.getElementById('dashboardCheckinListener');
+        input.focus();
+        input.select();
+    }
+
+    function closeDashboardCheckinModal() {
+        activeDashboardCheckinLogId = null;
+        document.getElementById('dashboardCheckinModalOverlay').style.display = 'none';
+    }
+
+    function renderDashboardCheckinItemsTable() {
+        const tbody = document.getElementById('dashboardCheckinItemsTableBody');
+        const log = gearLogs.find(l => l.id === activeDashboardCheckinLogId);
+        if (!log || !tbody) return;
+
+        tbody.innerHTML = log.gear.map((item, idx) => {
+            const masterMatch = masterEquipment.find(m => m.name.toUpperCase() === item.name.toUpperCase());
+            const barcodeStr = masterMatch ? masterMatch.barcode : 'EQP-UNKNOWN';
+            
+            return `
+                <tr>
+                    <td><span class="barcode-badge">${barcodeStr}</span></td>
+                    <td><strong>${item.name}</strong></td>
+                    <td style="text-align: center; font-weight: bold; color: var(--warning);">${item.qty}</td>
+                    <td style="text-align: center;">
+                        <button type="button" class="btn btn-sm btn-success" onclick="checkinSingleLogItem(${idx})">↩ Return 1</button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    function handleDashboardCheckinScanner(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            executeDashboardCheckinScan(e.target.value);
+            e.target.value = '';
+        }
+    }
+
+    function executeDashboardCheckinScan(scannedCode) {
+        if (!scannedCode || !scannedCode.trim()) return;
+        const query = scannedCode.trim().toLowerCase();
+        const log = gearLogs.find(l => l.id === activeDashboardCheckinLogId);
+        if (!log) return;
+
+        let matchedIndex = log.gear.findIndex(g => {
+            const masterMatch = masterEquipment.find(m => m.name.toUpperCase() === g.name.toUpperCase());
+            return (masterMatch && masterMatch.barcode.toLowerCase() === query) || 
+                   g.name.toLowerCase() === query || 
+                   query.includes(g.name.toLowerCase());
+        });
+
+        if (matchedIndex !== -1) {
+            checkinSingleLogItem(matchedIndex);
+        } else {
+            logDashboardCheckinTerminal(`<span style="color: #f87171;">✕ REJECTED: Barcode "${scannedCode}" was NOT assigned to this shoot!</span>`);
+        }
+    }
+
+    function checkinSingleLogItem(itemIdx) {
+        const log = gearLogs.find(l => l.id === activeDashboardCheckinLogId);
+        if (!log || !log.gear[itemIdx]) return;
+
+        const currentItem = log.gear[itemIdx];
+        let currentQty = parseInt(currentItem.qty, 10) || 1;
+
+        if (currentQty > 1) {
+            currentItem.qty = (currentQty - 1).toString();
+            logDashboardCheckinTerminal(`↩ CHECKED IN: 1x ${currentItem.name} (${currentItem.qty} remaining)`);
+        } else {
+            logDashboardCheckinTerminal(`↩ FULLY RETURNED: ${currentItem.name}`);
+            log.gear.splice(itemIdx, 1);
+        }
+        
+        if (log.gear.length === 0) {
+            log.status = 'RETURNED';
+            const now = new Date();
+            log.actualReturnTimeStamp = now.toLocaleDateString('en-GB') + ', ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            SafeStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
+            alert('All items returned! Shoot status updated to RETURNED.');
+            closeDashboardCheckinModal();
+            renderDashboard();
+        } else {
+            SafeStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
+            renderDashboardCheckinItemsTable();
+            renderDashboard();
+        }
+    }
+
+    function completeDashboardCheckinProcess() {
+        const log = gearLogs.find(l => l.id === activeDashboardCheckinLogId);
+        if (!log) return;
+
+        showConfirmationModal({
+            title: 'Force Return All Equipment?',
+            message: `Return all remaining items for client "${log.clientName}" back into live inventory?`,
+            icon: '↩️',
+            confirmBtnText: 'Return All Gear',
+            confirmBtnClass: 'btn-success',
+            onConfirm: () => {
+                log.gear = [];
+                log.status = 'RETURNED';
+                const now = new Date();
+                log.actualReturnTimeStamp = now.toLocaleDateString('en-GB') + ', ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                
+                SafeStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
+                closeDashboardCheckinModal();
+                renderDashboard();
+            }
+        });
+    }
+
+    function logDashboardCheckinTerminal(msg) {
+        const terminal = document.getElementById('dashboardCheckinTerminalLog');
+        if (terminal) terminal.innerHTML = `${msg}<br>${terminal.innerHTML}`;
+    }
+
+    function renderEquipmentAvailability() {
+        const tbody = document.getElementById('availabilityTableBody');
+        const dispatchedMap = getCurrentlyDispatchedMap();
+
+        tbody.innerHTML = masterEquipment.map((eq, index) => {
+            const outQty = dispatchedMap[eq.name.toUpperCase()] || 0;
+            const totalStock = eq.stock || 5;
+            const inStock = Math.max(0, totalStock - outQty);
+            
+            let statusBadge = `<span class="status-tag status-returned">Available</span>`;
+            let barColor = "var(--success)";
+            const fillPercentage = Math.min(100, Math.round((inStock / totalStock) * 100));
+
+            if (inStock === 0) {
+                statusBadge = `<span class="status-tag" style="background:#fee2e2; color:#991b1b;">Out On Shoot</span>`;
+                barColor = "var(--danger)";
+            }
+
+            return `
+                <tr>
+                    <td style="text-align: center;">${index + 1}</td>
+                    <td><span class="barcode-badge">${eq.barcode}</span></td>
+                    <td><strong>${eq.name}</strong></td>
+                    <td style="text-align: center; font-weight: bold; color: ${inStock > 0 ? 'var(--success)' : 'var(--danger)'};">${inStock}</td>
+                    <td style="text-align: center; font-weight: bold; color: var(--warning);">${outQty}</td>
+                    <td style="text-align: center;">${totalStock}</td>
+                    <td>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            ${statusBadge}
+                        </div>
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" style="width: ${fillPercentage}%; background: ${barColor};"></div>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    function filterAvailability() {
+        const query = document.getElementById('availabilitySearchInput').value.toLowerCase();
+        const rows = document.querySelectorAll('#availabilityTableBody tr');
+        rows.forEach(row => {
+            const text = row.innerText.toLowerCase();
+            row.style.display = text.includes(query) ? '' : 'none';
+        });
+    }
+
+    function addNewEquipmentItem() {
+        const nameInput = document.getElementById('newEquipmentName');
+        const stockInput = document.getElementById('newEquipmentStock');
+        const name = nameInput.value.trim().toUpperCase();
+        const stock = Math.max(1, parseInt(stockInput.value, 10) || 5);
+
+        if (!name) {
+            alert('Please enter an equipment name.');
+            return;
+        }
+
+        if (masterEquipment.some(item => item.name === name)) {
+            alert('This equipment item already exists.');
+            return;
+        }
+
+        const barcode = generateUniqueBarcodeId(masterEquipment);
+
+        showConfirmationModal({
+            title: 'Add New Equipment?',
+            message: `• Item Name: ${name}\n• Total Stock: ${stock} units\n• Generated Barcode: ${barcode}`,
+            icon: '🎥',
+            confirmBtnText: 'Add to Inventory',
+            confirmBtnClass: 'btn-primary',
+            onConfirm: () => {
+                masterEquipment.push({ barcode, name, stock });
+                SafeStorage.setItem('gearMasterEquipmentObj', JSON.stringify(masterEquipment));
+                itemsList = masterEquipment.map(item => item.name);
+
+                nameInput.value = '';
+                stockInput.value = '';
+                
+                renderMasterEquipmentTable();
+                updateEntryInterface();
+                renderDashboard();
+            }
+        });
+    }
+
+    function editMasterEquipmentItem(index) {
+        editingIndex = index;
+        renderMasterEquipmentTable();
+    }
+
+    function cancelEditMasterEquipmentItem() {
+        editingIndex = -1;
+        renderMasterEquipmentTable();
+    }
+
+    function saveEditMasterEquipmentItem(index) {
+        const nameInput = document.getElementById(`edit-name-input-${index}`);
+        const stockInput = document.getElementById(`edit-stock-input-${index}`);
+
+        if (!nameInput || !stockInput) return;
+
+        const trimmedName = nameInput.value.trim().toUpperCase();
+        const newStock = Math.max(1, parseInt(stockInput.value, 10) || 1);
+
+        if (!trimmedName) {
+            alert("Equipment name cannot be empty.");
+            return;
+        }
+
+        if (masterEquipment.some((eq, idx) => eq.name === trimmedName && idx !== index)) {
+            alert("Another item already uses this name.");
+            return;
+        }
+
+        masterEquipment[index].name = trimmedName;
+        masterEquipment[index].stock = newStock;
+        
+        SafeStorage.setItem('gearMasterEquipmentObj', JSON.stringify(masterEquipment));
+        itemsList = masterEquipment.map(eq => eq.name);
+
+        editingIndex = -1;
+        renderMasterEquipmentTable();
+        updateEntryInterface();
+        renderDashboard();
+    }
+
+    function deleteMasterEquipmentItem(index) {
+        const item = masterEquipment[index];
+        showConfirmationModal({
+            title: 'Delete Master Equipment?',
+            message: `Are you sure you want to permanently remove "${item.name}" [${item.barcode}] from inventory?`,
+            icon: '🗑️',
+            confirmBtnText: 'Delete Item',
+            confirmBtnClass: 'btn-danger',
+            onConfirm: () => {
+                masterEquipment.splice(index, 1);
+                SafeStorage.setItem('gearMasterEquipmentObj', JSON.stringify(masterEquipment));
+                itemsList = masterEquipment.map(item => item.name);
+
+                editingIndex = -1;
+                renderMasterEquipmentTable();
+                updateEntryInterface();
+                renderDashboard();
+            }
+        });
+    }
+
+    function openBarcodePrintModal(barcode, name) {
+        currentBarcodePrintMeta = { barcode, name };
+        document.getElementById('printItemName').innerText = name;
+        JsBarcode("#barcodePrintSvg", barcode, {
+            format: "CODE128",
+            width: 2,
+            height: 55,
+            displayValue: true
+        });
+        document.getElementById('barcodePrintModal').style.display = 'flex';
+    }
+
+    function downloadBarcodeAsPNG() {
+        const svgElement = document.getElementById('barcodePrintSvg');
+        if (!svgElement) return;
+
+        const svgData = new XMLSerializer().serializeToString(svgElement);
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+
+        const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+        const url = URL.createObjectURL(svgBlob);
+
+        img.onload = function () {
+            canvas.width = img.width + 40;
+            canvas.height = img.height + 40;
+
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 20, 20);
+
+            const pngUrl = canvas.toDataURL('image/png');
+            const downloadLink = document.createElement('a');
+            
+            const sanitizedName = (currentBarcodePrintMeta.name || 'Equipment').replace(/[^a-zA-Z0-9]/g, '_');
+            downloadLink.href = pngUrl;
+            downloadLink.download = `Barcode_${sanitizedName}_${currentBarcodePrintMeta.barcode || 'Code'}.png`;
+            
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+
+            URL.revokeObjectURL(url);
+        };
+
+        img.src = url;
+    }
+
+    function closeBarcodePrintModal() {
+        document.getElementById('barcodePrintModal').style.display = 'none';
+        currentBarcodePrintMeta = { barcode: '', name: '' };
+    }
+
+    function renderMasterEquipmentTable() {
+        document.getElementById('totalEquipmentCount').innerText = masterEquipment.length;
+        const tbody = document.getElementById('masterEquipmentTableBody');
+        
+        tbody.innerHTML = masterEquipment.map((item, index) => {
+            if (editingIndex === index) {
+                return `
+                    <tr class="editing-row">
+                        <td style="text-align: center; font-weight: bold;">${index + 1}</td>
+                        <td><span class="barcode-badge">${item.barcode}</span></td>
+                        <td><input type="text" id="edit-name-input-${index}" class="inline-edit-input" value="${item.name}"></td>
+                        <td style="text-align: center;"><input type="number" id="edit-stock-input-${index}" class="inline-edit-input" style="width: 60px; text-align: center;" value="${item.stock}" min="1"></td>
+                        <td>
+                            <div class="table-action-cell">
+                                <button class="btn btn-sm btn-primary" onclick="saveEditMasterEquipmentItem(${index})">💾 Save</button>
+                                <button class="btn btn-sm btn-secondary" onclick="cancelEditMasterEquipmentItem()">✕ Cancel</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                return `
+                    <tr>
+                        <td style="text-align: center;">${index + 1}</td>
+                        <td><span class="barcode-badge">${item.barcode}</span></td>
+                        <td><strong>${item.name}</strong></td>
+                        <td style="text-align: center; font-weight: bold;">${item.stock}</td>
+                        <td>
+                            <div class="table-action-cell">
+                                <button class="btn btn-sm btn-secondary" onclick="openBarcodePrintModal('${item.barcode}', '${item.name}')">🖨️ Label</button>
+                                <button class="btn btn-sm btn-warning" onclick="editMasterEquipmentItem(${index})">✏️ Edit</button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteMasterEquipmentItem(${index})">🗑️ Delete</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }
+        }).join('');
+    }
+
+    function editLogRecord(id) {
+        editingLogId = id;
+        const record = gearLogs.find(log => log.id === id);
+        activeTempGearList = record && record.gear ? JSON.parse(JSON.stringify(record.gear)) : [];
+        renderDashboard();
+    }
+
+    function cancelEditLogRecord() {
+        editingLogId = null;
+        activeTempGearList = [];
+        renderDashboard();
+    }
+
+    function removeTempGearItem(itemIndex) {
+        activeTempGearList.splice(itemIndex, 1);
+        renderLogGearEditRows();
+    }
+
+    function updateTempGearQty(itemIndex, newQty) {
+        const qtyVal = Math.max(1, parseInt(newQty, 10) || 1);
+        if (activeTempGearList[itemIndex]) {
+            activeTempGearList[itemIndex].qty = qtyVal.toString();
+        }
+    }
+
+    function addTempGearItemFromSelect(id) {
+        const select = document.getElementById(`add-gear-select-${id}`);
+        if (!select || !select.value) return;
+        
+        const selectedName = select.value;
+        const existing = activeTempGearList.find(g => g.name.toUpperCase() === selectedName.toUpperCase());
+
+        if (existing) {
+            existing.qty = (parseInt(existing.qty, 10) + 1).toString();
+        } else {
+            activeTempGearList.push({ name: selectedName, qty: "1" });
+        }
+
+        select.value = "";
+        renderLogGearEditRows();
+    }
+
+    function renderLogGearEditRows() {
+        const container = document.getElementById('log-edit-gear-container');
+        if (!container) return;
+
+        if (activeTempGearList.length === 0) {
+            container.innerHTML = `<span style="font-size: 0.75rem; color: var(--danger); font-weight: bold;">No gear assigned.</span>`;
+            return;
+        }
+
+        container.innerHTML = activeTempGearList.map((g, idx) => `
+            <div class="gear-edit-row">
+                <span style="flex: 2; font-size: 0.8rem; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${g.name}</span>
+                <input type="number" class="inline-edit-input" style="flex: 1; margin:0; width: 50px; text-align: center;" value="${g.qty}" min="1" onchange="updateTempGearQty(${idx}, this.value)">
+                <button type="button" class="btn btn-sm btn-danger" style="min-height:28px; padding:2px 6px;" onclick="removeTempGearItem(${idx})">🗑️</button>
+            </div>
+        `).join('');
+    }
+
+    function saveEditLogRecord(id) {
+        const clientInput = document.getElementById(`log-edit-client-${id}`);
+        const clientIdInput = document.getElementById(`log-edit-clientid-${id}`);
+        const eventInput = document.getElementById(`log-edit-event-${id}`);
+        const placeInput = document.getElementById(`log-edit-place-${id}`);
+        const teamInput = document.getElementById(`log-edit-team-${id}`);
+        const inchargeInput = document.getElementById(`log-edit-incharge-${id}`);
+        const mobileInput = document.getElementById(`log-edit-mobile-${id}`);
+        const timeoutDateInput = document.getElementById(`log-edit-timeoutdate-${id}`);
+        const timeoutTimeInput = document.getElementById(`log-edit-timeouttime-${id}`);
+        const statusSelect = document.getElementById(`log-edit-status-${id}`);
+
+        if (!clientInput) return;
+
+        const updatedClient = clientInput.value.trim();
+        if (!updatedClient) {
+            alert('Client Name cannot be empty.');
+            return;
+        }
+
+        if (activeTempGearList.length === 0) {
+            alert('Please include at least one dispatched gear item.');
+            return;
+        }
+
+        gearLogs = gearLogs.map(log => {
+            if (log.id === id) {
+                const newStatus = statusSelect ? statusSelect.value : log.status;
+                let actualReturnTimeStamp = log.actualReturnTimeStamp;
+
+                if (newStatus === 'RETURNED' && log.status !== 'RETURNED') {
+                    const now = new Date();
+                    actualReturnTimeStamp = now.toLocaleDateString('en-GB') + ', ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                } else if (newStatus === 'OUT ON SHOOT') {
+                    actualReturnTimeStamp = null;
+                }
+
+                return {
+                    ...log,
+                    clientName: updatedClient,
+                    clientId: clientIdInput ? clientIdInput.value.trim() : log.clientId,
+                    event: eventInput ? eventInput.value.trim() : log.event,
+                    place: placeInput ? placeInput.value.trim() : log.place,
+                    team: teamInput ? teamInput.value.trim() : log.team,
+                    shootIncharge: inchargeInput ? inchargeInput.value.trim() : log.shootIncharge,
+                    mobileNumber: mobileInput ? mobileInput.value.trim() : log.mobileNumber,
+                    timeOutDate: timeoutDateInput ? timeoutDateInput.value : log.timeOutDate,
+                    timeOutTime: timeoutTimeInput ? timeoutTimeInput.value : log.timeOutTime,
+                    status: newStatus,
+                    actualReturnTimeStamp: actualReturnTimeStamp,
+                    gear: JSON.parse(JSON.stringify(activeTempGearList))
+                };
+            }
+            return log;
+        });
+
+        SafeStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
+        editingLogId = null;
+        activeTempGearList = [];
+        renderDashboard();
+    }
+
+    function renderDashboard() {
+        renderEquipmentAvailability();
+        
+        const currentUserName = currentUserNameSession || SafeStorage.getItem('appUserName') || '';
+        const tbody = document.getElementById('logsTableBody');
+        let activeOut = 0;
+        let totalReturned = 0;
+
+        const visibleLogs = (currentRole === 'admin') ? gearLogs : gearLogs.filter(log => log.createdBy === currentUserName);
+
+        tbody.innerHTML = visibleLogs.map(log => {
+            if (log.status === 'OUT ON SHOOT') activeOut++;
+            if (log.status === 'RETURNED') totalReturned++;
+
+            const timeOutDisplay = formatDateTime(log.timeOutDate, log.timeOutTime);
+            const timeInDisplay = log.status === 'RETURNED' && log.actualReturnTimeStamp ? log.actualReturnTimeStamp : '-';
+
+            if (editingLogId === log.id) {
+                const gearOptions = masterEquipment.map(eq => `<option value="${eq.name}">${eq.name} (${eq.barcode})</option>`).join('');
+
+                setTimeout(() => { renderLogGearEditRows(); }, 0);
+
+                return `
+                    <tr class="editing-row">
+                        <td style="min-width: 180px;">
+                            <label style="font-size: 0.65rem; font-weight: bold; color: var(--text-muted);">CLIENT & ID</label>
+                            <input type="text" id="log-edit-client-${log.id}" class="inline-edit-input" placeholder="Client Name" value="${log.clientName}">
+                            <input type="text" id="log-edit-clientid-${log.id}" class="inline-edit-input" placeholder="Client ID" value="${log.clientId || ''}">
+                            
+                            <label style="font-size: 0.65rem; font-weight: bold; color: var(--text-muted); margin-top:2px;">EVENT & PLACE</label>
+                            <div style="display: flex; gap: 4px;">
+                                <input type="text" id="log-edit-event-${log.id}" class="inline-edit-input" placeholder="Event" value="${log.event || ''}">
+                                <input type="text" id="log-edit-place-${log.id}" class="inline-edit-input" placeholder="Place" value="${log.place || ''}">
+                            </div>
+
+                            <label style="font-size: 0.65rem; font-weight: bold; color: var(--primary); margin-top:4px; display:block;">📦 EDIT DISPATCHED GEAR</label>
+                            <div class="gear-edit-box" id="log-edit-gear-container"></div>
+
+                            <div style="margin-top: 4px;">
+                                <select id="add-gear-select-${log.id}" class="inline-edit-input" onchange="addTempGearItemFromSelect(${log.id})">
+                                    <option value="">+ Add Item...</option>
+                                    ${gearOptions}
+                                </select>
+                            </div>
+                        </td>
+                        <td>
+                            <label style="font-size: 0.65rem; font-weight: bold; color: var(--text-muted);">TEAM & INCHARGE</label>
+                            <input type="text" id="log-edit-team-${log.id}" class="inline-edit-input" placeholder="Team" value="${log.team || ''}">
+                            <input type="text" id="log-edit-incharge-${log.id}" class="inline-edit-input" placeholder="Incharge" value="${log.shootIncharge || ''}">
+                            <input type="tel" id="log-edit-mobile-${log.id}" class="inline-edit-input" placeholder="Mobile" value="${log.mobileNumber || ''}">
+                        </td>
+                        <td>
+                            <input type="date" id="log-edit-timeoutdate-${log.id}" class="inline-edit-input" value="${log.timeOutDate || ''}">
+                            <input type="time" id="log-edit-timeouttime-${log.id}" class="inline-edit-input" value="${log.timeOutTime || ''}">
+                        </td>
+                        <td><strong>${timeInDisplay}</strong></td>
+                        <td>
+                            <select id="log-edit-status-${log.id}" class="inline-edit-input">
+                                <option value="OUT ON SHOOT" ${log.status === 'OUT ON SHOOT' ? 'selected' : ''}>OUT ON SHOOT</option>
+                                <option value="RETURNED" ${log.status === 'RETURNED' ? 'selected' : ''}>RETURNED</option>
+                            </select>
+                        </td>
+                        <td>
+                            <div class="table-action-cell">
+                                <button class="btn btn-sm btn-primary" onclick="saveEditLogRecord(${log.id})">💾 Save</button>
+                                <button class="btn btn-sm btn-secondary" onclick="cancelEditLogRecord()">✕ Cancel</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }
+
+            const checkinButton = log.status === 'OUT ON SHOOT' ? `<button class="btn btn-sm btn-success" onclick="openDashboardCheckinModal(${log.id})">↩ Check-In</button>` : '';
+
+            const actionsCell = currentRole === 'admin' ? `
+                <td>
+                    <div class="table-action-cell">
+                        ${checkinButton}
+                        <button class="btn btn-sm btn-secondary" onclick="openDetailModal(${log.id})">Details</button>
+                        <button class="btn btn-sm btn-warning" onclick="editLogRecord(${log.id})">✏️ Edit</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteRecord(${log.id})">🗑️ Delete</button>
+                    </div>
+                </td>
+            ` : `<td><div class="table-action-cell">${checkinButton} <button class="btn btn-sm btn-secondary" onclick="openDetailModal(${log.id})">Details</button></div></td>`;
+
+            return `
+                <tr>
+                    <td>
+                        <strong>${log.clientName}</strong>
+                        <span class="time-text">Event: ${log.event || '-'} (${log.place || '-'})</span>
+                        <span class="time-text">Items: ${log.gear.length} selected</span>
+                    </td>
+                    <td>
+                        ${log.team || '-'}
+                        <span class="time-text">Incharge: ${log.shootIncharge || '-'}</span>
+                    </td>
+                    <td>${timeOutDisplay}</td>
+                    <td><strong>${timeInDisplay}</strong></td>
+                    <td>
+                        <span class="status-tag ${log.status === 'RETURNED' ? 'status-returned' : 'status-out'}">
+                            ${log.status}
+                        </span>
+                    </td>
+                    ${actionsCell}
+                </tr>
+            `;
+        }).join('');
+
+        document.getElementById('metric-total').innerText = visibleLogs.length;
+        document.getElementById('metric-out').innerText = activeOut;
+        document.getElementById('metric-returned').innerText = totalReturned;
+    }
+
+    function openDetailModal(id) {
+        const record = gearLogs.find(log => log.id === id);
+        if (!record) return;
+
+        document.getElementById('detailClientName').innerText = record.clientName;
+        document.getElementById('detailClientId').innerText = record.clientId || 'N/A';
+        document.getElementById('detailEventPlace').innerText = `${record.event || '-'} (${record.place || '-'})`;
+        document.getElementById('detailTeam').innerText = record.team || 'N/A';
+        document.getElementById('detailIncharge').innerText = record.shootIncharge || 'N/A';
+        document.getElementById('detailMobile').innerText = record.mobileNumber || 'N/A';
+        
+        document.getElementById('detailTimeOut').innerText = formatDateTime(record.timeOutDate, record.timeOutTime);
+        document.getElementById('detailTimeIn').innerText = record.status === 'RETURNED' && record.actualReturnTimeStamp ? record.actualReturnTimeStamp : '-';
+        document.getElementById('detailCreatedBy').innerText = `${record.createdBy || 'Staff'} ${record.creatorMobile ? '(' + record.creatorMobile + ')' : ''}`;
+
+        const statusTag = document.getElementById('detailStatusTag');
+        statusTag.innerText = record.status;
+        statusTag.className = `status-tag ${record.status === 'RETURNED' ? 'status-returned' : 'status-out'}`;
+
+        const tbody = document.getElementById('detailItemsTableBody');
+        tbody.innerHTML = record.gear.map((item, index) => {
+            const masterMatch = masterEquipment.find(m => m.name.toUpperCase() === item.name.toUpperCase());
+            const barcodeStr = masterMatch ? masterMatch.barcode : 'EQP-UNKNOWN';
+            return `
+                <tr>
+                    <td style="text-align: center;">${index + 1}</td>
+                    <td><span class="barcode-badge">${barcodeStr}</span></td>
+                    <td><strong>${item.name}</strong></td>
+                    <td style="text-align: center;">${item.qty}</td>
+                </tr>
+            `;
+        }).join('');
+
+        document.getElementById('detailModal').style.display = 'flex';
+    }
+
+    function closeDetailModal() {
+        document.getElementById('detailModal').style.display = 'none';
+    }
+
+    function showAdminPasswordInput() {
+        document.getElementById('adminPassBox').style.display = 'block';
+        document.getElementById('adminPasswordInput').focus();
+    }
+
+    function validateAdminPassword() {
+        const enteredPass = document.getElementById('adminPasswordInput').value;
+        const storedPass = SafeStorage.getItem('appAdminPassword') || 'admin123';
+        
+        if (enteredPass === storedPass) {
+            document.getElementById('loginError').innerText = '';
+            document.getElementById('adminPasswordInput').value = '';
+            document.getElementById('adminPassBox').style.display = 'none';
+            selectProfile('admin', 'Administrator', '');
+        } else {
+            document.getElementById('loginError').innerText = 'Incorrect Password!';
+        }
+    }
+
+    function handleAdminLoginKey(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            validateAdminPassword();
+        }
+    }
+
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.bottom-nav-btn').forEach(el => el.classList.remove('active'));
+        
+        document.getElementById(tabId).classList.add('active');
+        
+        if(tabId === 'dashboard-tab') {
+            document.getElementById('tabOverviewBtn').classList.add('active');
+            document.getElementById('mobTabOverviewBtn').classList.add('active');
+        }
+        if(tabId === 'new-entry-tab') {
+            document.getElementById('tabNewSheetBtn').classList.add('active');
+            document.getElementById('mobTabNewSheetBtn').classList.add('active');
+        }
+        if(tabId === 'equipment-tab') {
+            document.getElementById('tabEquipmentBtn').classList.add('active');
+            document.getElementById('mobTabEquipmentBtn').classList.add('active');
+        }
+        if(tabId === 'users-tab') {
+            document.getElementById('tabUsersBtn').classList.add('active');
+            document.getElementById('mobTabUsersBtn').classList.add('active');
+        }
+        if(tabId === 'admin-controls-tab') {
+            document.getElementById('tabAdminControlsBtn').classList.add('active');
+            document.getElementById('mobTabAdminControlsBtn').classList.add('active');
+        }
+    }
+
+    function createNewUserProfile() {
+        const name = document.getElementById('newStaffName').value.trim();
+        const mobile = document.getElementById('newStaffMobile').value.trim();
+        const id = document.getElementById('newStaffId').value.trim();
+        const team = document.getElementById('newStaffTeam').value.trim();
+
+        if (!name || !id) {
+            alert('Please enter Staff Name and Staff ID.');
+            return;
+        }
+
+        showConfirmationModal({
+            title: 'Create Staff Profile?',
+            message: `• Staff Name: ${name}\n• Staff ID: ${id}\n• Team: ${team || 'N/A'}`,
+            icon: '👤',
+            confirmBtnText: 'Create Profile',
+            confirmBtnClass: 'btn-primary',
+            onConfirm: () => {
+                userProfiles.push({ id, name, mobile, team, permissions: 'restricted' });
+                SafeStorage.setItem('gearUserProfiles', JSON.stringify(userProfiles));
+                
+                document.getElementById('newStaffName').value = '';
+                document.getElementById('newStaffMobile').value = '';
+                document.getElementById('newStaffId').value = '';
+                document.getElementById('newStaffTeam').value = '';
+
+                renderLoginUserList();
+                renderUserPermissionsTable();
+            }
+        });
+    }
+
+    function promptSaveRecordConfirmation() {
+        const clientName = document.getElementById('clientName').value.trim();
+        if (!clientName) {
+            alert('Please enter at least the Client Name.');
+            return;
+        }
+
+        let gearData = [];
+        const useScanner = (!allowManualCheckout) || (currentRole === 'user') || (currentRole === 'admin' && adminEntryMethod === 'scanner');
+
+        if (!useScanner) {
+            const rows = document.querySelectorAll('#equipmentItemsBody tr');
+            rows.forEach((row, idx) => {
+                const selectBox = row.querySelector('.item-select');
+                if (selectBox && selectBox.checked) {
+                    const qtyInput = row.querySelector('.item-qty');
+                    const qtyVal = parseInt(qtyInput.value, 10) || 1;
+                    const maxStock = parseInt(qtyInput.getAttribute('data-max-stock'), 10) || 1;
+
+                    if (qtyVal > maxStock) {
+                        alert(`Requested quantity for ${masterEquipment[idx].name} (${qtyVal}) exceeds available stock (${maxStock})!`);
+                        gearData = [];
+                        return;
+                    }
+
+                    gearData.push({
+                        name: masterEquipment[idx].name,
+                        barcode: masterEquipment[idx].barcode,
+                        qty: qtyVal.toString()
+                    });
+                }
+            });
+        } else {
+            masterEquipment.forEach((item, idx) => {
+                if (scannedQuantities[idx] > 0) {
+                    gearData.push({ 
+                        name: item.name, 
+                        barcode: item.barcode, 
+                        qty: scannedQuantities[idx].toString() 
+                    });
+                }
+            });
+        }
+
+        if (gearData.length === 0) {
+            alert('No available items selected or scanned! Please assign gear.');
+            return;
+        }
+
+        const clientId = document.getElementById('clientId').value || 'N/A';
+        const event = document.getElementById('event').value || 'N/A';
+        const date = document.getElementById('date').value || 'N/A';
+        const place = document.getElementById('place').value || 'N/A';
+
+        showConfirmationModal({
+            title: 'Confirm Booking & Dispatch?',
+            message: `• Client: ${clientName} (ID: ${clientId})\n• Event: ${event} on ${date} (${place})\n• Total Dispatched Items: ${gearData.length} type(s)`,
+            icon: '📋',
+            confirmBtnText: 'Confirm & Dispatch',
+            confirmBtnClass: 'btn-primary',
+            onConfirm: () => {
+                executeSaveRecord(clientName, gearData);
+            }
+        });
+    }
+
+    function executeSaveRecord(clientName, gearData) {
+        const currentActiveUserName = currentUserNameSession || SafeStorage.getItem('appUserName') || 'Staff';
+        const creatorMobile = SafeStorage.getItem('appUserMobile') || '';
+        
+        const record = {
+            id: Date.now(),
+            clientName: clientName,
+            clientId: document.getElementById('clientId').value,
+            team: document.getElementById('team').value,
+            date: document.getElementById('date').value,
+            place: document.getElementById('place').value,
+            event: document.getElementById('event').value,
+            shootIncharge: document.getElementById('shootIncharge').value,
+            mobileNumber: document.getElementById('mobileNumber').value,
+            timeOutDate: document.getElementById('timeOutDate').value,
+            timeOutTime: document.getElementById('timeOutTime').value,
+            actualReturnTimeStamp: null,
+            gear: gearData,
+            status: 'OUT ON SHOOT',
+            createdBy: currentActiveUserName,
+            creatorMobile: creatorMobile
+        };
+
+        gearLogs.unshift(record);
+        SafeStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
+        
+        document.getElementById('checklistForm').reset();
+        scannedQuantities = {};
+        updateEntryInterface();
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('date').value = today;
+        document.getElementById('timeOutDate').value = today;
+        
+        renderDashboard();
+        if (currentRole === 'admin') {
+            switchTab('dashboard-tab');
+        } else {
+            alert('Checkout Sheet saved successfully!');
+        }
+    }
+
+    function formatDateTime(dateStr, timeStr) {
+        if (!dateStr && !timeStr) return 'N/A';
+        return `${dateStr || ''} ${timeStr || ''}`.trim();
+    }
+
+    function toggleStatus(id) {
+        if (currentRole !== 'admin') return;
+        gearLogs = gearLogs.map(log => {
+            if (log.id === id) {
+                if (log.status === 'OUT ON SHOOT') {
+                    log.status = 'RETURNED';
+                    const now = new Date();
+                    log.actualReturnTimeStamp = now.toLocaleDateString('en-GB') + ', ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                } else {
+                    log.status = 'OUT ON SHOOT';
+                    log.actualReturnTimeStamp = null;
+                }
+            }
+            return log;
+        });
+        SafeStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
+        renderDashboard();
+    }
+
+    function deleteRecord(id) {
+        if (currentRole !== 'admin') return;
+        const log = gearLogs.find(l => l.id === id);
+        
+        showConfirmationModal({
+            title: 'Delete Shoot Record?',
+            message: `Are you sure you want to permanently delete shoot record for "${log ? log.clientName : id}"?`,
+            icon: '🗑️',
+            confirmBtnText: 'Delete Record',
+            confirmBtnClass: 'btn-danger',
+            onConfirm: () => {
+                gearLogs = gearLogs.filter(log => log.id !== id);
+                SafeStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
+                renderDashboard();
+            }
+        });
+    }
+
+    function filterLogs() {
+        const query = document.getElementById('searchInput').value.toLowerCase();
+        const rows = document.querySelectorAll('#logsTableBody tr');
+        rows.forEach(row => {
+            const text = row.innerText.toLowerCase();
+            row.style.display = text.includes(query) ? '' : 'none';
+        });
+    }
+</script>
+
 </body>
 </html>
