@@ -1655,7 +1655,7 @@
                     <th style="width: 40px; text-align: center;">S.No</th>
                     <th>Barcode</th>
                     <th>Item Description</th>
-                    <th style="width: 110px;">Available / Qty</th>
+                    <th style="width: 130px;">Available / Qty</th>
                 </tr>
             `;
 
@@ -1678,7 +1678,7 @@
                             ${isOutOfStock ? `<span class="status-tag" style="background:#fee2e2; color:#991b1b; font-size:0.65rem; margin-left:6px;">Out On Shoot</span>` : ''}
                         </td>
                         <td>
-                            <input type="text" class="item-qty" id="qty-input-${index}" style="width:100%; padding:6px;" placeholder="${inStock} / ${totalStock}" disabled data-max-stock="${inStock}">
+                            <input type="number" class="item-qty" id="qty-input-${index}" style="width:100%; padding:6px;" min="1" max="${inStock}" value="1" disabled data-max-stock="${inStock}" onchange="validateManualQtyInput(${index}, ${inStock})">
                         </td>
                     </tr>
                 `;
@@ -1738,11 +1738,22 @@
             }
             row.classList.add('selected-row');
             qtyInput.disabled = false;
-            if (!qtyInput.value) qtyInput.value = '1';
+            if (!qtyInput.value || parseInt(qtyInput.value, 10) < 1) qtyInput.value = '1';
         } else {
             row.classList.remove('selected-row');
             qtyInput.disabled = true;
-            qtyInput.value = '';
+            qtyInput.value = '1';
+        }
+    }
+
+    function validateManualQtyInput(index, maxStock) {
+        const qtyInput = document.getElementById(`qty-input-${index}`);
+        let val = parseInt(qtyInput.value, 10) || 1;
+        if (val > maxStock) {
+            alert(`Cannot exceed available stock limit of ${maxStock} for this item.`);
+            qtyInput.value = maxStock;
+        } else if (val < 1) {
+            qtyInput.value = 1;
         }
     }
 
@@ -2556,7 +2567,8 @@
 
         if (!useScanner) {
             const rows = document.querySelectorAll('#equipmentItemsBody tr');
-            rows.forEach((row, idx) => {
+            for (let idx = 0; idx < rows.length; idx++) {
+                const row = rows[idx];
                 const selectBox = row.querySelector('.item-select');
                 if (selectBox && selectBox.checked) {
                     const qtyInput = row.querySelector('.item-qty');
@@ -2565,7 +2577,6 @@
 
                     if (qtyVal > maxStock) {
                         alert(`Requested quantity for ${masterEquipment[idx].name} (${qtyVal}) exceeds available stock (${maxStock})!`);
-                        gearData = [];
                         return;
                     }
 
@@ -2575,17 +2586,29 @@
                         qty: qtyVal.toString()
                     });
                 }
-            });
+            }
         } else {
-            masterEquipment.forEach((item, idx) => {
-                if (scannedQuantities[idx] > 0) {
+            const dispatchedMap = getCurrentlyDispatchedMap();
+            for (let idx = 0; idx < masterEquipment.length; idx++) {
+                const count = scannedQuantities[idx] || 0;
+                if (count > 0) {
+                    const item = masterEquipment[idx];
+                    const outOnOtherShoots = dispatchedMap[item.name.toUpperCase()] || 0;
+                    const totalStock = item.stock || 5;
+                    const availableStock = Math.max(0, totalStock - outOnOtherShoots);
+
+                    if (count > availableStock) {
+                        alert(`Scanned quantity for ${item.name} (${count}) exceeds available stock (${availableStock})!`);
+                        return;
+                    }
+
                     gearData.push({ 
                         name: item.name, 
                         barcode: item.barcode, 
-                        qty: scannedQuantities[idx].toString() 
+                        qty: count.toString() 
                     });
                 }
-            });
+            }
         }
 
         if (gearData.length === 0) {
