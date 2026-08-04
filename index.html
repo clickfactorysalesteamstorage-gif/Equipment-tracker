@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Universal Equipment Management Dashboard v3.2</title>
-    <!-- JsBarcode Library for Barcode Generation -->
+    <title>Universal Equipment Management Dashboard v3.3</title>
+    <!-- JsBarcode Library with local fallback safeguard -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.12.3/JsBarcode.all.min.js"></script>
     <style>
         :root {
@@ -626,7 +626,7 @@
     <header class="mobile-header">
         <div style="font-weight: 800; font-size: 1.1rem; display: flex; align-items: center; gap: 6px;">
             <span>📦 Gear Control</span>
-            <span class="version-badge">v3.2</span>
+            <span class="version-badge">v3.3</span>
         </div>
         <button class="btn btn-sm btn-secondary" onclick="switchProfileModal()">Profile</button>
     </header>
@@ -636,7 +636,7 @@
         <div>
             <div class="sidebar-brand">
                 <span>📦 Gear Control</span>
-                <span class="version-badge">v3.2</span>
+                <span class="version-badge">v3.3</span>
             </div>
             <div class="developer-badge">
                 <span>Dev: <strong>Satish</strong></span>
@@ -837,7 +837,7 @@
             </div>
         </div>
 
-        <!-- TAB 5: ADMIN CONTROLS & PROFILE SETTINGS -->
+        <!-- TAB 5: FINE-TUNED ADMIN CONTROLS & ACCESS SECURITY -->
         <div id="admin-controls-tab" class="tab-content">
             
             <!-- PANEL 1: SYSTEM OPERATIONAL CONTROLS -->
@@ -900,7 +900,7 @@
             <div class="content-card" style="background: #f8fafc;">
                 <strong>💻 Technical Specs & Storage Metrics</strong>
                 <div style="margin-top: 8px; color: var(--text-muted); font-size: 0.8rem; line-height: 1.6;">
-                    • <strong>Version:</strong> v3.2 (Public-Host Session Persistence Edition)<br>
+                    • <strong>Version:</strong> v3.3 (Production Public-Host Edition)<br>
                     • <strong>Developer:</strong> Satish<br>
                     • <strong>Engine:</strong> Client-side offline Single Page Application (SPA) with fallback memory storage.<br>
                     • <strong>Storage Status:</strong> Synchronized with browser LocalStorage / Fallback Memory.
@@ -961,14 +961,14 @@
         <div style="font-size: 0.85rem; line-height: 1.6; color: var(--text-dark);">
             <div style="background: #f1f5f9; padding: 12px; border-radius: var(--radius-sm); margin-bottom: 12px;">
                 <p><strong>System Name:</strong> Equipment Management Dashboard</p>
-                <p><strong>Version:</strong> <span class="version-badge">v3.2 Public-Host</span></p>
+                <p><strong>Version:</strong> <span class="version-badge">v3.3 Production</span></p>
                 <p><strong>Lead Application Developer:</strong> Satish</p>
             </div>
             
             <h4 style="margin-bottom: 6px;">Features:</h4>
             <ul style="padding-left: 20px; font-size: 0.8rem; color: var(--text-muted);">
-                <li>Seamless inline profile switching without popup blockers.</li>
-                <li>Cloud-ready fallback memory storage for public hosting environments.</li>
+                <li>Reliable inline profile switching across all public cloud hosts.</li>
+                <li>Safe storage fallbacks for restricted browsing/hosting environments.</li>
                 <li>Download generated barcodes directly as PNG images.</li>
                 <li>Synchronized Stock Reservation Guard across Scanner & Manual Modes.</li>
             </ul>
@@ -1183,7 +1183,7 @@
     function exportAuditLogBackup() {
         const auditData = {
             exportDate: new Date().toISOString(),
-            version: 'v3.2',
+            version: 'v3.3',
             masterEquipment: masterEquipment,
             gearLogs: gearLogs,
             userProfiles: userProfiles
@@ -1342,7 +1342,6 @@
         `).join('');
     }
 
-    // FIXED PROFILE SWITCHER FOR PUBLIC HOSTING (NO POPUPS)
     function selectProfile(role, name, mobile) {
         currentRole = role;
         currentUserNameSession = name;
