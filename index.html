@@ -1629,10 +1629,10 @@
         populateChecklistTable(useScanner);
     }
 
-    function getCurrentlyDispatchedMap() {
+    function getCurrentlyDispatchedMap(excludingLogId = null) {
         let map = {};
         gearLogs.forEach(log => {
-            if (log.status === 'OUT ON SHOOT') {
+            if (log.status === 'OUT ON SHOOT' && log.id !== excludingLogId) {
                 log.gear.forEach(g => {
                     const nameUpper = g.name.toUpperCase();
                     const qtyNum = parseInt(g.qty, 10) || 1;
@@ -2214,7 +2214,22 @@
     function updateTempGearQty(itemIndex, newQty) {
         const qtyVal = Math.max(1, parseInt(newQty, 10) || 1);
         if (activeTempGearList[itemIndex]) {
-            activeTempGearList[itemIndex].qty = qtyVal.toString();
+            const itemName = activeTempGearList[itemIndex].name;
+            const masterMatch = masterEquipment.find(m => m.name.toUpperCase() === itemName.toUpperCase());
+            const totalStock = masterMatch ? (masterMatch.stock || 5) : 5;
+            
+            // Calculate available stock excluding this current booking
+            const dispatchedMap = getCurrentlyDispatchedMap(editingLogId);
+            const otherOut = dispatchedMap[itemName.toUpperCase()] || 0;
+            const maxAllowed = Math.max(0, totalStock - otherOut);
+
+            if (qtyVal > maxAllowed) {
+                alert(`Cannot exceed available stock limit of ${maxAllowed} for ${itemName}!`);
+                activeTempGearList[itemIndex].qty = maxAllowed.toString();
+            } else {
+                activeTempGearList[itemIndex].qty = qtyVal.toString();
+            }
+            renderLogGearEditRows();
         }
     }
 
@@ -2223,10 +2238,24 @@
         if (!select || !select.value) return;
         
         const selectedName = select.value;
+        const masterMatch = masterEquipment.find(m => m.name.toUpperCase() === selectedName.toUpperCase());
+        const totalStock = masterMatch ? (masterMatch.stock || 5) : 5;
+        
+        const dispatchedMap = getCurrentlyDispatchedMap(editingLogId);
+        const otherOut = dispatchedMap[selectedName.toUpperCase()] || 0;
+        const maxAllowed = Math.max(0, totalStock - otherOut);
+
         const existing = activeTempGearList.find(g => g.name.toUpperCase() === selectedName.toUpperCase());
+        const currentQtyInEdit = existing ? parseInt(existing.qty, 10) : 0;
+
+        if (currentQtyInEdit + 1 > maxAllowed) {
+            alert(`Cannot add more ${selectedName}! Maximum available stock limit is ${maxAllowed}.`);
+            select.value = "";
+            return;
+        }
 
         if (existing) {
-            existing.qty = (parseInt(existing.qty, 10) + 1).toString();
+            existing.qty = (currentQtyInEdit + 1).toString();
         } else {
             activeTempGearList.push({ name: selectedName, qty: "1" });
         }
