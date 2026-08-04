@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Universal Equipment Management Dashboard v3.1</title>
+    <title>Universal Equipment Management Dashboard v3.2</title>
     <!-- JsBarcode Library for Barcode Generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.12.3/JsBarcode.all.min.js"></script>
     <style>
@@ -626,7 +626,7 @@
     <header class="mobile-header">
         <div style="font-weight: 800; font-size: 1.1rem; display: flex; align-items: center; gap: 6px;">
             <span>📦 Gear Control</span>
-            <span class="version-badge">v3.1</span>
+            <span class="version-badge">v3.2</span>
         </div>
         <button class="btn btn-sm btn-secondary" onclick="switchProfileModal()">Profile</button>
     </header>
@@ -636,7 +636,7 @@
         <div>
             <div class="sidebar-brand">
                 <span>📦 Gear Control</span>
-                <span class="version-badge">v3.1</span>
+                <span class="version-badge">v3.2</span>
             </div>
             <div class="developer-badge">
                 <span>Dev: <strong>Satish</strong></span>
@@ -713,7 +713,7 @@
             <div class="content-card">
                 <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
                     <h3 id="logSectionTitle">Recent Shoots & Gear Logs</h3>
-                    <input type="text" id="searchInput" onkeyup="filterLogs()" placeholder="Search client, event, or team..." style="padding: 10px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm); width: 100%; min-height: 44px;">
+                    <input type="text" id="searchInput" onkeyup="filterLogs()" placeholder="Search client, event, or team..." style="padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); width: 100%; min-height: 44px;">
                 </div>
                 
                 <div class="table-responsive">
@@ -900,7 +900,7 @@
             <div class="content-card" style="background: #f8fafc;">
                 <strong>💻 Technical Specs & Storage Metrics</strong>
                 <div style="margin-top: 8px; color: var(--text-muted); font-size: 0.8rem; line-height: 1.6;">
-                    • <strong>Version:</strong> v3.1 (Cloud-Ready & Public Host Edition)<br>
+                    • <strong>Version:</strong> v3.2 (Public-Host Session Persistence Edition)<br>
                     • <strong>Developer:</strong> Satish<br>
                     • <strong>Engine:</strong> Client-side offline Single Page Application (SPA) with fallback memory storage.<br>
                     • <strong>Storage Status:</strong> Synchronized with browser LocalStorage / Fallback Memory.
@@ -961,15 +961,15 @@
         <div style="font-size: 0.85rem; line-height: 1.6; color: var(--text-dark);">
             <div style="background: #f1f5f9; padding: 12px; border-radius: var(--radius-sm); margin-bottom: 12px;">
                 <p><strong>System Name:</strong> Equipment Management Dashboard</p>
-                <p><strong>Version:</strong> <span class="version-badge">v3.1 Cloud-Ready</span></p>
+                <p><strong>Version:</strong> <span class="version-badge">v3.2 Public-Host</span></p>
                 <p><strong>Lead Application Developer:</strong> Satish</p>
             </div>
             
             <h4 style="margin-bottom: 6px;">Features:</h4>
             <ul style="padding-left: 20px; font-size: 0.8rem; color: var(--text-muted);">
+                <li>Seamless inline profile switching without popup blockers.</li>
                 <li>Cloud-ready fallback memory storage for public hosting environments.</li>
                 <li>Download generated barcodes directly as PNG images.</li>
-                <li>Live Stock Availability Column rendered in Scanner Mode.</li>
                 <li>Synchronized Stock Reservation Guard across Scanner & Manual Modes.</li>
             </ul>
         </div>
@@ -1129,7 +1129,6 @@
 </div>
 
 <script>
-    // Safe Storage Fallback Wrapper for Public Hosting Environments
     const SafeStorage = {
         getItem(key) {
             try { return localStorage.getItem(key); } catch (e) { return window._memStore?.[key] || null; }
@@ -1184,7 +1183,7 @@
     function exportAuditLogBackup() {
         const auditData = {
             exportDate: new Date().toISOString(),
-            version: 'v3.1',
+            version: 'v3.2',
             masterEquipment: masterEquipment,
             gearLogs: gearLogs,
             userProfiles: userProfiles
@@ -1277,8 +1276,8 @@
 
     let itemsList = masterEquipment.map(item => item.name);
 
-    let currentRole = sessionStorage.getItem('tabSessionUserRole') || SafeStorage.getItem('appUserRole') || null;
-    let currentUserNameSession = sessionStorage.getItem('tabSessionUserName') || SafeStorage.getItem('appUserName') || null;
+    let currentRole = SafeStorage.getItem('appUserRole') || null;
+    let currentUserNameSession = SafeStorage.getItem('appUserName') || null;
 
     let gearLogs = JSON.parse(SafeStorage.getItem('gearDashboardLogs')) || [];
     
@@ -1301,20 +1300,6 @@
     let activeDashboardCheckinLogId = null;
 
     document.addEventListener("DOMContentLoaded", () => {
-        const tempRole = sessionStorage.getItem('tempAppUserRole');
-        if (tempRole) {
-            currentRole = tempRole;
-            currentUserNameSession = sessionStorage.getItem('tempAppUserName') || '';
-            
-            sessionStorage.setItem('tabSessionUserRole', tempRole);
-            sessionStorage.setItem('tabSessionUserName', currentUserNameSession);
-            sessionStorage.setItem('tabSessionUserMobile', sessionStorage.getItem('tempAppUserMobile') || '');
-
-            sessionStorage.removeItem('tempAppUserRole');
-            sessionStorage.removeItem('tempAppUserName');
-            sessionStorage.removeItem('tempAppUserMobile');
-        }
-
         renderLoginUserList();
         
         if (!currentRole) {
@@ -1355,6 +1340,19 @@
                 </div>
             </div>
         `).join('');
+    }
+
+    // FIXED PROFILE SWITCHER FOR PUBLIC HOSTING (NO POPUPS)
+    function selectProfile(role, name, mobile) {
+        currentRole = role;
+        currentUserNameSession = name;
+
+        SafeStorage.setItem('appUserRole', role);
+        SafeStorage.setItem('appUserName', name);
+        SafeStorage.setItem('appUserMobile', mobile || '');
+
+        document.getElementById('loginOverlay').style.display = 'none';
+        applyRolePermissions(role);
     }
 
     function applyRolePermissions(role) {
@@ -2453,20 +2451,6 @@
             e.preventDefault();
             validateAdminPassword();
         }
-    }
-
-    function selectProfile(role, name, mobile) {
-        sessionStorage.setItem('tempAppUserRole', role);
-        sessionStorage.setItem('tempAppUserName', name);
-        sessionStorage.setItem('tempAppUserMobile', mobile || '');
-
-        document.getElementById('loginOverlay').style.display = 'none';
-        window.open(window.location.href, '_blank');
-    }
-
-    function switchProfileModal() {
-        document.getElementById('adminPassBox').style.display = 'none';
-        document.getElementById('loginOverlay').style.display = 'flex';
     }
 
     function switchTab(tabId) {
