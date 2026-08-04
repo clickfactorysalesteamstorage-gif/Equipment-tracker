@@ -639,10 +639,10 @@
     <header class="mobile-header">
         <div style="font-weight: 800; font-size: 1.05rem; display: flex; align-items: center; gap: 6px;">
             <span>📦 Gear Control</span>
-            <span id="mobileActiveRoleBadge" class="role-pill role-admin" style="font-size: 0.6rem; padding: 1px 6px;">Admin</span>
+            <span id="mobileActiveRoleBadge" class="role-pill role-user" style="font-size: 0.6rem; padding: 1px 6px;">Staff</span>
         </div>
         <div style="display: flex; gap: 6px; align-items: center;">
-            <span id="mobileActiveUserName" style="font-size: 0.75rem; color: #cbd5e1; font-weight: 600; max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Admin</span>
+            <span id="mobileActiveUserName" style="font-size: 0.75rem; color: #cbd5e1; font-weight: 600; max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Staff</span>
             <button class="btn btn-sm btn-secondary" style="padding: 4px 8px; font-size: 0.75rem; min-height: 32px;" onclick="switchProfileModal()">Profile</button>
             <button class="btn btn-sm btn-danger" style="padding: 4px 8px; font-size: 0.75rem; min-height: 32px;" onclick="logoutUser()">Logout</button>
         </div>
@@ -671,8 +671,8 @@
 
         <div class="user-profile-box">
             <div style="font-size: 0.75rem; color: #94a3b8; font-weight: 700; text-transform: uppercase;">Active Operator</div>
-            <div style="font-weight: 800; font-size: 0.95rem; color: white;" id="activeUserName">Administrator</div>
-            <div><span id="activeRoleBadge" class="role-pill role-admin">Admin</span></div>
+            <div style="font-weight: 800; font-size: 0.95rem; color: white;" id="activeUserName">Staff Member</div>
+            <div><span id="activeRoleBadge" class="role-pill role-user">Staff</span></div>
             <button class="btn btn-sm btn-secondary" style="width: 100%; margin-top: 4px;" onclick="switchProfileModal()">Switch Profile</button>
             <button class="btn btn-sm btn-danger" style="width: 100%; margin-top: 2px;" onclick="logoutUser()">🚪 Logout</button>
         </div>
@@ -1408,6 +1408,19 @@
         const currentProfileObj = userProfiles.find(u => u.name === userName);
         const hasFullAccess = role === 'admin' || (currentProfileObj && currentProfileObj.permissions === 'full');
 
+        // Navigation elements
+        const tabOverview = document.getElementById('tabOverviewBtn');
+        const tabNewSheet = document.getElementById('tabNewSheetBtn');
+        const tabEquipment = document.getElementById('tabEquipmentBtn');
+        const tabUsers = document.getElementById('tabUsersBtn');
+        const tabAdminControls = document.getElementById('tabAdminControlsBtn');
+
+        const mobTabOverview = document.getElementById('mobTabOverviewBtn');
+        const mobTabNewSheet = document.getElementById('mobTabNewSheetBtn');
+        const mobTabEquipment = document.getElementById('mobTabEquipmentBtn');
+        const mobTabUsers = document.getElementById('mobTabUsersBtn');
+        const mobTabAdminControls = document.getElementById('mobTabAdminControlsBtn');
+
         if (role === 'admin') {
             badge.innerText = 'Admin';
             badge.className = 'role-pill role-admin';
@@ -1416,11 +1429,19 @@
 
             adminSelector.style.display = allowManualCheckout ? 'flex' : 'none';
             document.getElementById('adminMetricsGrid').style.display = 'grid';
-            document.getElementById('tabOverviewBtn').style.display = 'flex';
-            document.getElementById('tabOverviewBtn').innerText = '📊 Overview Logs';
-            document.getElementById('tabEquipmentBtn').style.display = 'flex';
-            document.getElementById('tabUsersBtn').style.display = 'flex';
-            document.getElementById('tabAdminControlsBtn').style.display = 'flex';
+            
+            tabOverview.style.display = 'flex';
+            tabOverview.innerText = '📊 Overview Logs';
+            tabNewSheet.style.display = 'flex';
+            tabEquipment.style.display = 'flex';
+            tabUsers.style.display = 'flex';
+            tabAdminControls.style.display = 'flex';
+
+            mobTabOverview.style.display = 'flex';
+            mobTabNewSheet.style.display = 'flex';
+            mobTabEquipment.style.display = 'flex';
+            mobTabUsers.style.display = 'flex';
+            mobTabAdminControls.style.display = 'flex';
             
             document.getElementById('metric-total-label').innerText = 'Total Outings';
             document.getElementById('metric-out-label').innerText = 'Out On Shoot';
@@ -1438,13 +1459,20 @@
             mobBadge.className = 'role-pill role-user';
 
             adminSelector.style.display = 'none';
-            
             document.getElementById('adminMetricsGrid').style.display = 'grid';
-            document.getElementById('tabOverviewBtn').style.display = 'flex';
-            document.getElementById('tabOverviewBtn').innerText = '📊 My Outing Logs';
-            document.getElementById('tabEquipmentBtn').style.display = hasFullAccess ? 'flex' : 'none';
-            document.getElementById('tabUsersBtn').style.display = hasFullAccess ? 'flex' : 'none';
-            document.getElementById('tabAdminControlsBtn').style.display = 'none';
+            
+            tabOverview.style.display = 'flex';
+            tabOverview.innerText = '📊 My Outing Logs';
+            tabNewSheet.style.display = 'flex';
+            tabEquipment.style.display = hasFullAccess ? 'flex' : 'none';
+            tabUsers.style.display = hasFullAccess ? 'flex' : 'none';
+            tabAdminControls.style.display = 'none';
+
+            mobTabOverview.style.display = 'flex';
+            mobTabNewSheet.style.display = 'flex';
+            mobTabEquipment.style.display = hasFullAccess ? 'flex' : 'none';
+            mobTabUsers.style.display = hasFullAccess ? 'flex' : 'none';
+            mobTabAdminControls.style.display = 'none';
 
             document.getElementById('metric-total-label').innerText = 'My Total Outings';
             document.getElementById('metric-out-label').innerText = 'My Gear Out On Shoot';
