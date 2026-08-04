@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Universal Equipment Management Dashboard v3.0</title>
+    <title>Universal Equipment Management Dashboard v3.1</title>
     <!-- JsBarcode Library for Barcode Generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.12.3/JsBarcode.all.min.js"></script>
     <style>
@@ -63,7 +63,6 @@
             .app-layout { flex-direction: row; }
         }
 
-        /* MOBILE HEADER */
         .mobile-header {
             background-color: var(--sidebar-bg);
             color: white;
@@ -81,7 +80,6 @@
             .mobile-header { display: none; }
         }
 
-        /* DESKTOP SIDEBAR NAVIGATION */
         .sidebar {
             background-color: var(--sidebar-bg);
             color: white;
@@ -169,7 +167,6 @@
             box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
         }
 
-        /* FIXED BOTTOM NAVIGATION FOR MOBILE */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -494,7 +491,6 @@
         .status-out { background: var(--warning-light); color: #92400e; border: 1px solid rgba(245, 158, 11, 0.3); }
         .status-returned { background: var(--success-light); color: #065f46; border: 1px solid rgba(16, 185, 129, 0.3); }
 
-        /* BUTTON DESIGN & ALIGNMENT */
         .btn { 
             padding: 10px 16px; 
             border: none; 
@@ -569,7 +565,7 @@
             padding: 16px;
             border-radius: var(--radius-sm);
             border: 1px solid var(--border);
-            margin-bottom: 14px;
+            margin-bottom: 12px;
         }
 
         .switch {
@@ -630,7 +626,7 @@
     <header class="mobile-header">
         <div style="font-weight: 800; font-size: 1.1rem; display: flex; align-items: center; gap: 6px;">
             <span>📦 Gear Control</span>
-            <span class="version-badge">v3.0</span>
+            <span class="version-badge">v3.1</span>
         </div>
         <button class="btn btn-sm btn-secondary" onclick="switchProfileModal()">Profile</button>
     </header>
@@ -640,7 +636,7 @@
         <div>
             <div class="sidebar-brand">
                 <span>📦 Gear Control</span>
-                <span class="version-badge">v3.0</span>
+                <span class="version-badge">v3.1</span>
             </div>
             <div class="developer-badge">
                 <span>Dev: <strong>Satish</strong></span>
@@ -688,22 +684,22 @@
             
             <!-- LIVE EQUIPMENT AVAILABILITY PANEL -->
             <div class="content-card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
                     <h3>📦 Live Equipment Availability Status</h3>
-                    <input type="text" id="availabilitySearchInput" onkeyup="filterAvailability()" placeholder="Search gear or barcode..." style="padding: 10px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.875rem; width: 100%; max-width: 260px; min-height: 42px;">
+                    <input type="text" id="availabilitySearchInput" onkeyup="filterAvailability()" placeholder="Search gear or barcode..." style="padding: 10px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.875rem; width: 100%; max-width: 250px; min-height: 40px;">
                 </div>
 
-                <div class="table-responsive" style="max-height: 300px;">
+                <div class="table-responsive" style="max-height: 280px;">
                     <table>
                         <thead>
                             <tr>
                                 <th style="width: 40px; text-align: center;">S.No</th>
                                 <th>Barcode Code</th>
                                 <th>Equipment Name</th>
-                                <th style="width: 80px; text-align: center;">In Stock</th>
+                                <th style="width: 70px; text-align: center;">In Stock</th>
                                 <th style="width: 100px; text-align: center;">Out On Shoot</th>
-                                <th style="width: 80px; text-align: center;">Total</th>
-                                <th style="width: 120px; text-align: center;">Status</th>
+                                <th style="width: 70px; text-align: center;">Total</th>
+                                <th style="width: 110px; text-align: center;">Status</th>
                             </tr>
                         </thead>
                         <tbody id="availabilityTableBody">
@@ -715,9 +711,9 @@
 
             <!-- DASHBOARD RECENT SHOOTS & GEAR LOGS -->
             <div class="content-card">
-                <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px;">
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
                     <h3 id="logSectionTitle">Recent Shoots & Gear Logs</h3>
-                    <input type="text" id="searchInput" onkeyup="filterLogs()" placeholder="Search client, event, or team..." style="padding: 10px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm); width: 100%; min-height: 46px;">
+                    <input type="text" id="searchInput" onkeyup="filterLogs()" placeholder="Search client, event, or team..." style="padding: 10px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm); width: 100%; min-height: 44px;">
                 </div>
                 
                 <div class="table-responsive">
@@ -743,10 +739,10 @@
         <!-- TAB 2: NEW CHECKOUT ENTRY SHEET (CHECK-OUT ONLY) -->
         <div id="new-entry-tab" class="tab-content">
             <div class="content-card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 8px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
                     <div>
                         <h3>📋 New Booking Check-Out Sheet</h3>
-                        <p style="color: var(--text-muted); font-size: 0.85rem;">Assign available gear using scanner or checkbox list.</p>
+                        <p style="color: var(--text-muted); font-size: 0.8rem;">Assign available gear using scanner or checkbox list.</p>
                     </div>
                     <span class="status-tag status-out" style="font-size: 0.75rem;">CHECK-OUT</span>
                 </div>
@@ -773,7 +769,7 @@
                     </div>
 
                     <!-- TRIGGER BUTTON FOR NEW BOOKING CHECK-OUT SCANNER -->
-                    <div id="scannerConsoleTrigger" style="margin-bottom: 18px;">
+                    <div id="scannerConsoleTrigger" style="margin-bottom: 15px;">
                         <button type="button" class="btn btn-primary" style="width: 100%; padding: 14px; font-size: 0.95rem;" onclick="openCheckoutScannerModal()">🔌 Open Barcode Scanner Terminal</button>
                     </div>
 
@@ -799,24 +795,24 @@
         <div id="equipment-tab" class="tab-content">
             <div class="content-card">
                 <h3>Add New Upcoming Equipment</h3>
-                <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 14px;">Register gear with auto-generated barcode tags.</p>
+                <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 12px;">Register gear with auto-generated barcode tags.</p>
 
-                <div style="display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap;">
-                    <input type="text" id="newEquipmentName" placeholder="Equipment name..." style="flex: 2; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); min-width: 160px; min-height: 46px;">
-                    <input type="number" id="newEquipmentStock" placeholder="Stock (Default: 5)" min="1" style="flex: 1; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); min-width: 100px; min-height: 46px;">
+                <div style="display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap;">
+                    <input type="text" id="newEquipmentName" placeholder="Equipment name..." style="flex: 2; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); min-width: 160px; min-height: 44px;">
+                    <input type="number" id="newEquipmentStock" placeholder="Stock (Default: 5)" min="1" style="flex: 1; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); min-width: 100px; min-height: 44px;">
                     <button class="btn btn-primary" style="width: 100%;" onclick="addNewEquipmentItem()">+ Add Equipment</button>
                 </div>
 
                 <h4>Current Registered Inventory (<span id="totalEquipmentCount">0</span> Items)</h4>
-                <div class="table-responsive" style="margin-top: 12px; max-height: 400px;">
+                <div class="table-responsive" style="margin-top: 10px; max-height: 380px;">
                     <table>
                         <thead>
                             <tr>
                                 <th style="width: 40px; text-align: center;">S.No</th>
                                 <th>Barcode</th>
                                 <th>Equipment Name</th>
-                                <th style="width: 80px; text-align: center;">Stock</th>
-                                <th style="width: 140px; text-align: center;">Actions</th>
+                                <th style="width: 70px; text-align: center;">Stock</th>
+                                <th style="width: 130px; text-align: center;">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="masterEquipmentTableBody">
@@ -831,7 +827,7 @@
         <div id="users-tab" class="tab-content">
             <div class="content-card">
                 <h3>Add New Staff Profile</h3>
-                <div class="form-grid" style="margin-top: 12px;">
+                <div class="form-grid" style="margin-top: 10px;">
                     <div class="input-group"><label>Staff Full Name</label><input type="text" id="newStaffName"></div>
                     <div class="input-group"><label>Mobile Number</label><input type="tel" id="newStaffMobile"></div>
                     <div class="input-group"><label>Staff ID</label><input type="text" id="newStaffId"></div>
@@ -841,12 +837,12 @@
             </div>
         </div>
 
-        <!-- TAB 5: FINE-TUNED ADMIN CONTROLS & ACCESS SECURITY -->
+        <!-- TAB 5: ADMIN CONTROLS & PROFILE SETTINGS -->
         <div id="admin-controls-tab" class="tab-content">
             
             <!-- PANEL 1: SYSTEM OPERATIONAL CONTROLS -->
             <div class="content-card">
-                <h3 style="margin-bottom: 14px;">⚙️ System Operational Controls</h3>
+                <h3 style="margin-bottom: 12px;">⚙️ System Operational Controls</h3>
                 
                 <div class="toggle-box">
                     <div>
@@ -859,15 +855,15 @@
                     </label>
                 </div>
 
-                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px;">
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
                     <button class="btn btn-secondary" style="flex: 1;" onclick="exportAuditLogBackup()">📥 Export System Audit Logs (JSON Backup)</button>
                 </div>
             </div>
 
             <!-- PANEL 2: ADMIN CREDENTIALS SECURITY -->
             <div class="content-card">
-                <h3 style="margin-bottom: 14px;">👑 Administrator Display & Password Authorization</h3>
-                <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 16px;">Update display credentials and secure authorization password.</p>
+                <h3 style="margin-bottom: 12px;">👑 Administrator Display & Password Authorization</h3>
+                <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 15px;">Update display credentials and secure authorization password.</p>
 
                 <div class="form-grid">
                     <div class="input-group"><label>Admin Display Name</label><input type="text" id="adminDisplayNameInput" placeholder="Administrator"></div>
@@ -880,8 +876,8 @@
 
             <!-- PANEL 3: STAFF PERMISSIONS MATRIX -->
             <div class="content-card">
-                <h3 style="margin-bottom: 14px;">🛡️ Manage User Access Permission Matrix</h3>
-                <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 16px;">Assign Full Access or Restricted permissions to active staff members.</p>
+                <h3 style="margin-bottom: 12px;">🛡️ Manage User Access Permission Matrix</h3>
+                <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 15px;">Assign Full Access or Restricted permissions to active staff members.</p>
 
                 <div class="table-responsive">
                     <table>
@@ -890,7 +886,7 @@
                                 <th>Staff ID</th>
                                 <th>Staff Name</th>
                                 <th>Permission Level</th>
-                                <th style="width: 140px; text-align: center;">Actions</th>
+                                <th style="width: 120px; text-align: center;">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="adminUserPermissionsTableBody">
@@ -903,11 +899,11 @@
             <!-- PANEL 4: TECHNICAL SPECIFICATIONS -->
             <div class="content-card" style="background: #f8fafc;">
                 <strong>💻 Technical Specs & Storage Metrics</strong>
-                <div style="margin-top: 10px; color: var(--text-muted); font-size: 0.825rem; line-height: 1.6;">
-                    • <strong>Version:</strong> v3.0 (Fine-Tuned UI & Modern Component Design)<br>
+                <div style="margin-top: 8px; color: var(--text-muted); font-size: 0.8rem; line-height: 1.6;">
+                    • <strong>Version:</strong> v3.1 (Cloud-Ready & Public Host Edition)<br>
                     • <strong>Developer:</strong> Satish<br>
-                    • <strong>Engine:</strong> Client-side offline Single Page Application (SPA).<br>
-                    • <strong>Storage Status:</strong> Synchronized with browser LocalStorage (`gearMasterEquipmentObj`, `gearDashboardLogs`, `gearUserProfiles`).
+                    • <strong>Engine:</strong> Client-side offline Single Page Application (SPA) with fallback memory storage.<br>
+                    • <strong>Storage Status:</strong> Synchronized with browser LocalStorage / Fallback Memory.
                 </div>
             </div>
 
@@ -945,8 +941,8 @@
 <div id="confirmationModal" class="overlay" style="display: none; z-index: 2000;">
     <div class="dialog-card" style="max-width: 440px; text-align: center;">
         <div style="font-size: 2.5rem; margin-bottom: 8px;" id="confirmIcon">📋</div>
-        <h3 id="confirmTitle" style="margin-bottom: 8px; font-size: 1.2rem; letter-spacing: -0.01em;">Confirm Action</h3>
-        <p id="confirmMessage" style="color: var(--text-dark); font-size: 0.9rem; margin-bottom: 22px; line-height: 1.5; white-space: pre-line; text-align: left; background: #f8fafc; padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border);"></p>
+        <h3 id="confirmTitle" style="margin-bottom: 8px; font-size: 1.15rem;">Confirm Action</h3>
+        <p id="confirmMessage" style="color: var(--text-dark); font-size: 0.9rem; margin-bottom: 20px; line-height: 1.5; white-space: pre-line; text-align: left; background: #f8fafc; padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border);"></p>
         
         <div style="display: flex; gap: 10px; justify-content: center;">
             <button class="btn btn-secondary" style="flex: 1;" onclick="closeConfirmationModal(false)">Cancel</button>
@@ -957,24 +953,24 @@
 
 <!-- DEVELOPER INFO MODAL -->
 <div id="devInfoModal" class="overlay" style="display: none;">
-    <div class="dialog-card" style="max-width: 520px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 16px;">
+    <div class="dialog-card" style="max-width: 500px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 15px;">
             <h3>💻 Developer & Version Info</h3>
             <button class="btn btn-secondary btn-sm" onclick="closeDevInfoModal()">✕ Close</button>
         </div>
-        <div style="font-size: 0.875rem; line-height: 1.6; color: var(--text-dark);">
-            <div style="background: #f1f5f9; padding: 14px; border-radius: var(--radius-sm); margin-bottom: 14px;">
+        <div style="font-size: 0.85rem; line-height: 1.6; color: var(--text-dark);">
+            <div style="background: #f1f5f9; padding: 12px; border-radius: var(--radius-sm); margin-bottom: 12px;">
                 <p><strong>System Name:</strong> Equipment Management Dashboard</p>
-                <p><strong>Version:</strong> <span class="version-badge">v3.0 UI Fine-Tuned</span></p>
+                <p><strong>Version:</strong> <span class="version-badge">v3.1 Cloud-Ready</span></p>
                 <p><strong>Lead Application Developer:</strong> Satish</p>
             </div>
             
-            <h4 style="margin-bottom: 8px;">Key System Features:</h4>
-            <ul style="padding-left: 20px; font-size: 0.825rem; color: var(--text-muted);">
-                <li>Download generated barcodes directly as high-res PNG images.</li>
-                <li>Fine-tuned Admin Control Scaffolding (Operational, Security, Matrix).</li>
-                <li>Audit Log Backup Export (JSON).</li>
+            <h4 style="margin-bottom: 6px;">Features:</h4>
+            <ul style="padding-left: 20px; font-size: 0.8rem; color: var(--text-muted);">
+                <li>Cloud-ready fallback memory storage for public hosting environments.</li>
+                <li>Download generated barcodes directly as PNG images.</li>
                 <li>Live Stock Availability Column rendered in Scanner Mode.</li>
+                <li>Synchronized Stock Reservation Guard across Scanner & Manual Modes.</li>
             </ul>
         </div>
     </div>
@@ -983,11 +979,11 @@
 <!-- LOGIN OVERLAY -->
 <div id="loginOverlay" class="overlay">
     <div class="dialog-card">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 14px;">
-            <h2 style="font-size: 1.15rem;">Workspace Login</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 12px;">
+            <h2 style="font-size: 1.1rem;">Workspace Login</h2>
             <button class="btn btn-secondary btn-sm" onclick="closeLoginModal()">✕ Close</button>
         </div>
-        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 14px; text-align: center;">Select profile to access logs</p>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 12px; text-align: center;">Select profile to access logs</p>
         
         <div class="role-option" onclick="showAdminPasswordInput()">
             <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -996,14 +992,14 @@
             </div>
         </div>
 
-        <div id="adminPassBox" style="display: none; margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--border); text-align: left;">
-            <label style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted);">ADMIN PASSWORD:</label>
-            <input type="password" id="adminPasswordInput" placeholder="Default: admin123" style="width: 100%; padding: 12px; margin: 6px 0 12px 0; border: 1px solid var(--border); border-radius: var(--radius-sm);" onkeypress="handleAdminLoginKey(event)">
+        <div id="adminPassBox" style="display: none; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); text-align: left;">
+            <label style="font-size: 0.75rem; font-weight: bold; color: var(--text-muted);">ADMIN PASSWORD:</label>
+            <input type="password" id="adminPasswordInput" placeholder="Default: admin123" style="width: 100%; padding: 10px; margin: 6px 0 10px 0; border: 1px solid var(--border); border-radius: var(--radius-sm);" onkeypress="handleAdminLoginKey(event)">
             <button class="btn btn-primary btn-sm" style="width: 100%;" onclick="validateAdminPassword()">Login as Admin</button>
-            <div id="loginError" style="color: var(--danger); font-size: 0.75rem; margin-top: 8px; font-weight: 700;"></div>
+            <div id="loginError" style="color: var(--danger); font-size: 0.75rem; margin-top: 6px; font-weight: bold;"></div>
         </div>
 
-        <div style="margin: 14px 0 6px 0; font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-align: left; text-transform: uppercase; letter-spacing: 0.03em;">Staff Profiles</div>
+        <div style="margin: 12px 0 6px 0; font-size: 0.75rem; color: var(--text-muted); font-weight: bold; text-align: left; text-transform: uppercase;">Staff Profiles</div>
         <div id="loginUserList"></div>
     </div>
 </div>
@@ -1011,41 +1007,41 @@
 <!-- CHECK-OUT BARCODE SCANNER MODAL -->
 <div id="checkoutScannerModalOverlay" class="overlay" style="display: none;">
     <div class="scanner-card">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 12px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 10px;">
             <div>
-                <h3 style="font-size: 1.05rem; color: white;">📤 Check-Out Scanner</h3>
+                <h3 style="font-size: 1rem; color: white;">📤 Check-Out Scanner</h3>
                 <span style="font-size: 0.75rem; color: #94a3b8;">Trigger gun scanner to add items</span>
             </div>
             <button class="btn btn-danger btn-sm" onclick="closeCheckoutScannerModal()">✕ Close</button>
         </div>
 
-        <div style="margin: 14px 0;">
-            <input type="text" id="checkoutBarcodeListener" placeholder="Ready to scan barcodes..." style="width: 100%; padding: 14px; border-radius: var(--radius-sm); border: 2px solid var(--primary); background: #1e293b; color: #60a5fa; font-size: 1rem; font-weight: 700;" onkeypress="handleCheckoutBarcodeScanner(event)" autofocus>
+        <div style="margin: 12px 0;">
+            <input type="text" id="checkoutBarcodeListener" placeholder="Ready to scan barcodes..." style="width: 100%; padding: 12px; border-radius: var(--radius-sm); border: 2px solid var(--primary); background: #1e293b; color: #60a5fa; font-size: 0.95rem; font-weight: bold;" onkeypress="handleCheckoutBarcodeScanner(event)" autofocus>
         </div>
 
         <div class="scan-terminal" id="checkoutTerminalLog">> Handheld scanner ready for booking check-out...</div>
         
-        <button class="btn btn-secondary btn-sm" style="width: 100%; margin-top: 14px;" onclick="closeCheckoutScannerModal()">Done Scanning</button>
+        <button class="btn btn-secondary btn-sm" style="width: 100%; margin-top: 12px;" onclick="closeCheckoutScannerModal()">Done Scanning</button>
     </div>
 </div>
 
 <!-- DASHBOARD DIRECT CHECK-IN SCANNER MODAL -->
 <div id="dashboardCheckinModalOverlay" class="overlay" style="display: none;">
-    <div class="scanner-card" style="max-width: 580px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 12px;">
+    <div class="scanner-card" style="max-width: 550px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 10px;">
             <div>
-                <h3 style="font-size: 1.05rem; color: #10b981;">↩ Direct Check-In Terminal</h3>
+                <h3 style="font-size: 1rem; color: #10b981;">↩ Direct Check-In Terminal</h3>
                 <span style="font-size: 0.75rem; color: #94a3b8;">Client: <strong id="dashCheckinClientName" style="color: white;">-</strong></span>
             </div>
             <button class="btn btn-danger btn-sm" onclick="closeDashboardCheckinModal()">✕ Close</button>
         </div>
 
-        <div style="margin: 14px 0;">
-            <input type="text" id="dashboardCheckinListener" placeholder="Scan item barcode..." style="width: 100%; padding: 14px; border-radius: var(--radius-sm); border: 2px solid var(--success); background: #1e293b; color: #34d399; font-size: 1rem; font-weight: 700;" onkeypress="handleDashboardCheckinScanner(event)" autofocus>
+        <div style="margin: 12px 0;">
+            <input type="text" id="dashboardCheckinListener" placeholder="Scan item barcode..." style="width: 100%; padding: 12px; border-radius: var(--radius-sm); border: 2px solid var(--success); background: #1e293b; color: #34d399; font-size: 0.95rem; font-weight: bold;" onkeypress="handleDashboardCheckinScanner(event)" autofocus>
         </div>
 
-        <h4 style="margin: 10px 0 6px 0; color: #94a3b8; font-size: 0.825rem;">Checked-Out Items Remaining:</h4>
-        <div class="table-responsive" style="max-height: 190px; margin-bottom: 10px;">
+        <h4 style="margin: 8px 0 4px 0; color: #94a3b8; font-size: 0.8rem;">Checked-Out Items Remaining:</h4>
+        <div class="table-responsive" style="max-height: 180px; margin-bottom: 8px;">
             <table>
                 <thead>
                     <tr>
@@ -1063,8 +1059,8 @@
 
         <div class="scan-terminal" id="dashboardCheckinTerminalLog">> Matching scanned gear against shoot items...</div>
         
-        <div class="actions-bar" style="margin-top: 14px;">
-            <button class="btn btn-success btn-sm" style="width: 100%; padding: 12px;" onclick="completeDashboardCheckinProcess()">✅ Return All Items to Inventory</button>
+        <div class="actions-bar" style="margin-top: 12px;">
+            <button class="btn btn-success btn-sm" style="width: 100%;" onclick="completeDashboardCheckinProcess()">✅ Return All Items to Inventory</button>
         </div>
     </div>
 </div>
@@ -1092,7 +1088,7 @@
         </div>
 
         <h4 style="margin-bottom: 8px;">Dispatched Items List</h4>
-        <div class="table-responsive" style="max-height: 220px; margin-bottom: 14px;">
+        <div class="table-responsive" style="max-height: 220px; margin-bottom: 12px;">
             <table>
                 <thead>
                     <tr>
@@ -1114,13 +1110,13 @@
     </div>
 </div>
 
-<!-- PRINT / DOWNLOAD BARCODE LABEL MODAL -->
+<!-- PRINT BARCODE LABEL MODAL -->
 <div id="barcodePrintModal" class="overlay" style="display: none;">
-    <div class="dialog-card" style="max-width: 400px; text-align: center;">
+    <div class="dialog-card" style="max-width: 380px; text-align: center;">
         <h3 id="printItemName">Equipment Barcode</h3>
-        <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 14px;">Inventory Tag</p>
+        <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 12px;">Inventory Tag</p>
         
-        <div style="background: white; padding: 16px; border: 1px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 16px;">
+        <div style="background: white; padding: 15px; border: 1px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 12px;">
             <svg id="barcodePrintSvg"></svg>
         </div>
 
@@ -1133,8 +1129,21 @@
 </div>
 
 <script>
+    // Safe Storage Fallback Wrapper for Public Hosting Environments
+    const SafeStorage = {
+        getItem(key) {
+            try { return localStorage.getItem(key); } catch (e) { return window._memStore?.[key] || null; }
+        },
+        setItem(key, val) {
+            try { localStorage.setItem(key, val); } catch (e) {
+                window._memStore = window._memStore || {};
+                window._memStore[key] = val;
+            }
+        }
+    };
+
     let pendingConfirmCallback = null;
-    let allowManualCheckout = localStorage.getItem('appAllowManualCheckout') === 'true';
+    let allowManualCheckout = SafeStorage.getItem('appAllowManualCheckout') === 'true';
     let currentBarcodePrintMeta = { barcode: '', name: '' };
 
     function showConfirmationModal({ title, message, icon = '⚠️', confirmBtnText = 'Confirm', confirmBtnClass = 'btn-primary', onConfirm }) {
@@ -1160,7 +1169,7 @@
 
     function toggleManualCheckoutSetting(isEnabled) {
         allowManualCheckout = isEnabled;
-        localStorage.setItem('appAllowManualCheckout', isEnabled ? 'true' : 'false');
+        SafeStorage.setItem('appAllowManualCheckout', isEnabled ? 'true' : 'false');
         
         const statusText = document.getElementById('manualCheckoutToggleStatus');
         if (statusText) {
@@ -1175,7 +1184,7 @@
     function exportAuditLogBackup() {
         const auditData = {
             exportDate: new Date().toISOString(),
-            version: 'v3.0',
+            version: 'v3.1',
             masterEquipment: masterEquipment,
             gearLogs: gearLogs,
             userProfiles: userProfiles
@@ -1256,7 +1265,7 @@
         { barcode: "EQP-100149", name: "JACKETS", stock: 10 }
     ];
 
-    let masterEquipment = JSON.parse(localStorage.getItem('gearMasterEquipmentObj')) || defaultMasterItems;
+    let masterEquipment = JSON.parse(SafeStorage.getItem('gearMasterEquipmentObj')) || defaultMasterItems;
     
     masterEquipment = masterEquipment.map(item => {
         if (!item.barcode) {
@@ -1264,22 +1273,22 @@
         }
         return item;
     });
-    localStorage.setItem('gearMasterEquipmentObj', JSON.stringify(masterEquipment));
+    SafeStorage.setItem('gearMasterEquipmentObj', JSON.stringify(masterEquipment));
 
     let itemsList = masterEquipment.map(item => item.name);
 
-    let currentRole = sessionStorage.getItem('tabSessionUserRole') || localStorage.getItem('appUserRole') || null;
-    let currentUserNameSession = sessionStorage.getItem('tabSessionUserName') || localStorage.getItem('appUserName') || null;
+    let currentRole = sessionStorage.getItem('tabSessionUserRole') || SafeStorage.getItem('appUserRole') || null;
+    let currentUserNameSession = sessionStorage.getItem('tabSessionUserName') || SafeStorage.getItem('appUserName') || null;
 
-    let gearLogs = JSON.parse(localStorage.getItem('gearDashboardLogs')) || [];
+    let gearLogs = JSON.parse(SafeStorage.getItem('gearDashboardLogs')) || [];
     
     gearLogs = gearLogs.map(log => {
         if (log.status === 'OUT') log.status = 'OUT ON SHOOT';
         return log;
     });
-    localStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
+    SafeStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
 
-    let userProfiles = JSON.parse(localStorage.getItem('gearUserProfiles')) || [
+    let userProfiles = JSON.parse(SafeStorage.getItem('gearUserProfiles')) || [
         { id: 'STAFF-1', name: 'Standard Staff Operator', mobile: '9876543210', team: 'Camera Crew', permissions: 'restricted' }
     ];
 
@@ -1349,7 +1358,7 @@
     }
 
     function applyRolePermissions(role) {
-        const userName = currentUserNameSession || (role === 'admin' ? (localStorage.getItem('appAdminDisplayName') || 'Administrator') : 'Staff Member');
+        const userName = currentUserNameSession || (role === 'admin' ? (SafeStorage.getItem('appAdminDisplayName') || 'Administrator') : 'Staff Member');
         document.getElementById('activeUserName').innerText = userName;
         
         const badge = document.getElementById('activeRoleBadge');
@@ -1373,7 +1382,7 @@
             document.getElementById('metric-returned-label').innerText = 'Returned';
             document.getElementById('logSectionTitle').innerText = 'Recent Shoots & Gear Logs';
 
-            document.getElementById('adminDisplayNameInput').value = localStorage.getItem('appAdminDisplayName') || 'Administrator';
+            document.getElementById('adminDisplayNameInput').value = SafeStorage.getItem('appAdminDisplayName') || 'Administrator';
             renderUserPermissionsTable();
             switchTab('dashboard-tab');
         } else {
@@ -1406,10 +1415,10 @@
         const newPass = document.getElementById('adminNewPassInput').value;
         const confirmPass = document.getElementById('adminConfirmPassInput').value;
 
-        const storedPass = localStorage.getItem('appAdminPassword') || 'admin123';
+        const storedPass = SafeStorage.getItem('appAdminPassword') || 'admin123';
 
         if (nameVal) {
-            localStorage.setItem('appAdminDisplayName', nameVal);
+            SafeStorage.setItem('appAdminDisplayName', nameVal);
             document.getElementById('activeUserName').innerText = nameVal;
         }
 
@@ -1427,7 +1436,7 @@
                 return;
             }
 
-            localStorage.setItem('appAdminPassword', newPass);
+            SafeStorage.setItem('appAdminPassword', newPass);
             document.getElementById('adminCurrentPassInput').value = '';
             document.getElementById('adminNewPassInput').value = '';
             document.getElementById('adminConfirmPassInput').value = '';
@@ -1473,7 +1482,7 @@
             return u;
         });
 
-        localStorage.setItem('gearUserProfiles', JSON.stringify(userProfiles));
+        SafeStorage.setItem('gearUserProfiles', JSON.stringify(userProfiles));
         editingUserId = null;
         renderLoginUserList();
         renderUserPermissionsTable();
@@ -1484,7 +1493,7 @@
             if (u.id === userId) u.permissions = newPerm;
             return u;
         });
-        localStorage.setItem('gearUserProfiles', JSON.stringify(userProfiles));
+        SafeStorage.setItem('gearUserProfiles', JSON.stringify(userProfiles));
         renderUserPermissionsTable();
     }
 
@@ -1545,7 +1554,7 @@
             confirmBtnClass: 'btn-danger',
             onConfirm: () => {
                 userProfiles = userProfiles.filter(u => u.id !== userId);
-                localStorage.setItem('gearUserProfiles', JSON.stringify(userProfiles));
+                SafeStorage.setItem('gearUserProfiles', JSON.stringify(userProfiles));
                 renderLoginUserList();
                 renderUserPermissionsTable();
             }
@@ -1863,12 +1872,12 @@
             log.status = 'RETURNED';
             const now = new Date();
             log.actualReturnTimeStamp = now.toLocaleDateString('en-GB') + ', ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            localStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
+            SafeStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
             alert('All items returned! Shoot status updated to RETURNED.');
             closeDashboardCheckinModal();
             renderDashboard();
         } else {
-            localStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
+            SafeStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
             renderDashboardCheckinItemsTable();
             renderDashboard();
         }
@@ -1890,7 +1899,7 @@
                 const now = new Date();
                 log.actualReturnTimeStamp = now.toLocaleDateString('en-GB') + ', ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 
-                localStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
+                SafeStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
                 closeDashboardCheckinModal();
                 renderDashboard();
             }
@@ -1976,7 +1985,7 @@
             confirmBtnClass: 'btn-primary',
             onConfirm: () => {
                 masterEquipment.push({ barcode, name, stock });
-                localStorage.setItem('gearMasterEquipmentObj', JSON.stringify(masterEquipment));
+                SafeStorage.setItem('gearMasterEquipmentObj', JSON.stringify(masterEquipment));
                 itemsList = masterEquipment.map(item => item.name);
 
                 nameInput.value = '';
@@ -2021,7 +2030,7 @@
         masterEquipment[index].name = trimmedName;
         masterEquipment[index].stock = newStock;
         
-        localStorage.setItem('gearMasterEquipmentObj', JSON.stringify(masterEquipment));
+        SafeStorage.setItem('gearMasterEquipmentObj', JSON.stringify(masterEquipment));
         itemsList = masterEquipment.map(eq => eq.name);
 
         editingIndex = -1;
@@ -2040,7 +2049,7 @@
             confirmBtnClass: 'btn-danger',
             onConfirm: () => {
                 masterEquipment.splice(index, 1);
-                localStorage.setItem('gearMasterEquipmentObj', JSON.stringify(masterEquipment));
+                SafeStorage.setItem('gearMasterEquipmentObj', JSON.stringify(masterEquipment));
                 itemsList = masterEquipment.map(item => item.name);
 
                 editingIndex = -1;
@@ -2261,7 +2270,7 @@
             return log;
         });
 
-        localStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
+        SafeStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
         editingLogId = null;
         activeTempGearList = [];
         renderDashboard();
@@ -2270,7 +2279,7 @@
     function renderDashboard() {
         renderEquipmentAvailability();
         
-        const currentUserName = currentUserNameSession || localStorage.getItem('appUserName') || '';
+        const currentUserName = currentUserNameSession || SafeStorage.getItem('appUserName') || '';
         const tbody = document.getElementById('logsTableBody');
         let activeOut = 0;
         let totalReturned = 0;
@@ -2427,7 +2436,7 @@
 
     function validateAdminPassword() {
         const enteredPass = document.getElementById('adminPasswordInput').value;
-        const storedPass = localStorage.getItem('appAdminPassword') || 'admin123';
+        const storedPass = SafeStorage.getItem('appAdminPassword') || 'admin123';
         
         if (enteredPass === storedPass) {
             document.getElementById('loginError').innerText = '';
@@ -2508,7 +2517,7 @@
             confirmBtnClass: 'btn-primary',
             onConfirm: () => {
                 userProfiles.push({ id, name, mobile, team, permissions: 'restricted' });
-                localStorage.setItem('gearUserProfiles', JSON.stringify(userProfiles));
+                SafeStorage.setItem('gearUserProfiles', JSON.stringify(userProfiles));
                 
                 document.getElementById('newStaffName').value = '';
                 document.getElementById('newStaffMobile').value = '';
@@ -2588,8 +2597,8 @@
     }
 
     function executeSaveRecord(clientName, gearData) {
-        const currentActiveUserName = currentUserNameSession || localStorage.getItem('appUserName') || 'Staff';
-        const creatorMobile = localStorage.getItem('appUserMobile') || '';
+        const currentActiveUserName = currentUserNameSession || SafeStorage.getItem('appUserName') || 'Staff';
+        const creatorMobile = SafeStorage.getItem('appUserMobile') || '';
         
         const record = {
             id: Date.now(),
@@ -2611,7 +2620,7 @@
         };
 
         gearLogs.unshift(record);
-        localStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
+        SafeStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
         
         document.getElementById('checklistForm').reset();
         scannedQuantities = {};
@@ -2648,7 +2657,7 @@
             }
             return log;
         });
-        localStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
+        SafeStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
         renderDashboard();
     }
 
@@ -2664,7 +2673,7 @@
             confirmBtnClass: 'btn-danger',
             onConfirm: () => {
                 gearLogs = gearLogs.filter(log => log.id !== id);
-                localStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
+                SafeStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
                 renderDashboard();
             }
         });
