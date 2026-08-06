@@ -7,26 +7,30 @@
     <!-- JsBarcode Library with local fallback safeguard -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.12.3/JsBarcode.all.min.js"></script>
     
-    <!-- Firebase SDK Imports -->
+    <!-- Firebase SDK Imports with exact configuration provided -->
     <script type="module">
+        // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
 
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
         const firebaseConfig = {
             apiKey: "AIzaSyAIOix4Z-QwuUrU-fU5PccalRyRs_z7MzA",
             authDomain: "equipment-tracker-5ec78.firebaseapp.com",
             projectId: "equipment-tracker-5ec78",
             storageBucket: "equipment-tracker-5ec78.firebasestorage.app",
             messagingSenderId: "199725838732",
-            appId: "1:199725838732:web:3dd41e36cdc0871963a6a9",
-            measurementId: "G-68SWYZ791Y"
+            appId: "1:199725838732:web:22e024b41329514263a6a9",
+            measurementId: "G-3STV098B67"
         };
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const analytics = getAnalytics(app);
-        
-        // Expose Firebase app globally if needed by other scripts
+
         window.firebaseApp = app;
         window.firebaseAnalytics = analytics;
     </script>
