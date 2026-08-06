@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Universal Equipment Management Dashboard v3.3</title>
+    <title>Universal Equipment Management Dashboard v3.3 (Cloud Sync)</title>
     <!-- JsBarcode Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.12.3/JsBarcode.all.min.js"></script>
     <!-- Firebase Compat SDKs for Real-Time Cross-Device Cloud Sync -->
@@ -294,7 +294,7 @@
         }
 
         .scan-terminal { 
-            background: #1e293b; border-left: 4px solid var(--primary); padding: 12px 14px; border-radius: 6px; font-family: SFMono-Regular, Consolas, monospace; font-size: 0.825rem; max-height: 150px; overflow-y: auto; margin-top: 14px; word-break: break-all; color: #e2e8f0; line-height: 1.6;
+            background: #1e293b; border-left: 4px solid var(--primary); padding: 12px 14px; border-radius: 6px; font-family: monospace; font-size: 0.825rem; max-height: 150px; overflow-y: auto; margin-top: 14px; word-break: break-all; color: #e2e8f0; line-height: 1.6;
         }
 
         .table-responsive { overflow-x: auto; max-height: 480px; overflow-y: auto; border: 1px solid var(--border); border-radius: var(--radius-sm); -webkit-overflow-scrolling: touch; }
@@ -422,11 +422,13 @@
                     <h3>📦 Live Equipment Availability Status</h3>
                     <input type="text" id="availabilitySearchInput" onkeyup="filterAvailability()" placeholder="Search gear or barcode..." style="padding: 10px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.875rem; width: 100%; max-width: 250px; min-height: 40px;">
                 </div>
+
                 <div class="table-responsive" style="max-height: 280px;">
                     <table>
                         <thead>
                             <tr>
-                                <th>Barcode</th>
+                                <th style="width: 40px; text-align: center;">S.No</th>
+                                <th>Barcode Code</th>
                                 <th>Equipment Name</th>
                                 <th style="width: 70px; text-align: center;">In Stock</th>
                                 <th style="width: 100px; text-align: center;">Out On Shoot</th>
@@ -444,6 +446,7 @@
                     <h3 id="logSectionTitle">Recent Shoots & Gear Logs</h3>
                     <input type="text" id="searchInput" onkeyup="filterLogs()" placeholder="Search client, event, or team..." style="padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); width: 100%; min-height: 44px;">
                 </div>
+                
                 <div class="table-responsive">
                     <table>
                         <thead>
@@ -451,9 +454,9 @@
                                 <th>Client / Event</th>
                                 <th>Team / Incharge</th>
                                 <th>Time Out</th>
-                                <th>Time In</th>
+                                <th>Time In (Returned)</th>
                                 <th>Status</th>
-                                <th style="min-width: 180px;">Actions</th>
+                                <th id="actionsHeader" style="min-width: 180px;">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="logsTableBody"></tbody>
@@ -524,6 +527,7 @@
                     <table>
                         <thead>
                             <tr>
+                                <th style="width: 40px; text-align: center;">S.No</th>
                                 <th>Barcode</th>
                                 <th>Equipment Name</th>
                                 <th style="width: 70px; text-align: center;">Stock</th>
@@ -648,7 +652,7 @@
             <button class="btn btn-primary btn-sm" style="width: 100%;" onclick="validateAdminPassword()">Login as Admin</button>
             <div id="loginError" style="color: var(--danger); font-size: 0.75rem; margin-top: 6px; font-weight: bold;"></div>
         </div>
-        <div style="margin: 12px 0 6px 0; font-size: 0.75rem; color: var(--text-muted); font-weight: bold; text-transform: uppercase;">Staff Profiles</div>
+        <div style="margin: 12px 0 6px 0; font-size: 0.75rem; color: var(--text-muted); font-weight: bold; text-align: left; text-transform: uppercase;">Staff Profiles</div>
         <div id="loginUserList"></div>
     </div>
 </div>
@@ -711,7 +715,6 @@
 
 <!-- FIREBASE REAL-TIME SYNC & APP LOGIC SCRIPT -->
 <script>
-    // YOUR FIREBASE CONFIGURATION CREDENTIALS
     const firebaseConfig = {
         apiKey: "AIzaSyAIOix4Z-QwuUrU-fU5PccalRyRs_z7MzA",
         authDomain: "equipment-tracker-5ec78.firebaseapp.com",
@@ -722,7 +725,6 @@
         measurementId: "G-3STV098B67"
     };
 
-    // Initialize Firebase SDK
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
@@ -731,19 +733,66 @@
     let currentRole = localStorage.getItem('appUserRole') || null;
     let currentUserNameSession = localStorage.getItem('appUserName') || null;
 
-    let masterEquipment = [];
+    const defaultMasterItems = [
+        { barcode: "EQP-100101", name: "5D MARK 4", stock: 5 }, 
+        { barcode: "EQP-100102", name: "CANON R6 CAM", stock: 5 }, 
+        { barcode: "EQP-100103", name: "CANON R5 CAM", stock: 5 }, 
+        { barcode: "EQP-100104", name: "CANON R6 MARK 2", stock: 5 }, 
+        { barcode: "EQP-100105", name: "SONY FX 30 VIDEO CAM", stock: 4 }, 
+        { barcode: "EQP-100106", name: "SONY Z 150 VIDEO CAM", stock: 4 }, 
+        { barcode: "EQP-100107", name: "SONY 18-105 mm", stock: 6 }, 
+        { barcode: "EQP-100108", name: "CANON 70-200 mm RF/EF", stock: 6 }, 
+        { barcode: "EQP-100109", name: "CANON 24-105 mm RF/EF", stock: 6 }, 
+        { barcode: "EQP-100110", name: "CANON 85 mm RF/SIGMA", stock: 5 }, 
+        { barcode: "EQP-100111", name: "CANON 50 mm RF/EF", stock: 5 }, 
+        { barcode: "EQP-100112", name: "CANON 35 mm RF/EF", stock: 5 }, 
+        { barcode: "EQP-100113", name: "CANON 16 mm RF/EF", stock: 4 }, 
+        { barcode: "EQP-100114", name: "CANON BATTERY & CHARGER (B- / C-)", stock: 10 }, 
+        { barcode: "EQP-100115", name: "SONY BATTERY & CHARGER (B- / C-)", stock: 10 }, 
+        { barcode: "EQP-100116", name: "CANON M CARDS 128 GB/64GB", stock: 15 }, 
+        { barcode: "EQP-100117", name: "SONY M CARDS 128 GB/64GB", stock: 15 }, 
+        { barcode: "EQP-100118", name: "SK 400", stock: 4 }, 
+        { barcode: "EQP-100119", name: "SUNGUN", stock: 6 }, 
+        { barcode: "EQP-100120", name: "FLASH (F- / B-)", stock: 8 }, 
+        { barcode: "EQP-100121", name: "LC 500", stock: 4 }, 
+        { barcode: "EQP-100122", name: "AD 600", stock: 4 }, 
+        { barcode: "EQP-100123", name: "AD 400", stock: 4 }, 
+        { barcode: "EQP-100124", name: "AD 200", stock: 4 }, 
+        { barcode: "EQP-100125", name: "PANEL LIGHTS (B- / C-)", stock: 8 }, 
+        { barcode: "EQP-100126", name: "X1+X2 TRIGGER", stock: 6 }, 
+        { barcode: "EQP-100127", name: "UNIVERSAL TRIGGER", stock: 6 }, 
+        { barcode: "EQP-100128", name: "WIRELESS MIC", stock: 8 }, 
+        { barcode: "EQP-100129", name: "WIRE MIC", stock: 8 }, 
+        { barcode: "EQP-100130", name: "ROHIN GIMBAL SC", stock: 3 }, 
+        { barcode: "EQP-100131", name: "ROHIN GIMBAL S2", stock: 3 }, 
+        { barcode: "EQP-100132", name: "ROHIN GIMBAL S3", stock: 3 }, 
+        { barcode: "EQP-100133", name: "MONT FRONT TRIPAD", stock: 6 }, 
+        { barcode: "EQP-100134", name: "SIMPEX TRIPAD", stock: 6 }, 
+        { barcode: "EQP-100135", name: "VIDEO TRIPAD & UMBERELLA (T- / U-)", stock: 6 }, 
+        { barcode: "EQP-100136", name: "GODEX & BEAUTY SOFTBOX (85mm- / 65mm-)", stock: 6 }, 
+        { barcode: "EQP-100137", name: "MAVIC AIR DRONE 4 PRO", stock: 2 }, 
+        { barcode: "EQP-100138", name: "MAVIC AIR 2", stock: 2 }, 
+        { barcode: "EQP-100139", name: "DJI AVATA", stock: 2 }, 
+        { barcode: "EQP-100140", name: "PHANTOM 4PRO", stock: 2 }, 
+        { barcode: "EQP-100141", name: "GEL KIT", stock: 5 }, 
+        { barcode: "EQP-100142", name: "LED TV", stock: 4 }, 
+        { barcode: "EQP-100143", name: "LED NAME BOARD", stock: 4 }, 
+        { barcode: "EQP-100144", name: "EXTENSION BOX", stock: 10 }, 
+        { barcode: "EQP-100145", name: "HARD DISK", stock: 8 }, 
+        { barcode: "EQP-100146", name: "CARD READER", stock: 10 }, 
+        { barcode: "EQP-100147", name: "360", stock: 2 }, 
+        { barcode: "EQP-100148", name: "SELFI BOOTH", stock: 2 }, 
+        { barcode: "EQP-100149", name: "JACKETS", stock: 10 }
+    ];
+
+    let masterEquipment = defaultMasterItems;
     let gearLogs = [];
     let userProfiles = [{ id: 'STAFF-1', name: 'Standard Staff Operator', mobile: '9876543210', team: 'Camera Crew', permissions: 'restricted' }];
 
     let adminEntryMethod = 'scanner';
     let scannedQuantities = {};
-    let editingIndex = -1;
-    let editingLogId = null;
-    let activeTempGearList = [];
-    let editingUserId = null;
     let activeDashboardCheckinLogId = null;
 
-    // Real-Time Cloud Listeners for Cross-Device Sync
     document.addEventListener("DOMContentLoaded", () => {
         setupCloudListeners();
         renderLoginUserList();
@@ -761,48 +810,33 @@
     });
 
     function setupCloudListeners() {
-        // Sync Inventory Master in Real-Time
         db.collection("sync_data").doc("masterEquipment").onSnapshot(doc => {
-            if (doc.exists && doc.data().items) {
+            if (doc.exists && doc.data().items && doc.data().items.length > 0) {
                 masterEquipment = doc.data().items;
             } else {
-                initDefaultEquipment();
+                pushToCloud("masterEquipment", { items: defaultMasterItems });
+                masterEquipment = defaultMasterItems;
             }
             renderMasterEquipmentTable();
             renderDashboard();
+            updateEntryInterface();
         });
 
-        // Sync Gear Logs in Real-Time
         db.collection("sync_data").doc("gearLogs").onSnapshot(doc => {
-            if (doc.exists && doc.data().logs) {
-                gearLogs = doc.data().logs;
-            }
+            if (doc.exists && doc.data().logs) gearLogs = doc.data().logs;
             renderDashboard();
         });
 
-        // Sync Users in Real-Time
         db.collection("sync_data").doc("userProfiles").onSnapshot(doc => {
             if (doc.exists && doc.data().profiles) {
                 userProfiles = doc.data().profiles;
                 renderLoginUserList();
-                renderUserPermissionsTable();
             }
         });
     }
 
     async function pushToCloud(docKey, dataObj) {
-        try {
-            await db.collection("sync_data").doc(docKey).set(dataObj);
-        } catch (e) { console.error("Cloud write error:", e); }
-    }
-
-    function initDefaultEquipment() {
-        masterEquipment = [
-            { barcode: "EQP-100101", name: "5D MARK 4", stock: 5 },
-            { barcode: "EQP-100102", name: "CANON R6 CAM", stock: 5 },
-            { barcode: "EQP-100105", name: "SONY FX 30 VIDEO CAM", stock: 4 }
-        ];
-        pushToCloud("masterEquipment", { items: masterEquipment });
+        try { await db.collection("sync_data").doc(docKey).set(dataObj); } catch (e) { console.error(e); }
     }
 
     function showConfirmationModal({ title, message, icon = '⚠️', confirmBtnText = 'Confirm', confirmBtnClass = 'btn-primary', onConfirm }) {
@@ -878,14 +912,12 @@
         if (role === 'admin') {
             badge.innerText = 'Admin'; badge.className = 'role-pill role-admin';
             mobBadge.innerText = 'Admin'; mobBadge.className = 'role-pill role-admin';
-            document.getElementById('adminMetricsGrid').style.display = 'grid';
             tabs.forEach(t => document.getElementById(t).style.display = 'flex');
             mobTabs.forEach(t => document.getElementById(t).style.display = 'flex');
             switchTab('dashboard-tab');
         } else {
             badge.innerText = hasFullAccess ? 'Staff (Full)' : 'Staff User'; badge.className = 'role-pill role-user';
             mobBadge.innerText = badge.innerText; mobBadge.className = badge.className;
-            document.getElementById('adminMetricsGrid').style.display = 'grid';
             document.getElementById('tabOverviewBtn').style.display = 'flex';
             document.getElementById('tabNewSheetBtn').style.display = 'flex';
             document.getElementById('tabEquipmentBtn').style.display = hasFullAccess ? 'flex' : 'none';
@@ -903,10 +935,10 @@
         renderDashboard();
     }
 
-    function getCurrentlyDispatchedMap(excludingLogId = null) {
+    function getCurrentlyDispatchedMap() {
         let map = {};
         gearLogs.forEach(log => {
-            if (log.status === 'OUT ON SHOOT' && log.id !== excludingLogId) {
+            if (log.status === 'OUT ON SHOOT') {
                 log.gear.forEach(g => {
                     const nameUpper = g.name.toUpperCase();
                     map[nameUpper] = (map[nameUpper] || 0) + (parseInt(g.qty, 10) || 1);
@@ -929,6 +961,7 @@
 
             return `
                 <tr>
+                    <td style="text-align: center;">${index + 1}</td>
                     <td><span class="barcode-badge">${eq.barcode}</span></td>
                     <td><strong>${eq.name}</strong></td>
                     <td style="text-align: center; color: ${inStock > 0 ? 'var(--success)' : 'var(--danger)'}; font-weight: bold;">${inStock}</td>
@@ -971,6 +1004,23 @@
         document.getElementById('metric-total').innerText = visibleLogs.length;
         document.getElementById('metric-out').innerText = activeOut;
         document.getElementById('metric-returned').innerText = totalReturned;
+    }
+
+    function renderMasterEquipmentTable() {
+        document.getElementById('totalEquipmentCount').innerText = masterEquipment.length;
+        const tbody = document.getElementById('masterEquipmentTableBody');
+        if(!tbody) return;
+        tbody.innerHTML = masterEquipment.map((item, index) => `
+            <tr>
+                <td style="text-align: center;">${index + 1}</td>
+                <td><span class="barcode-badge">${item.barcode}</span></td>
+                <td><strong>${item.name}</strong></td>
+                <td style="text-align: center; font-weight: bold;">${item.stock}</td>
+                <td>
+                    <button class="btn btn-sm btn-secondary" onclick="openBarcodePrintModal('${item.barcode}', '${item.name}')">🖨️ Label</button>
+                </td>
+            </tr>
+        `).join('');
     }
 
     async function promptSaveRecordConfirmation() {
@@ -1041,13 +1091,14 @@
     function updateEntryInterface() {
         const tbody = document.getElementById('equipmentItemsBody');
         const thead = document.getElementById('checklistHeader');
+        if(!tbody || !thead) return;
         thead.innerHTML = `<tr><th style="width:50px;">Select</th><th>Barcode</th><th>Item</th><th style="width:110px;">Qty</th></tr>`;
         const dispatchedMap = getCurrentlyDispatchedMap();
 
         tbody.innerHTML = masterEquipment.map((item, index) => {
             const inStock = Math.max(0, (item.stock || 5) - (dispatchedMap[item.name.toUpperCase()] || 0));
             return `
-                <tr>
+                <tr id="item-row-${index}">
                     <td style="text-align:center;"><input type="checkbox" class="item-select" id="select-check-${index}" onchange="toggleAdminRow(${index})" ${inStock <= 0 ? 'disabled' : ''}></td>
                     <td><span class="barcode-badge">${item.barcode}</span></td>
                     <td><strong>${item.name}</strong></td>
@@ -1058,10 +1109,9 @@
     }
 
     function toggleAdminRow(index) {
-        const row = document.getElementById(`item-row-${index}`);
         const check = document.getElementById(`select-check-${index}`);
         const qty = document.getElementById(`qty-input-${index}`);
-        qty.disabled = !check.checked;
+        if(qty) qty.disabled = !check.checked;
     }
 
     function showAdminPasswordInput() { document.getElementById('adminPassBox').style.display = 'block'; }
@@ -1076,7 +1126,6 @@
     function closeCheckoutScannerModal() { document.getElementById('checkoutScannerModalOverlay').style.display = 'none'; }
     function openDashboardCheckinModal(id) { activeDashboardCheckinLogId = id; document.getElementById('dashboardCheckinModalOverlay').style.display = 'flex'; }
     function closeDashboardCheckinModal() { document.getElementById('dashboardCheckinModalOverlay').style.display = 'none'; }
-    async function checkinSingleLogItem() {}
     async function completeDashboardCheckinProcess() {
         const log = gearLogs.find(l => l.id === activeDashboardCheckinLogId);
         if(!log) return;
@@ -1098,6 +1147,24 @@
         document.getElementById('detailModal').style.display = 'flex';
     }
     function closeDetailModal() { document.getElementById('detailModal').style.display = 'none'; }
+    function openBarcodePrintModal(barcode, name) {
+        document.getElementById('printItemName').innerText = name;
+        JsBarcode("#barcodePrintSvg", barcode, { format: "CODE128", width: 2, height: 55, displayValue: true });
+        document.getElementById('barcodePrintModal').style.display = 'flex';
+    }
+    function closeBarcodePrintModal() { document.getElementById('barcodePrintModal').style.display = 'none'; }
+    function filterAvailability() {
+        const query = document.getElementById('availabilitySearchInput').value.toLowerCase();
+        document.querySelectorAll('#availabilityTableBody tr').forEach(r => {
+            r.style.display = r.innerText.toLowerCase().includes(query) ? '' : 'none';
+        });
+    }
+    function filterLogs() {
+        const query = document.getElementById('searchInput').value.toLowerCase();
+        document.querySelectorAll('#logsTableBody tr').forEach(r => {
+            r.style.display = r.innerText.toLowerCase().includes(query) ? '' : 'none';
+        });
+    }
 </script>
 
 </body>
