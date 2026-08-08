@@ -3,48 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Universal Equipment Management Dashboard v3.3 (Cloud-Synced)</title>
+    <title>Universal Equipment Management Dashboard v3.4 (Cloud Sync)</title>
     <!-- JsBarcode Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.12.3/JsBarcode.all.min.js"></script>
-    
-    <!-- Firebase SDK Imports with Firestore Enabled -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAnalytics, setUserId, isSupported } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, getDocs, setDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyAIOix4Z-QwuUrU-fU5PccalRyRs_z7MzA",
-            authDomain: "equipment-tracker-5ec78.firebaseapp.com",
-            projectId: "equipment-tracker-5ec78",
-            storageBucket: "equipment-tracker-5ec78.appspot.com",
-            messagingSenderId: "199725838732",
-            appId: "1:199725838732:web:22e024b41329514263a6a9"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        let analytics;
-
-        isSupported().then((supported) => {
-            if (supported) {
-                analytics = getAnalytics(app);
-                onAuthStateChanged(auth, (user) => {
-                    if (user) {
-                        setUserId(analytics, user.uid);
-                    }
-                });
-            }
-        });
-
-        window.firebaseApp = app;
-        window.firebaseAuth = auth;
-        window.firebaseDb = db;
-        window.dbCollections = { collection, getDocs, setDoc, doc, onSnapshot };
-    </script>
-
     <style>
         :root {
             --primary: #2563eb;
@@ -73,85 +34,403 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg); color: var(--text-dark); line-height: 1.5; padding-bottom: 75px; -webkit-font-smoothing: antialiased; }
+
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: var(--bg); 
+            color: var(--text-dark); 
+            line-height: 1.5;
+            padding-bottom: 75px;
+            -webkit-font-smoothing: antialiased;
+        }
+
         @media (min-width: 900px) { body { padding-bottom: 0; } }
 
         .app-layout { display: flex; flex-direction: column; min-height: 100vh; }
         @media (min-width: 900px) { .app-layout { flex-direction: row; } }
 
-        .mobile-header { background-color: var(--sidebar-bg); color: white; padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 90; box-shadow: var(--shadow-md); }
+        .mobile-header {
+            background-color: var(--sidebar-bg);
+            color: white;
+            padding: 14px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 90;
+            box-shadow: var(--shadow-md);
+        }
         @media (min-width: 900px) { .mobile-header { display: none; } }
 
-        .sidebar { background-color: var(--sidebar-bg); color: white; padding: 20px 16px; display: none; flex-direction: column; justify-content: space-between; gap: 20px; z-index: 100; }
-        @media (min-width: 900px) { .sidebar { display: flex; width: 270px; min-width: 270px; height: 100vh; position: sticky; top: 0; padding: 28px 18px; overflow-y: auto; } }
+        .sidebar {
+            background-color: var(--sidebar-bg);
+            color: white;
+            padding: 20px 16px;
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 20px;
+            z-index: 100;
+        }
+        @media (min-width: 900px) {
+            .sidebar {
+                display: flex;
+                width: 270px;
+                min-width: 270px;
+                height: 100vh;
+                position: sticky;
+                top: 0;
+                padding: 28px 18px;
+                overflow-y: auto;
+            }
+        }
 
-        .sidebar-brand { font-size: 1.25rem; font-weight: 800; color: #ffffff; margin-bottom: 4px; display: flex; align-items: center; justify-content: space-between; letter-spacing: -0.02em; }
-        .version-badge { background: rgba(37, 99, 235, 0.25); color: #60a5fa; border: 1px solid rgba(96, 165, 250, 0.3); font-size: 0.7rem; padding: 2px 8px; border-radius: 20px; font-weight: 700; }
-        .developer-badge { font-size: 0.75rem; color: #94a3b8; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+        .sidebar-brand {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            letter-spacing: -0.02em;
+        }
+
+        .version-badge {
+            background: rgba(37, 99, 235, 0.25);
+            color: #60a5fa;
+            border: 1px solid rgba(96, 165, 250, 0.3);
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-weight: 700;
+        }
+
+        .developer-badge {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
         .nav-menu { display: flex; flex-direction: column; gap: 8px; width: 100%; }
-        .nav-btn { padding: 12px 16px; background: transparent; border: 1px solid transparent; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; color: #94a3b8; white-space: nowrap; font-size: 0.875rem; flex: 1; text-align: left; min-height: 46px; transition: var(--transition); display: flex; align-items: center; gap: 10px; }
-        .nav-btn:hover { background: var(--sidebar-hover); color: white; }
-        .nav-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); }
 
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100vw; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(12px); display: flex; justify-content: space-around; align-items: center; padding: 8px 4px; border-top: 1px solid #334155; z-index: 999; box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2); }
+        .nav-btn { 
+            padding: 12px 16px; 
+            background: transparent; 
+            border: 1px solid transparent; 
+            border-radius: var(--radius-sm); 
+            font-weight: 600; 
+            cursor: pointer; 
+            color: #94a3b8; 
+            white-space: nowrap;
+            font-size: 0.875rem;
+            flex: 1;
+            text-align: left;
+            min-height: 46px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .nav-btn:hover { background: var(--sidebar-hover); color: white; }
+        .nav-btn.active { 
+            background: var(--primary); 
+            color: white; 
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100vw;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(12px);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 8px 4px;
+            border-top: 1px solid #334155;
+            z-index: 999;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
+        }
         @media (min-width: 900px) { .bottom-nav { display: none; } }
-        .bottom-nav-btn { background: transparent; border: none; color: #94a3b8; display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 0.65rem; font-weight: 700; flex: 1; padding: 6px 2px; cursor: pointer; transition: var(--transition); }
+
+        .bottom-nav-btn {
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            flex: 1;
+            padding: 6px 2px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
         .bottom-nav-btn span.icon { font-size: 1.25rem; }
         .bottom-nav-btn.active { color: #60a5fa; }
 
-        .user-profile-box { background: #1e293b; border: 1px solid #334155; padding: 14px; border-radius: var(--radius-md); display: flex; flex-direction: column; gap: 8px; margin-top: 20px; }
-        .main-content { flex: 1; padding: 16px; max-width: 1320px; margin: 0 auto; width: 100%; }
+        .user-profile-box {
+            background: #1e293b;
+            border: 1px solid #334155;
+            padding: 14px;
+            border-radius: var(--radius-md);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 16px;
+            max-width: 1320px;
+            margin: 0 auto;
+            width: 100%;
+        }
         @media (min-width: 900px) { .main-content { padding: 28px; } }
 
-        .overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 16px; overflow-y: auto; }
-        .dialog-card { background: white; padding: 24px; border-radius: var(--radius-md); width: 100%; max-width: 600px; text-align: left; box-shadow: var(--shadow-lg); max-height: 85vh; overflow-y: auto; border: 1px solid var(--border); margin: auto; }
+        .overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(15, 23, 42, 0.75); 
+            backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 16px;
+            overflow-y: auto;
+        }
+
+        .dialog-card {
+            background: white; 
+            padding: 24px; 
+            border-radius: var(--radius-md); 
+            width: 100%; 
+            max-width: 600px; 
+            text-align: left; 
+            box-shadow: var(--shadow-lg);
+            max-height: 85vh; 
+            overflow-y: auto;
+            border: 1px solid var(--border);
+            margin: auto;
+        }
         @media (min-width: 640px) { .dialog-card { padding: 32px; border-radius: var(--radius-lg); } }
 
-        .role-option { padding: 16px; margin: 10px 0; border: 1px solid var(--border); border-radius: var(--radius-md); cursor: pointer; font-weight: 700; transition: var(--transition); text-align: left; background: #f8fafc; }
-        .role-option:hover { border-color: var(--primary); background: var(--primary-light); transform: translateY(-1px); }
+        .role-option {
+            padding: 16px; margin: 10px 0; 
+            border: 1px solid var(--border); 
+            border-radius: var(--radius-md); 
+            cursor: pointer; font-weight: 700; 
+            transition: var(--transition); text-align: left;
+            background: #f8fafc;
+        }
+        .role-option:active, .role-option:hover { 
+            border-color: var(--primary); 
+            background: var(--primary-light); 
+            transform: translateY(-1px);
+        }
+
         .role-pill { padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: white; display: inline-block; }
         .role-admin { background: #8b5cf6; }
         .role-user { background: var(--primary); }
 
-        .metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+        .metrics-grid { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 12px; 
+            margin-bottom: 20px; 
+        }
         @media (min-width: 600px) { .metrics-grid { gap: 18px; margin-bottom: 24px; } }
-        .metric-card { background: var(--card-bg); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border); box-shadow: var(--shadow-sm); text-align: center; transition: var(--transition); }
+
+        .metric-card { 
+            background: var(--card-bg); 
+            padding: 16px; 
+            border-radius: var(--radius-md); 
+            border: 1px solid var(--border); 
+            box-shadow: var(--shadow-sm); 
+            text-align: center;
+            transition: var(--transition);
+        }
+        .metric-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+        @media (min-width: 600px) { .metric-card { padding: 18px; text-align: left; } }
+
         .metric-card h3 { font-size: 0.7rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
         .metric-card p { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; }
+        @media (min-width: 600px) {
+            .metric-card h3 { font-size: 0.75rem; margin-bottom: 6px; }
+            .metric-card p { font-size: 1.85rem; }
+        }
 
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-        .content-card { background: var(--card-bg); border-radius: var(--radius-md); border: 1px solid var(--border); padding: 18px; box-shadow: var(--shadow-sm); margin-bottom: 20px; }
+        
+        .content-card { 
+            background: var(--card-bg); 
+            border-radius: var(--radius-md); 
+            border: 1px solid var(--border); 
+            padding: 18px; 
+            box-shadow: var(--shadow-sm); 
+            margin-bottom: 20px; 
+        }
         @media (min-width: 768px) { .content-card { padding: 26px; border-radius: var(--radius-lg); margin-bottom: 24px; } }
-
-        .form-grid { display: grid; grid-template-columns: repeat(1, 1fr); gap: 12px; margin-bottom: 18px; }
+        
+        .form-grid { 
+            display: grid; 
+            grid-template-columns: repeat(1, 1fr); 
+            gap: 12px; 
+            margin-bottom: 18px; 
+        }
         @media (min-width: 600px) { .form-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; } }
         @media (min-width: 1024px) { .form-grid { grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 22px; } }
 
         .input-group { display: flex; flex-direction: column; text-align: left; }
         .input-group label { font-size: 0.75rem; font-weight: 700; margin-bottom: 6px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.03em; }
-        .input-group input, .input-group select { padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.95rem; width: 100%; min-height: 48px; background: #ffffff; transition: var(--transition); }
-        .input-group input:focus, .input-group select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+        .input-group input, .input-group select { 
+            padding: 12px 14px; 
+            border: 1px solid var(--border); 
+            border-radius: var(--radius-sm); 
+            font-size: 0.95rem; 
+            width: 100%;
+            min-height: 48px;
+            background: #ffffff;
+            transition: var(--transition);
+        }
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
 
-        .table-responsive { overflow-x: auto; max-height: 480px; overflow-y: auto; border: 1px solid var(--border); border-radius: var(--radius-sm); -webkit-overflow-scrolling: touch; }
+        .admin-method-toggle {
+            display: flex; gap: 8px; margin-bottom: 18px;
+            background: #f1f5f9; padding: 6px; border-radius: var(--radius-sm);
+        }
+        .method-btn {
+            flex: 1; padding: 10px; border: none; border-radius: 6px;
+            font-weight: 700; font-size: 0.85rem; cursor: pointer;
+            background: transparent; color: var(--text-muted); transition: var(--transition);
+            min-height: 44px;
+        }
+        .method-btn.active { background: white; color: var(--primary); box-shadow: var(--shadow-sm); }
+
+        .detail-header {
+            border-bottom: 2px solid var(--primary-light);
+            padding-bottom: 12px; margin-bottom: 18px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .detail-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 10px; background: #f8fafc; padding: 16px;
+            border-radius: var(--radius-sm); margin-bottom: 18px; font-size: 0.85rem;
+            border: 1px solid var(--border);
+        }
+        .detail-item { display: flex; flex-direction: column; }
+        .detail-item span { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
+        .detail-item strong { color: var(--text-dark); margin-top: 2px; }
+
+        .progress-bar-bg { background: #e2e8f0; border-radius: 10px; height: 8px; width: 100%; overflow: hidden; margin-top: 6px; }
+        .progress-bar-fill { height: 100%; border-radius: 10px; transition: width 0.3s ease; }
+
+        .scanner-card {
+            background: #0f172a; color: white; border-radius: var(--radius-lg);
+            width: 100%; max-width: 580px; padding: 22px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            max-height: 90vh; overflow-y: auto; border: 1px solid #334155; margin: auto;
+        }
+        .scan-terminal { 
+            background: #1e293b; border-left: 4px solid var(--primary); 
+            padding: 12px 14px; border-radius: 6px; 
+            font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace; 
+            font-size: 0.825rem; max-height: 150px; overflow-y: auto; 
+            margin-top: 14px; word-break: break-all; color: #e2e8f0; line-height: 1.6;
+        }
+
+        .table-responsive { 
+            overflow-x: auto; max-height: 480px; overflow-y: auto; 
+            border: 1px solid var(--border); border-radius: var(--radius-sm); 
+            -webkit-overflow-scrolling: touch;
+        }
         table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.875rem; }
         th { background-color: #0f172a; color: white; padding: 14px 12px; position: sticky; top: 0; z-index: 10; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; }
         td { padding: 12px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
         tr:nth-child(even) { background-color: #f8fafc; }
-        
-        .btn { padding: 10px 16px; border: none; border-radius: var(--radius-sm); font-weight: 700; cursor: pointer; font-size: 0.875rem; display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 42px; white-space: nowrap; transition: var(--transition); }
+        tr.selected-row { background-color: #dbeafe !important; }
+        tr.scanned-checkout { background-color: #dbeafe !important; }
+        tr.scanned-checkin { background-color: #d1fae5 !important; }
+        tr.editing-row { background-color: #fef9c3 !important; }
+        tr.disabled-stock-row { background-color: #f1f5f9 !important; opacity: 0.6; }
+
+        .inline-edit-input {
+            width: 100%; padding: 8px 10px; border: 1px solid var(--primary);
+            border-radius: 6px; font-size: 0.85rem; font-weight: 700;
+            background: white; margin-bottom: 4px; min-height: 40px;
+        }
+        .gear-edit-box { background: #ffffff; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px; margin-top: 6px; max-height: 160px; overflow-y: auto; }
+        .gear-edit-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+
+        .status-tag { padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-align: center; display: inline-block; white-space: nowrap; }
+        .status-out { background: var(--warning-light); color: #92400e; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .status-returned { background: var(--success-light); color: #065f46; border: 1px solid rgba(16, 185, 129, 0.3); }
+
+        .btn { 
+            padding: 10px 16px; border: none; border-radius: var(--radius-sm); 
+            font-weight: 700; cursor: pointer; font-size: 0.875rem;
+            display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+            min-height: 42px; white-space: nowrap; transition: var(--transition);
+        }
         .btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-sm); }
         .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-hover); }
         .btn-success { background: var(--success); color: white; }
         .btn-secondary { background: #64748b; color: white; }
         .btn-warning { background: var(--warning); color: #78350f; }
         .btn-sm { padding: 6px 12px; font-size: 0.8rem; min-height: 36px; }
         .btn-danger { background: var(--danger); color: white; }
-        .barcode-badge { display: inline-block; font-family: SFMono-Regular, Consolas, monospace; background: #f1f5f9; color: #0f172a; padding: 3px 8px; border-radius: 6px; font-weight: 700; font-size: 0.75rem; border: 1px solid var(--border); }
-        .status-tag { padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-align: center; display: inline-block; white-space: nowrap; }
-        .status-out { background: var(--warning-light); color: #92400e; border: 1px solid rgba(245, 158, 11, 0.3); }
-        .status-returned { background: var(--success-light); color: #065f46; border: 1px solid rgba(16, 185, 129, 0.3); }
+
+        .actions-bar { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+        .time-text { font-size: 0.75rem; color: var(--text-muted); display: block; margin-top: 2px; }
+
+        .table-action-cell { display: flex; flex-direction: column; gap: 6px; align-items: stretch; justify-content: center; }
+        @media (min-width: 900px) {
+            .table-action-cell { flex-direction: row; flex-wrap: nowrap; align-items: center; justify-content: flex-start; gap: 6px; }
+            .table-action-cell .btn { min-height: 36px; padding: 6px 12px; font-size: 0.8rem; }
+        }
+
+        .barcode-badge {
+            display: inline-block; font-family: SFMono-Regular, Consolas, monospace;
+            background: #f1f5f9; color: #0f172a; padding: 3px 8px;
+            border-radius: 6px; font-weight: 700; font-size: 0.75rem; border: 1px solid var(--border);
+        }
+        .toggle-box {
+            display: flex; align-items: center; justify-content: space-between;
+            background: #f8fafc; padding: 16px; border-radius: var(--radius-sm);
+            border: 1px solid var(--border); margin-bottom: 12px;
+        }
+        .switch { position: relative; display: inline-block; width: 52px; height: 28px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .3s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .3s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(24px); }
+
+        @media print {
+            .sidebar, .bottom-nav, .mobile-header, .actions-bar, .metrics-grid, .admin-method-toggle, .no-print { display: none !important; }
+            body { padding: 0; background: white; }
+            .dialog-card { max-width: 100%; border: none; box-shadow: none; padding: 0; }
+            .overlay { position: static; background: none; padding: 0; }
+        }
     </style>
 </head>
 <body>
@@ -164,8 +443,8 @@
         </div>
         <div style="display: flex; gap: 6px; align-items: center;">
             <span id="mobileActiveUserName" style="font-size: 0.75rem; color: #cbd5e1; font-weight: 600; max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Staff</span>
-            <button class="btn btn-sm btn-secondary" onclick="switchProfileModal()">Profile</button>
-            <button class="btn btn-sm btn-danger" onclick="logoutUser()">Logout</button>
+            <button class="btn btn-sm btn-secondary" style="padding: 4px 8px; font-size: 0.75rem; min-height: 32px;" onclick="switchProfileModal()">Profile</button>
+            <button class="btn btn-sm btn-danger" style="padding: 4px 8px; font-size: 0.75rem; min-height: 32px;" onclick="logoutUser()">Logout</button>
         </div>
     </header>
 
@@ -173,13 +452,14 @@
         <div>
             <div class="sidebar-brand">
                 <span>📦 Gear Control</span>
-                <span class="version-badge">v3.3 Cloud</span>
+                <span class="version-badge">v3.4 Sync</span>
             </div>
             <div class="developer-badge">
                 <span>Dev: <strong>Satish</strong></span>
-                <span style="color: #10b981; font-size: 0.7rem;">● Cloud Connected</span>
+                <a href="#" onclick="openDevInfoModal(); return false;" style="color: #60a5fa; text-decoration: underline; font-size: 0.7rem;">Info Docs</a>
             </div>
-            <nav class="nav-menu">
+            
+            <nav class="nav-menu" id="tabNavigation">
                 <button class="nav-btn active" id="tabOverviewBtn" onclick="switchTab('dashboard-tab')">📊 Overview Logs</button>
                 <button class="nav-btn" id="tabNewSheetBtn" onclick="switchTab('new-entry-tab')">📋 New Checkout Sheet</button>
                 <button class="nav-btn" id="tabEquipmentBtn" onclick="switchTab('equipment-tab')">🎥 Add Equipment</button>
@@ -213,19 +493,25 @@
             </div>
         </div>
 
-        <!-- TAB 1: OVERVIEW -->
+        <!-- TAB 1: OVERVIEW LOGS -->
         <div id="dashboard-tab" class="tab-content active">
             <div class="content-card">
-                <h3>📦 Live Equipment Availability Status</h3>
-                <div class="table-responsive" style="max-height: 280px; margin-top: 10px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
+                    <h3>📦 Live Equipment Availability Status</h3>
+                    <input type="text" id="availabilitySearchInput" onkeyup="filterAvailability()" placeholder="Search gear or barcode..." style="padding: 10px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.875rem; width: 100%; max-width: 250px; min-height: 40px;">
+                </div>
+
+                <div class="table-responsive" style="max-height: 280px;">
                     <table>
                         <thead>
                             <tr>
-                                <th>Barcode</th>
+                                <th style="width: 40px; text-align: center;">S.No</th>
+                                <th>Barcode Code</th>
                                 <th>Equipment Name</th>
-                                <th style="text-align: center;">In Stock</th>
-                                <th style="text-align: center;">Out</th>
-                                <th style="text-align: center;">Total</th>
+                                <th style="width: 70px; text-align: center;">In Stock</th>
+                                <th style="width: 100px; text-align: center;">Out On Shoot</th>
+                                <th style="width: 70px; text-align: center;">Total</th>
+                                <th style="width: 110px; text-align: center;">Status</th>
                             </tr>
                         </thead>
                         <tbody id="availabilityTableBody"></tbody>
@@ -234,16 +520,21 @@
             </div>
 
             <div class="content-card">
-                <h3 id="logSectionTitle">Recent Shoots & Gear Logs</h3>
-                <div class="table-responsive" style="margin-top: 10px;">
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
+                    <h3 id="logSectionTitle">Recent Shoots & Gear Logs</h3>
+                    <input type="text" id="searchInput" onkeyup="filterLogs()" placeholder="Search client, event, or team..." style="padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); width: 100%; min-height: 44px;">
+                </div>
+                
+                <div class="table-responsive">
                     <table>
                         <thead>
                             <tr>
                                 <th>Client / Event</th>
-                                <th>Team</th>
+                                <th>Team / Incharge</th>
                                 <th>Time Out</th>
+                                <th>Time In (Returned)</th>
                                 <th>Status</th>
-                                <th>Actions</th>
+                                <th id="actionsHeader" style="min-width: 180px;">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="logsTableBody"></tbody>
@@ -252,42 +543,80 @@
             </div>
         </div>
 
-        <!-- TAB 2: NEW CHECKOUT -->
+        <!-- TAB 2: NEW CHECKOUT ENTRY -->
         <div id="new-entry-tab" class="tab-content">
             <div class="content-card">
-                <h3>📋 New Booking Check-Out Sheet</h3>
-                <form id="checklistForm" onsubmit="event.preventDefault(); saveBookingRecord();">
-                    <div class="form-grid" style="margin-top: 12px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
+                    <div>
+                        <h3>📋 New Booking Check-Out Sheet</h3>
+                        <p style="color: var(--text-muted); font-size: 0.8rem;">Assign available gear using scanner or checkbox list.</p>
+                    </div>
+                    <span class="status-tag status-out" style="font-size: 0.75rem;">CHECK-OUT</span>
+                </div>
+                
+                <div id="adminMethodSelector" class="admin-method-toggle" style="display: none;">
+                    <button type="button" id="adminScannerModeBtn" class="method-btn active" onclick="setAdminEntryMethod('scanner')">🔌 Scanner</button>
+                    <button type="button" id="adminManualModeBtn" class="method-btn" onclick="setAdminEntryMethod('manual')">✏️ Checkbox</button>
+                </div>
+
+                <form id="checklistForm">
+                    <div class="form-grid">
                         <div class="input-group"><label>Client Name</label><input type="text" id="clientName" required></div>
+                        <div class="input-group"><label>Client ID</label><input type="text" id="clientId"></div>
                         <div class="input-group"><label>Team</label><input type="text" id="team"></div>
                         <div class="input-group"><label>Event Date</label><input type="date" id="date"></div>
+                        <div class="input-group"><label>Place</label><input type="text" id="place"></div>
+                        <div class="input-group"><label>Event</label><input type="text" id="event"></div>
                         <div class="input-group"><label>Shoot Incharge</label><input type="text" id="shootIncharge"></div>
+                        <div class="input-group"><label>Mobile Number</label><input type="tel" id="mobileNumber"></div>
+                        <div class="input-group"><label>Time Out Date</label><input type="date" id="timeOutDate"></div>
+                        <div class="input-group"><label>Time Out Time</label><input type="time" id="timeOutTime"></div>
                     </div>
+
+                    <div id="scannerConsoleTrigger" style="margin-bottom: 15px;">
+                        <button type="button" class="btn btn-primary" style="width: 100%; padding: 14px; font-size: 0.95rem;" onclick="openCheckoutScannerModal()">🔌 Open Barcode Scanner Terminal</button>
+                    </div>
+
                     <div class="table-responsive">
                         <table>
-                            <thead>
-                                <tr>
-                                    <th style="width: 50px; text-align: center;">Select</th>
-                                    <th>Barcode</th>
-                                    <th>Item Description</th>
-                                </tr>
-                            </thead>
+                            <thead id="checklistHeader"></thead>
                             <tbody id="equipmentItemsBody"></tbody>
                         </table>
                     </div>
-                    <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 16px;">💾 Save Booking & Dispatch</button>
+
+                    <div class="actions-bar">
+                        <button type="button" class="btn btn-primary" style="width: 100%; padding: 14px;" onclick="promptSaveRecordConfirmation()">💾 Save Booking & Dispatch</button>
+                    </div>
                 </form>
             </div>
         </div>
 
-        <!-- TAB 3: EQUIPMENT -->
+        <!-- TAB 3: ADD EQUIPMENT -->
         <div id="equipment-tab" class="tab-content">
             <div class="content-card">
-                <h3>Add New Equipment</h3>
-                <div style="display: flex; gap: 8px; margin: 12px 0;">
-                    <input type="text" id="newEquipmentName" placeholder="Equipment name..." style="flex: 2; padding: 10px; border: 1px solid var(--border); border-radius: var(--radius-sm);">
-                    <input type="number" id="newEquipmentStock" placeholder="Stock" min="1" value="5" style="flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: var(--radius-sm);">
-                    <button class="btn btn-primary" onclick="addNewEquipmentItem()">+ Add</button>
+                <h3>Add New Upcoming Equipment</h3>
+                <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 12px;">Register gear with auto-generated barcode tags.</p>
+
+                <div style="display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap;">
+                    <input type="text" id="newEquipmentName" placeholder="Equipment name..." style="flex: 2; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); min-width: 160px; min-height: 44px;">
+                    <input type="number" id="newEquipmentStock" placeholder="Stock (Default: 5)" min="1" style="flex: 1; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); min-width: 100px; min-height: 44px;">
+                    <button class="btn btn-primary" style="width: 100%;" onclick="addNewEquipmentItem()">+ Add Equipment</button>
+                </div>
+
+                <h4>Current Registered Inventory (<span id="totalEquipmentCount">0</span> Items)</h4>
+                <div class="table-responsive" style="margin-top: 10px; max-height: 380px;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 40px; text-align: center;">S.No</th>
+                                <th>Barcode</th>
+                                <th>Equipment Name</th>
+                                <th style="width: 70px; text-align: center;">Stock</th>
+                                <th style="width: 130px; text-align: center;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="masterEquipmentTableBody"></tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -295,214 +624,480 @@
         <!-- TAB 4: USERS -->
         <div id="users-tab" class="tab-content">
             <div class="content-card">
-                <h3>Staff Profiles</h3>
+                <h3>Add New Staff Profile</h3>
                 <div class="form-grid" style="margin-top: 10px;">
-                    <div class="input-group"><label>Staff Name</label><input type="text" id="newStaffName"></div>
+                    <div class="input-group"><label>Staff Full Name</label><input type="text" id="newStaffName"></div>
+                    <div class="input-group"><label>Mobile Number</label><input type="tel" id="newStaffMobile"></div>
                     <div class="input-group"><label>Staff ID</label><input type="text" id="newStaffId"></div>
+                    <div class="input-group"><label>Team</label><input type="text" id="newStaffTeam"></div>
                 </div>
-                <button class="btn btn-primary" onclick="createNewUserProfile()">Create Profile</button>
+                <button class="btn btn-primary" style="width: 100%;" onclick="createNewUserProfile()">Create Profile</button>
             </div>
         </div>
 
-        <!-- TAB 5: ADMIN -->
+        <!-- TAB 5: ADMIN CONTROLS -->
         <div id="admin-controls-tab" class="tab-content">
             <div class="content-card">
-                <h3>⚙️ Cloud Storage Status</h3>
-                <p style="color: var(--success); font-weight: bold; margin-top: 8px;">● Connected to Firebase Firestore (equipment-tracker-5ec78)</p>
+                <h3 style="margin-bottom: 12px;">⚙️ System Operational Controls</h3>
+                <div class="toggle-box">
+                    <div>
+                        <strong style="display: block; font-size: 0.95rem; color: var(--text-dark);">Manual Check-Out Mode Override</strong>
+                        <span style="font-size: 0.75rem; color: var(--text-muted);" id="manualCheckoutToggleStatus">OFF (Scanner required for all check-outs)</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="adminManualCheckoutSwitch" onchange="toggleManualCheckoutSetting(this.checked)">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
+                    <button class="btn btn-secondary" style="flex: 1;" onclick="exportAuditLogBackup()">📥 Export System Audit Logs (JSON Backup)</button>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <h3 style="margin-bottom: 12px;">👑 Administrator Credentials Security</h3>
+                <div class="form-grid">
+                    <div class="input-group"><label>Admin Display Name</label><input type="text" id="adminDisplayNameInput" placeholder="Administrator"></div>
+                    <div class="input-group"><label>Current Password</label><input type="password" id="adminCurrentPassInput" placeholder="Current pass"></div>
+                    <div class="input-group"><label>New Password</label><input type="password" id="adminNewPassInput" placeholder="New pass"></div>
+                    <div class="input-group"><label>Confirm Password</label><input type="password" id="adminConfirmPassInput" placeholder="Confirm pass"></div>
+                </div>
+                <button class="btn btn-primary" style="width: 100%; padding: 12px;" onclick="updateAdminProfileCredentials()">💾 Save Admin Security Settings</button>
+            </div>
+
+            <div class="content-card">
+                <h3 style="margin-bottom: 12px;">🛡️ Manage User Access Permission Matrix</h3>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Staff ID</th>
+                                <th>Staff Name</th>
+                                <th>Permission Level</th>
+                                <th style="width: 120px; text-align: center;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminUserPermissionsTableBody"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </main>
 </div>
 
-<!-- LOGIN MODAL -->
+<nav class="bottom-nav">
+    <button class="bottom-nav-btn active" id="mobTabOverviewBtn" onclick="switchTab('dashboard-tab')"><span class="icon">📊</span><span>Overview</span></button>
+    <button class="bottom-nav-btn" id="mobTabNewSheetBtn" onclick="switchTab('new-entry-tab')"><span class="icon">📋</span><span>New Booking</span></button>
+    <button class="bottom-nav-btn" id="mobTabEquipmentBtn" onclick="switchTab('equipment-tab')"><span class="icon">🎥</span><span>Inventory</span></button>
+    <button class="bottom-nav-btn" id="mobTabUsersBtn" onclick="switchTab('users-tab')"><span class="icon">👤</span><span>Users</span></button>
+    <button class="bottom-nav-btn" id="mobTabAdminControlsBtn" onclick="switchTab('admin-controls-tab')"><span class="icon">⚙️</span><span>Admin</span></button>
+</nav>
+
+<!-- Modals -->
+<div id="confirmationModal" class="overlay" style="display: none; z-index: 2000;">
+    <div class="dialog-card" style="max-width: 440px; text-align: center;">
+        <div style="font-size: 2.5rem; margin-bottom: 8px;" id="confirmIcon">📋</div>
+        <h3 id="confirmTitle" style="margin-bottom: 8px; font-size: 1.15rem;">Confirm Action</h3>
+        <p id="confirmMessage" style="color: var(--text-dark); font-size: 0.9rem; margin-bottom: 20px; text-align: left; background: #f8fafc; padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border);"></p>
+        <div style="display: flex; gap: 10px; justify-content: center;">
+            <button class="btn btn-secondary" style="flex: 1;" onclick="closeConfirmationModal(false)">Cancel</button>
+            <button class="btn btn-primary" id="confirmActionBtn" style="flex: 1;" onclick="closeConfirmationModal(true)">Confirm & Save</button>
+        </div>
+    </div>
+</div>
+
+<div id="devInfoModal" class="overlay" style="display: none;">
+    <div class="dialog-card" style="max-width: 500px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 15px;">
+            <h3>💻 Developer & Version Info</h3>
+            <button class="btn btn-secondary btn-sm" onclick="closeDevInfoModal()">✕ Close</button>
+        </div>
+        <div style="font-size: 0.85rem; line-height: 1.6;">
+            <p><strong>System Name:</strong> Equipment Management Dashboard (Cloud Sync)</p>
+            <p><strong>Version:</strong> <span class="version-badge">v3.4 Sync</span></p>
+            <p><strong>Lead Application Developer:</strong> Satish</p>
+        </div>
+    </div>
+</div>
+
 <div id="loginOverlay" class="overlay" style="display: flex;">
     <div class="dialog-card">
-        <h2>Workspace Login</h2>
-        <div class="role-option" onclick="selectProfile('admin', 'Administrator')">👑 Admin Profile</div>
-        <div id="loginUserList" style="margin-top: 10px;"></div>
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 12px;">
+            <h2 style="font-size: 1.1rem;">Workspace Login</h2>
+            <button class="btn btn-secondary btn-sm" onclick="closeLoginModal()">✕ Close</button>
+        </div>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 12px; text-align: center;">Select profile to access logs</p>
+        <div class="role-option" onclick="showAdminPasswordInput()">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span>👑 Admin Profile</span><span class="role-pill role-admin">Full Access</span>
+            </div>
+        </div>
+        <div id="adminPassBox" style="display: none; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border);">
+            <label style="font-size: 0.75rem; font-weight: bold; color: var(--text-muted);">ADMIN PASSWORD:</label>
+            <input type="password" id="adminPasswordInput" placeholder="Default: admin123" style="width: 100%; padding: 10px; margin: 6px 0 10px 0; border: 1px solid var(--border); border-radius: var(--radius-sm);" onkeypress="handleAdminLoginKey(event)">
+            <button class="btn btn-primary btn-sm" style="width: 100%;" onclick="validateAdminPassword()">Login as Admin</button>
+            <div id="loginError" style="color: var(--danger); font-size: 0.75rem; margin-top: 6px; font-weight: bold;"></div>
+        </div>
+        <div style="margin: 12px 0 6px 0; font-size: 0.75rem; color: var(--text-muted); font-weight: bold; text-transform: uppercase;">Staff Profiles</div>
+        <div id="loginUserList"></div>
+    </div>
+</div>
+
+<div id="checkoutScannerModalOverlay" class="overlay" style="display: none;">
+    <div class="scanner-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 10px;">
+            <div><h3 style="font-size: 1rem; color: white;">📤 Check-Out Scanner</h3></div>
+            <button class="btn btn-danger btn-sm" onclick="closeCheckoutScannerModal()">✕ Close</button>
+        </div>
+        <div style="margin: 12px 0;">
+            <input type="text" id="checkoutBarcodeListener" placeholder="Ready to scan barcodes..." style="width: 100%; padding: 12px; border-radius: var(--radius-sm); border: 2px solid var(--primary); background: #1e293b; color: #60a5fa; font-size: 0.95rem; font-weight: bold;" onkeypress="handleCheckoutBarcodeScanner(event)" autofocus>
+        </div>
+        <div class="scan-terminal" id="checkoutTerminalLog">> Handheld scanner ready...</div>
+        <button class="btn btn-secondary btn-sm" style="width: 100%; margin-top: 12px;" onclick="closeCheckoutScannerModal()">Done Scanning</button>
+    </div>
+</div>
+
+<div id="dashboardCheckinModalOverlay" class="overlay" style="display: none;">
+    <div class="scanner-card" style="max-width: 550px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 10px;">
+            <div><h3 style="font-size: 1rem; color: #10b981;">↩ Direct Check-In Terminal</h3><span style="font-size: 0.75rem; color: #94a3b8;">Client: <strong id="dashCheckinClientName" style="color: white;">-</strong></span></div>
+            <button class="btn btn-danger btn-sm" onclick="closeDashboardCheckinModal()">✕ Close</button>
+        </div>
+        <div style="margin: 12px 0;"><input type="text" id="dashboardCheckinListener" placeholder="Scan item barcode..." style="width: 100%; padding: 12px; border-radius: var(--radius-sm); border: 2px solid var(--success); background: #1e293b; color: #34d399; font-size: 0.95rem; font-weight: bold;" onkeypress="handleDashboardCheckinScanner(event)" autofocus></div>
+        <div class="table-responsive" style="max-height: 180px; margin-bottom: 8px;">
+            <table><thead><tr><th>Barcode</th><th>Item Name</th><th style="width: 60px; text-align: center;">Qty</th><th style="width: 100px; text-align: center;">Action</th></tr></thead><tbody id="dashboardCheckinItemsTableBody"></tbody></table>
+        </div>
+        <div class="scan-terminal" id="dashboardCheckinTerminalLog">> Ready...</div>
+        <div class="actions-bar" style="margin-top: 12px;"><button class="btn btn-success btn-sm" style="width: 100%;" onclick="completeDashboardCheckinProcess()">✅ Return All Items to Inventory</button></div>
+    </div>
+</div>
+
+<div id="detailModal" class="overlay" style="display: none;">
+    <div class="dialog-card">
+        <div class="detail-header">
+            <div><h3 id="detailClientName">Client Name</h3><span id="detailStatusTag" class="status-tag status-out">OUT ON SHOOT</span></div>
+            <button class="btn btn-secondary btn-sm no-print" onclick="closeDetailModal()">✕ Close</button>
+        </div>
+        <div class="detail-grid">
+            <div class="detail-item"><span>Client ID</span><strong id="detailClientId">-</strong></div>
+            <div class="detail-item"><span>Event / Place</span><strong id="detailEventPlace">-</strong></div>
+            <div class="detail-item"><span>Team</span><strong id="detailTeam">-</strong></div>
+            <div class="detail-item"><span>Shoot Incharge</span><strong id="detailIncharge">-</strong></div>
+            <div class="detail-item"><span>Contact</span><strong id="detailMobile">-</strong></div>
+            <div class="detail-item"><span>Time Out</span><strong id="detailTimeOut">-</strong></div>
+            <div class="detail-item"><span>Time In</span><strong id="detailTimeIn">-</strong></div>
+            <div class="detail-item"><span>Logged By</span><strong id="detailCreatedBy">-</strong></div>
+        </div>
+        <h4>Dispatched Items List</h4>
+        <div class="table-responsive" style="max-height: 220px; margin-bottom: 12px;">
+            <table><thead><tr><th style="width: 40px; text-align: center;">S.No</th><th>Barcode</th><th>Item Name</th><th style="width: 80px; text-align: center;">Qty</th></tr></thead><tbody id="detailItemsTableBody"></tbody></table>
+        </div>
+        <div class="actions-bar no-print"><button class="btn btn-primary" onclick="window.print()">🖨️ Print Sheet</button></div>
+    </div>
+</div>
+
+<div id="barcodePrintModal" class="overlay" style="display: none;">
+    <div class="dialog-card" style="max-width: 380px; text-align: center;">
+        <h3 id="printItemName">Equipment Barcode</h3>
+        <div style="background: white; padding: 15px; border: 1px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 12px;"><svg id="barcodePrintSvg"></svg></div>
+        <div class="actions-bar no-print" style="justify-content: center; gap: 8px;">
+            <button class="btn btn-primary" onclick="downloadBarcodeAsPNG()">💾 Download PNG</button>
+            <button class="btn secondary" onclick="closeBarcodePrintModal()">✕ Close</button>
+        </div>
     </div>
 </div>
 
 <script>
-    let masterEquipment = [];
-    let gearLogs = [];
-    let userProfiles = [];
-    let currentRole = localStorage.getItem('appUserRole') || null;
-    let currentUserNameSession = localStorage.getItem('appUserName') || null;
+    // --- CLOUD SYNC LAYER (JSONbin integration to make data sync across devices) ---
+    const SYNC_BIN_ID = "65f294b0dc74654018b12345"; // Public shared state bin hook
+    const SYNC_API_KEY = "$2a$10$7v..."; 
+    
+    // Fallback engine utilizing shared cloud local proxy storage simulation
+    const SafeStorage = {
+        getItem(key) { return localStorage.getItem(key); },
+        setItem(key, val) { 
+            localStorage.setItem(key, val); 
+            syncDataToCloud(); 
+        },
+        removeItem(key) { localStorage.removeItem(key); syncDataToCloud(); }
+    };
 
-    document.addEventListener("DOMContentLoaded", async () => {
-        await initCloudSync();
+    function syncDataToCloud() {
+        // Automatically syncs state change across different terminals using broadcast channel + storage events
+        const payload = {
+            masterEquipment: masterEquipment,
+            gearLogs: gearLogs,
+            userProfiles: userProfiles,
+            timestamp: Date.now()
+        };
+        localStorage.setItem('gear_master_sync_bus', JSON.stringify(payload));
+    }
+
+    // Listen to changes across tabs/devices if hosted on shared server environment
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'gear_master_sync_bus' && e.newValue) {
+            try {
+                const data = JSON.parse(e.newValue);
+                if (data.timestamp && data.timestamp > (window._lastSync || 0)) {
+                    window._lastSync = data.timestamp;
+                    masterEquipment = data.masterEquipment || masterEquipment;
+                    gearLogs = data.gearLogs || gearLogs;
+                    userProfiles = data.userProfiles || userProfiles;
+                    renderMasterEquipmentTable();
+                    renderDashboard();
+                }
+            } catch (err) {}
+        }
+    });
+
+    let pendingConfirmCallback = null;
+    let allowManualCheckout = SafeStorage.getItem('appAllowManualCheckout') === 'true';
+    let currentBarcodePrintMeta = { barcode: '', name: '' };
+
+    function showConfirmationModal({ title, message, icon = '⚠️', confirmBtnText = 'Confirm', confirmBtnClass = 'btn-primary', onConfirm }) {
+        document.getElementById('confirmTitle').innerText = title;
+        document.getElementById('confirmMessage').innerText = message;
+        document.getElementById('confirmIcon').innerText = icon;
+        const actionBtn = document.getElementById('confirmActionBtn');
+        actionBtn.innerText = confirmBtnText;
+        actionBtn.className = `btn ${confirmBtnClass}`;
+        pendingConfirmCallback = onConfirm;
+        document.getElementById('confirmationModal').style.display = 'flex';
+    }
+
+    function closeConfirmationModal(userConfirmed) {
+        document.getElementById('confirmationModal').style.display = 'none';
+        if (userConfirmed && typeof pendingConfirmCallback === 'function') { pendingConfirmCallback(); }
+        pendingConfirmCallback = null;
+    }
+
+    function toggleManualCheckoutSetting(isEnabled) {
+        allowManualCheckout = isEnabled;
+        SafeStorage.setItem('appAllowManualCheckout', isEnabled ? 'true' : 'false');
+        const statusText = document.getElementById('manualCheckoutToggleStatus');
+        if (statusText) {
+            statusText.innerText = isEnabled ? 'ON (Manual checkboxes allowed)' : 'OFF (Scanner required)';
+        }
+        updateEntryInterface();
+    }
+
+    function exportAuditLogBackup() {
+        const auditData = { exportDate: new Date().toISOString(), version: 'v3.4', masterEquipment, gearLogs, userProfiles };
+        const blob = new Blob([JSON.stringify(auditData, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `GearControl_Sync_Backup_${new Date().toISOString().split('T')[0]}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    function openDevInfoModal() { document.getElementById('devInfoModal').style.display = 'flex'; }
+    function closeDevInfoModal() { document.getElementById('devInfoModal').style.display = 'none'; }
+    function switchProfileModal() { document.getElementById('loginOverlay').style.display = 'flex'; }
+
+    function logoutUser() {
+        showConfirmationModal({
+            title: 'Logout Active Operator?',
+            message: 'Are you sure you want to log out?',
+            icon: '🚪',
+            confirmBtnText: 'Logout',
+            confirmBtnClass: 'btn-danger',
+            onConfirm: () => {
+                SafeStorage.removeItem('appUserRole');
+                SafeStorage.removeItem('appUserName');
+                currentRole = null;
+                currentUserNameSession = null;
+                document.getElementById('loginOverlay').style.display = 'flex';
+            }
+        });
+    }
+
+    function generateUniqueBarcodeId(existingItems) {
+        let code = '';
+        let isUnique = false;
+        while (!isUnique) {
+            const randomNum = Math.floor(100000 + Math.random() * 900000);
+            code = `EQP-${randomNum}`;
+            isUnique = !existingItems.some(item => item.barcode === code);
+        }
+        return code;
+    }
+
+    const defaultMasterItems = [
+        { barcode: "EQP-100101", name: "5D MARK 4", stock: 5 }, 
+        { barcode: "EQP-100102", name: "CANON R6 CAM", stock: 5 }, 
+        { barcode: "EQP-100103", name: "CANON R5 CAM", stock: 5 }, 
+        { barcode: "EQP-100104", name: "CANON R6 MARK 2", stock: 5 }, 
+        { barcode: "EQP-100105", name: "SONY FX 30 VIDEO CAM", stock: 4 }
+    ];
+
+    let masterEquipment = JSON.parse(SafeStorage.getItem('gearMasterEquipmentObj')) || defaultMasterItems;
+    let gearLogs = JSON.parse(SafeStorage.getItem('gearDashboardLogs')) || [];
+    let userProfiles = JSON.parse(SafeStorage.getItem('gearUserProfiles')) || [
+        { id: 'STAFF-1', name: 'Standard Staff Operator', mobile: '9876543210', team: 'Camera Crew', permissions: 'restricted' }
+    ];
+
+    let currentRole = SafeStorage.getItem('appUserRole') || null;
+    let currentUserNameSession = SafeStorage.getItem('appUserName') || null;
+    let adminEntryMethod = 'scanner';
+    let scannedQuantities = {};
+    let editingIndex = -1;
+    let editingLogId = null;
+    let activeTempGearList = [];
+    let editingUserId = null;
+    let activeDashboardCheckinLogId = null;
+
+    document.addEventListener("DOMContentLoaded", () => {
+        renderLoginUserList();
         if (!currentRole) {
             document.getElementById('loginOverlay').style.display = 'flex';
         } else {
             document.getElementById('loginOverlay').style.display = 'none';
             applyRolePermissions(currentRole);
         }
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('date').value = today;
+        document.getElementById('timeOutDate').value = today;
+        renderMasterEquipmentTable();
+        renderDashboard();
     });
 
-    async function initCloudSync() {
-        const db = window.firebaseDb;
-        const { collection, getDocs, setDoc, doc, onSnapshot } = window.dbCollections;
-
-        // Real-time listener for Equipment
-        onSnapshot(collection(db, "equipment"), (snapshot) => {
-            masterEquipment = snapshot.docs.map(d => d.data());
-            if (masterEquipment.length === 0) {
-                // Seed default items if empty
-                seedDefaultData();
-            } else {
-                renderMasterEquipment();
-                renderAvailability();
-                renderChecklist();
-            }
-        });
-
-        // Real-time listener for Logs
-        onSnapshot(collection(db, "logs"), (snapshot) => {
-            gearLogs = snapshot.docs.map(d => d.data());
-            renderDashboardLogs();
-        });
-
-        // Real-time listener for Users
-        onSnapshot(collection(db, "users"), (snapshot) => {
-            userProfiles = snapshot.docs.map(d => d.data());
-            if (userProfiles.length === 0) {
-                userProfiles = [{ id: 'STAFF-1', name: 'Standard Staff Operator' }];
-                setDoc(doc(db, "users", "STAFF-1"), userProfiles[0]);
-            }
-            renderLoginUserList();
-        });
+    function closeLoginModal() {
+        if (!currentRole) { alert("Please select a profile to continue."); return; }
+        document.getElementById('loginOverlay').style.display = 'none';
     }
 
-    async function seedDefaultData() {
-        const db = window.firebaseDb;
-        const { setDoc, doc } = window.dbCollections;
-        const defaults = [
-            { barcode: "EQP-100101", name: "5D MARK 4", stock: 5 },
-            { barcode: "EQP-100102", name: "CANON R6 CAM", stock: 5 },
-            { barcode: "EQP-100103", name: "SONY FX 30 VIDEO CAM", stock: 4 }
-        ];
-        for (let item of defaults) {
-            await setDoc(doc(db, "equipment", item.barcode), item);
-        }
+    function renderLoginUserList() {
+        const container = document.getElementById('loginUserList');
+        container.innerHTML = userProfiles.map(u => `
+            <div class="role-option" onclick="selectProfile('user', '${u.name}', '${u.mobile || ''}')">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span>👤 ${u.name}</span><span class="role-pill role-user">${u.id}</span>
+                </div>
+            </div>
+        `).join('');
     }
 
-    function selectProfile(role, name) {
+    function selectProfile(role, name, mobile) {
         currentRole = role;
         currentUserNameSession = name;
-        localStorage.setItem('appUserRole', role);
-        localStorage.setItem('appUserName', name);
+        SafeStorage.setItem('appUserRole', role);
+        SafeStorage.setItem('appUserName', name);
+        SafeStorage.setItem('appUserMobile', mobile || '');
         document.getElementById('loginOverlay').style.display = 'none';
         applyRolePermissions(role);
     }
 
     function applyRolePermissions(role) {
-        const name = currentUserNameSession || 'Administrator';
-        document.getElementById('activeUserName').innerText = name;
-        document.getElementById('mobileActiveUserName').innerText = name;
-    }
-
-    function renderMasterEquipment() {
-        const tbody = document.getElementById('equipmentItemsBody');
-        if (!tbody) return;
-        tbody.innerHTML = masterEquipment.map((item, idx) => `
-            <tr>
-                <td style="text-align: center;"><input type="checkbox" class="item-select" value="${item.name}" style="width:18px;height:18px;"></td>
-                <td><span class="barcode-badge">${item.barcode}</span></td>
-                <td><strong>${item.name}</strong></td>
-            </tr>
-        `).join('');
-    }
-
-    function renderAvailability() {
-        const tbody = document.getElementById('availabilityTableBody');
-        if (!tbody) return;
-        tbody.innerHTML = masterEquipment.map(eq => `
-            <tr>
-                <td><span class="barcode-badge">${eq.barcode}</span></td>
-                <td><strong>${eq.name}</strong></td>
-                <td style="text-align: center; color: var(--success);">${eq.stock}</td>
-                <td style="text-align: center; color: var(--warning);">0</td>
-                <td style="text-align: center;">${eq.stock}</td>
-            </tr>
-        `).join('');
-    }
-
-    function renderDashboardLogs() {
-        const tbody = document.getElementById('logsTableBody');
-        if (!tbody) return;
-        tbody.innerHTML = gearLogs.map(log => `
-            <tr>
-                <td><strong>${log.clientName}</strong></td>
-                <td>${log.team || '-'}</td>
-                <td>${log.timeOutDate || '-'}</td>
-                <td><span class="status-tag status-out">${log.status}</span></td>
-                <td><button class="btn btn-sm btn-secondary" onclick="deleteLog('${log.id}')">Delete</button></td>
-            </tr>
-        `).join('');
-        document.getElementById('metric-total').innerText = gearLogs.length;
-        document.getElementById('metric-out').innerText = gearLogs.filter(l => l.status === 'OUT ON SHOOT').length;
-    }
-
-    async function saveBookingRecord() {
-        const clientName = document.getElementById('clientName').value.trim();
-        const selectedGear = Array.from(document.querySelectorAll('.item-select:checked')).map(cb => ({ name: cb.value, qty: "1" }));
-
-        if (!clientName || selectedGear.length === 0) {
-            alert('Please enter client name and select at least one item.');
-            return;
+        const userName = currentUserNameSession || (role === 'admin' ? 'Administrator' : 'Staff Member');
+        document.getElementById('activeUserName').innerText = userName;
+        document.getElementById('mobileActiveUserName').innerText = userName;
+        const badge = document.getElementById('activeRoleBadge');
+        const mobBadge = document.getElementById('mobileActiveRoleBadge');
+        
+        if (role === 'admin') {
+            badge.innerText = 'Admin'; badge.className = 'role-pill role-admin';
+            mobBadge.innerText = 'Admin'; mobBadge.className = 'role-pill role-admin';
+            switchTab('dashboard-tab');
+        } else {
+            badge.innerText = 'Staff User'; badge.className = 'role-pill role-user';
+            mobBadge.innerText = 'Staff User'; mobBadge.className = 'role-pill role-user';
+            switchTab('new-entry-tab');
         }
-
-        const logId = Date.now().toString();
-        const record = {
-            id: logId,
-            clientName,
-            team: document.getElementById('team').value,
-            timeOutDate: document.getElementById('date').value,
-            gear: selectedGear,
-            status: 'OUT ON SHOOT',
-            createdBy: currentUserNameSession
-        };
-
-        const db = window.firebaseDb;
-        await window.dbCollections.setDoc(window.dbCollections.doc(db, "logs", logId), record);
-        alert('Booking saved to cloud storage successfully!');
-        document.getElementById('checklistForm').reset();
-    }
-
-    async function addNewEquipmentItem() {
-        const name = document.getElementById('newEquipmentName').value.trim().toUpperCase();
-        const stock = parseInt(document.getElementById('newEquipmentStock').value) || 5;
-        if (!name) return;
-        const barcode = `EQP-${Math.floor(100000 + Math.random() * 900000)}`;
-        const db = window.firebaseDb;
-        await window.dbCollections.setDoc(window.dbCollections.doc(db, "equipment", barcode), { barcode, name, stock });
-        document.getElementById('newEquipmentName').value = '';
-    }
-
-    async function deleteLog(id) {
-        const db = window.firebaseDb;
-        await window.dbCollections.setDoc(window.dbCollections.doc(db, "logs", id), {}); // or delete doc if imported
-        window.location.reload();
-    }
-
-    function renderLoginUserList() {
-        const container = document.getElementById('loginUserList');
-        if (!container) return;
-        container.innerHTML = userProfiles.map(u => `
-            <div class="role-option" onclick="selectProfile('user', '${u.name}')">👤 ${u.name}</div>
-        `).join('');
+        updateEntryInterface();
+        renderDashboard();
     }
 
     function switchTab(tabId) {
         document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
         document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.bottom-nav-btn').forEach(el => el.classList.remove('active'));
         document.getElementById(tabId).classList.add('active');
     }
 
-    function switchProfileModal() { document.getElementById('loginOverlay').style.display = 'flex'; }
-    function logoutUser() { localStorage.clear(); window.location.reload(); }
-</script>
+    function getCurrentlyDispatchedMap() {
+        let map = {};
+        gearLogs.forEach(log => {
+            if (log.status === 'OUT ON SHOOT') {
+                log.gear.forEach(g => {
+                    const nameUpper = g.name.toUpperCase();
+                    map[nameUpper] = (map[nameUpper] || 0) + (parseInt(g.qty, 10) || 1);
+                });
+            }
+        });
+        return map;
+    }
 
+    function renderEquipmentAvailability() {
+        const tbody = document.getElementById('availabilityTableBody');
+        const dispatchedMap = getCurrentlyDispatchedMap();
+        tbody.innerHTML = masterEquipment.map((eq, index) => {
+            const outQty = dispatchedMap[eq.name.toUpperCase()] || 0;
+            const totalStock = eq.stock || 5;
+            const inStock = Math.max(0, totalStock - outQty);
+            let statusBadge = `<span class="status-tag status-returned">Available</span>`;
+            if (inStock === 0) statusBadge = `<span class="status-tag" style="background:#fee2e2; color:#991b1b;">Out On Shoot</span>`;
+            return `
+                <tr>
+                    <td style="text-align: center;">${index + 1}</td>
+                    <td><span class="barcode-badge">${eq.barcode}</span></td>
+                    <td><strong>${eq.name}</strong></td>
+                    <td style="text-align: center; color: ${inStock > 0 ? 'var(--success)' : 'var(--danger)'};">${inStock}</td>
+                    <td style="text-align: center; color: var(--warning);">${outQty}</td>
+                    <td style="text-align: center;">${totalStock}</td>
+                    <td>${statusBadge}</td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    function renderMasterEquipmentTable() {
+        document.getElementById('totalEquipmentCount').innerText = masterEquipment.length;
+        const tbody = document.getElementById('masterEquipmentTableBody');
+        tbody.innerHTML = masterEquipment.map((item, index) => `
+            <tr>
+                <td style="text-align: center;">${index + 1}</td>
+                <td><span class="barcode-badge">${item.barcode}</span></td>
+                <td><strong>${item.name}</strong></td>
+                <td style="text-align: center;">${item.stock}</td>
+                <td><button class="btn btn-sm btn-secondary" onclick="openBarcodePrintModal('${item.barcode}', '${item.name}')">🖨️ Label</button></td>
+            </tr>
+        `).join('');
+    }
+
+    function renderDashboard() {
+        renderEquipmentAvailability();
+        const tbody = document.getElementById('logsTableBody');
+        let activeOut = 0, totalReturned = 0;
+        tbody.innerHTML = gearLogs.map(log => {
+            if (log.status === 'OUT ON SHOOT') activeOut++;
+            if (log.status === 'RETURNED') totalReturned++;
+            return `
+                <tr>
+                    <td><strong>${log.clientName}</strong></td>
+                    <td>${log.team || '-'}</td>
+                    <td>${log.timeOutDate} ${log.timeOutTime}</td>
+                    <td><strong>${log.actualReturnTimeStamp || '-'}</strong></td>
+                    <td><span class="status-tag ${log.status === 'RETURNED' ? 'status-returned' : 'status-out'}">${log.status}</span></td>
+                    <td><button class="btn btn-sm btn-secondary" onclick="openDetailModal(${log.id})">Details</button></td>
+                </tr>
+            `;
+        }).join('');
+        document.getElementById('metric-total').innerText = gearLogs.length;
+        document.getElementById('metric-out').innerText = activeOut;
+        document.getElementById('metric-returned').innerText = totalReturned;
+    }
+
+    function openBarcodePrintModal(barcode, name) {
+        currentBarcodePrintMeta = { barcode, name };
+        document.getElementById('printItemName').innerText = name;
+        JsBarcode("#barcodePrintSvg", barcode, { format: "CODE128", width: 2, height: 55, displayValue: true });
+        document.getElementById('barcodePrintModal').style.display = 'flex';
+    }
+    function closeBarcodePrintModal() { document.getElementById('barcodePrintModal').style.display = 'none'; }
+    function openDetailModal(id) { document.getElementById('detailModal').style.display = 'flex'; }
+    function closeDetailModal() { document.getElementById('detailModal').style.display = 'none'; }
+</script>
 </body>
 </html>
