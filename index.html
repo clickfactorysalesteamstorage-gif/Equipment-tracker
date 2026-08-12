@@ -780,7 +780,7 @@
                         <div class="input-group"><label>Place</label><input type="text" id="place"></div>
                         <div class="input-group"><label>Event</label><input type="text" id="event"></div>
                         <div class="input-group"><label>Shoot Incharge</label><input type="text" id="shootIncharge"></div>
-                        <div class="input-group"><label>Mobile Number</label><input type="tel" id="mobileNumber"></div>
+                        <div class="input-group"><label>Mobile Number</label><input type="tel" id="mobileNumber" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></div>
                         
                         <div class="input-group"><label>Time Out Date</label><input type="date" id="timeOutDate"></div>
                         <div class="input-group"><label>Time Out Time</label><input type="time" id="timeOutTime"></div>
@@ -2443,7 +2443,7 @@
                             <label style="font-size: 0.65rem; font-weight: bold; color: var(--text-muted);">TEAM & INCHARGE</label>
                             <input type="text" id="log-edit-team-${log.id}" class="inline-edit-input" placeholder="Team" value="${log.team || ''}">
                             <input type="text" id="log-edit-incharge-${log.id}" class="inline-edit-input" placeholder="Incharge" value="${log.shootIncharge || ''}">
-                            <input type="tel" id="log-edit-mobile-${log.id}" class="inline-edit-input" placeholder="Mobile" value="${log.mobileNumber || ''}">
+                            <input type="tel" inputmode="numeric" pattern="[0-9]*" id="log-edit-mobile-${log.id}" class="inline-edit-input" placeholder="Mobile" value="${log.mobileNumber || ''}" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                         </td>
                         <td>
                             <input type="date" id="log-edit-timeoutdate-${log.id}" class="inline-edit-input" value="${log.timeOutDate || ''}">
