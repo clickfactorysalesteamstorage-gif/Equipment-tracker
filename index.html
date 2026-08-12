@@ -780,7 +780,7 @@
                         <div class="input-group"><label>Place</label><input type="text" id="place"></div>
                         <div class="input-group"><label>Event</label><input type="text" id="event"></div>
                         <div class="input-group"><label>Shoot Incharge</label><input type="text" id="shootIncharge"></div>
-                        <div class="input-group"><label>Mobile Number</label><input type="text" inputmode="numeric" pattern="[0-9]*" id="mobileNumber" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></div>
+                        <div class="input-group"><label>Mobile Number</label><input type="tel" id="mobileNumber"></div>
                         
                         <div class="input-group"><label>Time Out Date</label><input type="date" id="timeOutDate"></div>
                         <div class="input-group"><label>Time Out Time</label><input type="time" id="timeOutTime"></div>
@@ -847,7 +847,7 @@
                 <h3>Add New Staff Profile</h3>
                 <div class="form-grid" style="margin-top: 10px;">
                     <div class="input-group"><label>Staff Full Name</label><input type="text" id="newStaffName"></div>
-                    <div class="input-group"><label>Mobile Number</label><input type="text" inputmode="numeric" pattern="[0-9]*" id="newStaffMobile" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></div>
+                    <div class="input-group"><label>Mobile Number</label><input type="tel" id="newStaffMobile"></div>
                     <div class="input-group"><label>Staff ID</label><input type="text" id="newStaffId"></div>
                     <div class="input-group"><label>Team</label><input type="text" id="newStaffTeam"></div>
                 </div>
@@ -2443,7 +2443,7 @@
                             <label style="font-size: 0.65rem; font-weight: bold; color: var(--text-muted);">TEAM & INCHARGE</label>
                             <input type="text" id="log-edit-team-${log.id}" class="inline-edit-input" placeholder="Team" value="${log.team || ''}">
                             <input type="text" id="log-edit-incharge-${log.id}" class="inline-edit-input" placeholder="Incharge" value="${log.shootIncharge || ''}">
-                            <input type="text" inputmode="numeric" pattern="[0-9]*" id="log-edit-mobile-${log.id}" class="inline-edit-input" placeholder="Mobile" value="${log.mobileNumber || ''}" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                            <input type="tel" id="log-edit-mobile-${log.id}" class="inline-edit-input" placeholder="Mobile" value="${log.mobileNumber || ''}">
                         </td>
                         <td>
                             <input type="date" id="log-edit-timeoutdate-${log.id}" class="inline-edit-input" value="${log.timeOutDate || ''}">
@@ -2459,4 +2459,351 @@
                         <td>
                             <div class="table-action-cell">
                                 <button class="btn btn-sm btn-primary" onclick="saveEditLogRecord(${log.id})">💾 Save</button>
-          I seem to be encountering an error. Can I try something else for you?
+                                <button class="btn btn-sm btn-secondary" onclick="cancelEditLogRecord()">✕ Cancel</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }
+
+            const checkinButton = log.status === 'OUT ON SHOOT' ? `<button class="btn btn-sm btn-success" onclick="openDashboardCheckinModal(${log.id})">↩ Check-In</button>` : '';
+
+            const actionsCell = currentRole === 'admin' ? `
+                <td>
+                    <div class="table-action-cell">
+                        ${checkinButton}
+                        <button class="btn btn-sm btn-secondary" onclick="openDetailModal(${log.id})">Details</button>
+                        <button class="btn btn-sm btn-warning" onclick="editLogRecord(${log.id})">✏️ Edit</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteRecord(${log.id})">🗑️ Delete</button>
+                    </div>
+                </td>
+            ` : `<td><div class="table-action-cell">${checkinButton} <button class="btn btn-sm btn-secondary" onclick="openDetailModal(${log.id})">Details</button></div></td>`;
+
+            return `
+                <tr>
+                    <td>
+                        <strong>${log.clientName}</strong>
+                        <span class="time-text">Event: ${log.event || '-'} (${log.place || '-'})</span>
+                        <span class="time-text">Items: ${log.gear.length} selected</span>
+                    </td>
+                    <td>
+                        ${log.team || '-'}
+                        <span class="time-text">Incharge: ${log.shootIncharge || '-'}</span>
+                    </td>
+                    <td>${timeOutDisplay}</td>
+                    <td><strong>${timeInDisplay}</strong></td>
+                    <td>
+                        <span class="status-tag ${log.status === 'RETURNED' ? 'status-returned' : 'status-out'}">
+                            ${log.status}
+                        </span>
+                    </td>
+                    ${actionsCell}
+                </tr>
+            `;
+        }).join('');
+
+        document.getElementById('metric-total').innerText = visibleLogs.length;
+        document.getElementById('metric-out').innerText = activeOut;
+        document.getElementById('metric-returned').innerText = totalReturned;
+    }
+
+    function openDetailModal(id) {
+        const record = gearLogs.find(log => log.id === id);
+        if (!record) return;
+
+        document.getElementById('detailClientName').innerText = record.clientName;
+        document.getElementById('detailClientId').innerText = record.clientId || 'N/A';
+        document.getElementById('detailEventPlace').innerText = `${record.event || '-'} (${record.place || '-'})`;
+        document.getElementById('detailTeam').innerText = record.team || 'N/A';
+        document.getElementById('detailIncharge').innerText = record.shootIncharge || 'N/A';
+        document.getElementById('detailMobile').innerText = record.mobileNumber || 'N/A';
+        
+        document.getElementById('detailTimeOut').innerText = formatDateTime(record.timeOutDate, record.timeOutTime);
+        document.getElementById('detailTimeIn').innerText = record.status === 'RETURNED' && record.actualReturnTimeStamp ? record.actualReturnTimeStamp : '-';
+        document.getElementById('detailCreatedBy').innerText = `${record.createdBy || 'Staff'} ${record.creatorMobile ? '(' + record.creatorMobile + ')' : ''}`;
+
+        const statusTag = document.getElementById('detailStatusTag');
+        statusTag.innerText = record.status;
+        statusTag.className = `status-tag ${record.status === 'RETURNED' ? 'status-returned' : 'status-out'}`;
+
+        const tbody = document.getElementById('detailItemsTableBody');
+        tbody.innerHTML = record.gear.map((item, index) => {
+            const masterMatch = masterEquipment.find(m => m.name.toUpperCase() === item.name.toUpperCase());
+            const barcodeStr = masterMatch ? masterMatch.barcode : 'EQP-UNKNOWN';
+            return `
+                <tr>
+                    <td style="text-align: center;">${index + 1}</td>
+                    <td><span class="barcode-badge">${barcodeStr}</span></td>
+                    <td><strong>${item.name}</strong></td>
+                    <td style="text-align: center;">${item.qty}</td>
+                </tr>
+            `;
+        }).join('');
+
+        document.getElementById('detailModal').style.display = 'flex';
+    }
+
+    function closeDetailModal() {
+        document.getElementById('detailModal').style.display = 'none';
+    }
+
+    function showAdminPasswordInput() {
+        document.getElementById('adminPassBox').style.display = 'block';
+        document.getElementById('adminPasswordInput').focus();
+    }
+
+    function validateAdminPassword() {
+        const enteredPass = document.getElementById('adminPasswordInput').value;
+        const storedPass = SafeStorage.getItem('appAdminPassword') || 'admin123';
+        
+        if (enteredPass === storedPass) {
+            document.getElementById('loginError').innerText = '';
+            document.getElementById('adminPasswordInput').value = '';
+            document.getElementById('adminPassBox').style.display = 'none';
+            selectProfile('admin', 'Administrator', '');
+        } else {
+            document.getElementById('loginError').innerText = 'Incorrect Password!';
+        }
+    }
+
+    function handleAdminLoginKey(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            validateAdminPassword();
+        }
+    }
+
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.bottom-nav-btn').forEach(el => el.classList.remove('active'));
+        
+        document.getElementById(tabId).classList.add('active');
+        
+        if(tabId === 'dashboard-tab') {
+            document.getElementById('tabOverviewBtn').classList.add('active');
+            document.getElementById('mobTabOverviewBtn').classList.add('active');
+        }
+        if(tabId === 'new-entry-tab') {
+            document.getElementById('tabNewSheetBtn').classList.add('active');
+            document.getElementById('mobTabNewSheetBtn').classList.add('active');
+        }
+        if(tabId === 'equipment-tab') {
+            document.getElementById('tabEquipmentBtn').classList.add('active');
+            document.getElementById('mobTabEquipmentBtn').classList.add('active');
+        }
+        if(tabId === 'users-tab') {
+            document.getElementById('tabUsersBtn').classList.add('active');
+            document.getElementById('mobTabUsersBtn').classList.add('active');
+        }
+        if(tabId === 'admin-controls-tab') {
+            document.getElementById('tabAdminControlsBtn').classList.add('active');
+            document.getElementById('mobTabAdminControlsBtn').classList.add('active');
+        }
+    }
+
+    function createNewUserProfile() {
+        const name = document.getElementById('newStaffName').value.trim();
+        const mobile = document.getElementById('newStaffMobile').value.trim();
+        const id = document.getElementById('newStaffId').value.trim();
+        const team = document.getElementById('newStaffTeam').value.trim();
+
+        if (!name || !id) {
+            alert('Please enter Staff Name and Staff ID.');
+            return;
+        }
+
+        showConfirmationModal({
+            title: 'Create Staff Profile?',
+            message: `• Staff Name: ${name}\n• Staff ID: ${id}\n• Team: ${team || 'N/A'}`,
+            icon: '👤',
+            confirmBtnText: 'Create Profile',
+            confirmBtnClass: 'btn-primary',
+            onConfirm: () => {
+                userProfiles.push({ id, name, mobile, team, permissions: 'restricted' });
+                SafeStorage.setItem('gearUserProfiles', JSON.stringify(userProfiles));
+                
+                document.getElementById('newStaffName').value = '';
+                document.getElementById('newStaffMobile').value = '';
+                document.getElementById('newStaffId').value = '';
+                document.getElementById('newStaffTeam').value = '';
+
+                renderLoginUserList();
+                renderUserPermissionsTable();
+            }
+        });
+    }
+
+    function promptSaveRecordConfirmation() {
+        const clientName = document.getElementById('clientName').value.trim();
+        if (!clientName) {
+            alert('Please enter at least the Client Name.');
+            return;
+        }
+
+        let gearData = [];
+        const useScanner = (!allowManualCheckout) || (currentRole === 'user') || (currentRole === 'admin' && adminEntryMethod === 'scanner');
+
+        if (!useScanner) {
+            const rows = document.querySelectorAll('#equipmentItemsBody tr');
+            for (let idx = 0; idx < rows.length; idx++) {
+                const row = rows[idx];
+                const selectBox = row.querySelector('.item-select');
+                if (selectBox && selectBox.checked) {
+                    const qtyInput = row.querySelector('.item-qty');
+                    const qtyVal = parseInt(qtyInput.value, 10) || 1;
+                    const maxStock = parseInt(qtyInput.getAttribute('data-max-stock'), 10) || 1;
+
+                    if (qtyVal > maxStock) {
+                        alert(`Requested quantity for ${masterEquipment[idx].name} (${qtyVal}) exceeds available stock (${maxStock})!`);
+                        return;
+                    }
+
+                    gearData.push({
+                        name: masterEquipment[idx].name,
+                        barcode: masterEquipment[idx].barcode,
+                        qty: qtyVal.toString()
+                    });
+                }
+            }
+        } else {
+            const dispatchedMap = getCurrentlyDispatchedMap();
+            for (let idx = 0; idx < masterEquipment.length; idx++) {
+                const count = scannedQuantities[idx] || 0;
+                if (count > 0) {
+                    const item = masterEquipment[idx];
+                    const outOnOtherShoots = dispatchedMap[item.name.toUpperCase()] || 0;
+                    const totalStock = item.stock || 5;
+                    const availableStock = Math.max(0, totalStock - outOnOtherShoots);
+
+                    if (count > availableStock) {
+                        alert(`Scanned quantity for ${item.name} (${count}) exceeds available stock (${availableStock})!`);
+                        return;
+                    }
+
+                    gearData.push({ 
+                        name: item.name, 
+                        barcode: item.barcode, 
+                        qty: count.toString() 
+                    });
+                }
+            }
+        }
+
+        if (gearData.length === 0) {
+            alert('No available items selected or scanned! Please assign gear.');
+            return;
+        }
+
+        const clientId = document.getElementById('clientId').value || 'N/A';
+        const event = document.getElementById('event').value || 'N/A';
+        const date = document.getElementById('date').value || 'N/A';
+        const place = document.getElementById('place').value || 'N/A';
+
+        showConfirmationModal({
+            title: 'Confirm Booking & Dispatch?',
+            message: `• Client: ${clientName} (ID: ${clientId})\n• Event: ${event} on ${date} (${place})\n• Total Dispatched Items: ${gearData.length} type(s)`,
+            icon: '📋',
+            confirmBtnText: 'Confirm & Dispatch',
+            confirmBtnClass: 'btn-primary',
+            onConfirm: () => {
+                executeSaveRecord(clientName, gearData);
+            }
+        });
+    }
+
+    function executeSaveRecord(clientName, gearData) {
+        const currentActiveUserName = currentUserNameSession || SafeStorage.getItem('appUserName') || 'Staff';
+        const creatorMobile = SafeStorage.getItem('appUserMobile') || '';
+        
+        const record = {
+            id: Date.now(),
+            clientName: clientName,
+            clientId: document.getElementById('clientId').value,
+            team: document.getElementById('team').value,
+            date: document.getElementById('date').value,
+            place: document.getElementById('place').value,
+            event: document.getElementById('event').value,
+            shootIncharge: document.getElementById('shootIncharge').value,
+            mobileNumber: document.getElementById('mobileNumber').value,
+            timeOutDate: document.getElementById('timeOutDate').value,
+            timeOutTime: document.getElementById('timeOutTime').value,
+            actualReturnTimeStamp: null,
+            gear: gearData,
+            status: 'OUT ON SHOOT',
+            createdBy: currentActiveUserName,
+            creatorMobile: creatorMobile
+        };
+
+        gearLogs.unshift(record);
+        SafeStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
+        
+        document.getElementById('checklistForm').reset();
+        scannedQuantities = {};
+        updateEntryInterface();
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('date').value = today;
+        document.getElementById('timeOutDate').value = today;
+        
+        renderDashboard();
+        if (currentRole === 'admin') {
+            switchTab('dashboard-tab');
+        } else {
+            alert('Checkout Sheet saved successfully!');
+        }
+    }
+
+    function formatDateTime(dateStr, timeStr) {
+        if (!dateStr && !timeStr) return 'N/A';
+        return `${dateStr || ''} ${timeStr || ''}`.trim();
+    }
+
+    function toggleStatus(id) {
+        if (currentRole !== 'admin') return;
+        gearLogs = gearLogs.map(log => {
+            if (log.id === id) {
+                if (log.status === 'OUT ON SHOOT') {
+                    log.status = 'RETURNED';
+                    const now = new Date();
+                    log.actualReturnTimeStamp = now.toLocaleDateString('en-GB') + ', ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                } else {
+                    log.status = 'OUT ON SHOOT';
+                    log.actualReturnTimeStamp = null;
+                }
+            }
+            return log;
+        });
+        SafeStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
+        renderDashboard();
+    }
+
+    function deleteRecord(id) {
+        if (currentRole !== 'admin') return;
+        const log = gearLogs.find(l => l.id === id);
+        
+        showConfirmationModal({
+            title: 'Delete Shoot Record?',
+            message: `Are you sure you want to permanently delete shoot record for "${log ? log.clientName : id}"?`,
+            icon: '🗑️',
+            confirmBtnText: 'Delete Record',
+            confirmBtnClass: 'btn-danger',
+            onConfirm: () => {
+                gearLogs = gearLogs.filter(log => log.id !== id);
+                SafeStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
+                renderDashboard();
+            }
+        });
+    }
+
+    function filterLogs() {
+        const query = document.getElementById('searchInput').value.toLowerCase();
+        const rows = document.querySelectorAll('#logsTableBody tr');
+        rows.forEach(row => {
+            const text = row.innerText.toLowerCase();
+            row.style.display = text.includes(query) ? '' : 'none';
+        });
+    }
+</script>
+
+</body>
+</html>
