@@ -1146,13 +1146,10 @@
     </div>
 </div>
 
-<script>
-    // Import the functions you need from the SDKs you need
+<!-- Firebase SDK integration loaded safely via script module tag -->
+<script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    // TODO: Add SDKs for Firebase products that you want to use
-    // https://firebase.google.com/docs/web/setup#available-libraries
-
-    // Your web app's Firebase configuration
+    
     const firebaseConfig = {
       apiKey: "AIzaSyCQfBqkEKo_MuhFDnYtvdp-v1humYZwdAo",
       authDomain: "equipment-tracker-f3dd6.firebaseapp.com",
@@ -1162,9 +1159,11 @@
       appId: "1:639545661428:web:0f71fc68e78cc8d448cba1"
     };
 
-    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
+    window.firebaseApp = app;
+</script>
 
+<script>
     const SafeStorage = {
         getItem(key) {
             try { return localStorage.getItem(key); } catch (e) { return window._memStore?.[key] || null; }
