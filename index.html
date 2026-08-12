@@ -847,7 +847,7 @@
                 <h3>Add New Staff Profile</h3>
                 <div class="form-grid" style="margin-top: 10px;">
                     <div class="input-group"><label>Staff Full Name</label><input type="text" id="newStaffName"></div>
-                    <div class="input-group"><label>Mobile Number</label><input type="tel" id="newStaffMobile"></div>
+                    <div class="input-group"><label>Mobile Number</label><input type="tel" id="newStaffMobile" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></div>
                     <div class="input-group"><label>Staff ID</label><input type="text" id="newStaffId"></div>
                     <div class="input-group"><label>Team</label><input type="text" id="newStaffTeam"></div>
                 </div>
@@ -1147,6 +1147,24 @@
 </div>
 
 <script>
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCQfBqkEKo_MuhFDnYtvdp-v1humYZwdAo",
+      authDomain: "equipment-tracker-f3dd6.firebaseapp.com",
+      projectId: "equipment-tracker-f3dd6",
+      storageBucket: "equipment-tracker-f3dd6.firebasestorage.app",
+      messagingSenderId: "639545661428",
+      appId: "1:639545661428:web:0f71fc68e78cc8d448cba1"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+
     const SafeStorage = {
         getItem(key) {
             try { return localStorage.getItem(key); } catch (e) { return window._memStore?.[key] || null; }
