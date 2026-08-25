@@ -1216,21 +1216,64 @@
     </div>
 </div>
 
-<!-- Firebase App & Config Initialization Script -->
+<!-- Firebase Real-Time Firestore Synchronization Script -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     
     const firebaseConfig = {
-      apiKey: "AIzaSyDzBeuGAtb2ECReuw7rOdmnHwpPetBKgSs",
-      authDomain: "database-for-gear-control.firebaseapp.com",
-      projectId: "database-for-gear-control",
-      storageBucket: "database-for-gear-control.firebasestorage.app",
-      messagingSenderId: "227048228923",
-      appId: "1:227048228923:web:a6fde1429763ccdbb1b41e"
+        apiKey: "AIzaSyDzBeuGAtb2ECReuw7rOdmnHwpPetBKgSs",
+        authDomain: "database-for-gear-control.firebaseapp.com",
+        projectId: "database-for-gear-control",
+        storageBucket: "database-for-gear-control.firebasestorage.app",
+        messagingSenderId: "227048228923",
+        appId: "1:227048228923:web:a6fde1429763ccdbb1b41e"
     };
 
-    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Global helper to push data to the Cloud
+    window.syncToCloud = async () => {
+        try {
+            await setDoc(doc(db, "gear_control", "state"), {
+                masterEquipment,
+                gearLogs,
+                userProfiles
+            });
+        } catch (error) {
+            console.error("Firestore sync error:", error);
+        }
+    };
+
+    // Watch Firestore for changes and update client UI
+    onSnapshot(doc(db, "gear_control", "state"), (docSnap) => {
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            window.isCloudDownloading = true; // Prevent update loop
+
+            if (data.masterEquipment) {
+                masterEquipment = data.masterEquipment;
+                localStorage.setItem('gearMasterEquipmentObj', JSON.stringify(masterEquipment));
+            }
+            if (data.gearLogs) {
+                gearLogs = data.gearLogs;
+                localStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
+            }
+            if (data.userProfiles) {
+                userProfiles = data.userProfiles;
+                localStorage.setItem('gearUserProfiles', JSON.stringify(userProfiles));
+            }
+
+            window.isCloudDownloading = false;
+
+            // Re-render UI elements
+            renderDashboard();
+            renderMasterEquipmentTable();
+            if (typeof renderUserPermissionsTable === "function") renderUserPermissionsTable();
+            if (typeof renderLoginUserList === "function") renderLoginUserList();
+        }
+    });
 </script>
 
 <script>
@@ -1243,10 +1286,17 @@
                 window._memStore = window._memStore || {};
                 window._memStore[key] = val;
             }
+            // Sync to cloud automatically if not currently downloading cloud changes
+            if (window.syncToCloud && !window.isCloudDownloading) {
+                window.syncToCloud();
+            }
         },
         removeItem(key) {
             try { localStorage.removeItem(key); } catch (e) {
                 if (window._memStore) delete window._memStore[key];
+            }
+            if (window.syncToCloud && !window.isCloudDownloading) {
+                window.syncToCloud();
             }
         }
     };
