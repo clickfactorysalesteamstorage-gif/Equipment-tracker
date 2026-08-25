@@ -892,6 +892,17 @@
                 <button class="btn btn-primary" style="width: 100%; padding: 12px;" onclick="updateAdminProfileCredentials()">💾 Save Admin Security Settings</button>
             </div>
 
+            <!-- PANEL 2.5: ADMIN RECOVERY KEY MANAGEMENT -->
+            <div class="content-card">
+                <h3 style="margin-bottom: 12px;">🔑 Admin Recovery Key Management</h3>
+                <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 15px;">Generate or update your account recovery passcode used for password resets.</p>
+
+                <div style="display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;">
+                    <input type="text" id="adminRecoveryKeyDisplay" readonly style="flex: 2; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: monospace; background: #f8fafc; font-weight: bold; min-height: 44px;">
+                    <button class="btn btn-primary" style="flex: 1; min-width: 160px;" onclick="generateNewRecoveryKey()">🎲 Generate New Key</button>
+                </div>
+            </div>
+
             <!-- PANEL 3: STAFF PERMISSIONS MATRIX -->
             <div class="content-card">
                 <h3 style="margin-bottom: 12px;">🛡️ Manage User Access Permission Matrix</h3>
@@ -1391,6 +1402,11 @@
             toggleManualCheckoutSetting(allowManualCheckout);
         }
 
+        // Initialize default recovery key if not set
+        if (!SafeStorage.getItem('appAdminRecoveryKey')) {
+            SafeStorage.setItem('appAdminRecoveryKey', 'SATISH-' + Math.floor(1000 + Math.random() * 9000));
+        }
+
         renderMasterEquipmentTable();
         renderDashboard();
     });
@@ -1479,6 +1495,7 @@
             document.getElementById('logSectionTitle').innerText = 'Recent Shoots & Gear Logs';
 
             document.getElementById('adminDisplayNameInput').value = SafeStorage.getItem('appAdminDisplayName') || 'Administrator';
+            document.getElementById('adminRecoveryKeyDisplay').value = SafeStorage.getItem('appAdminRecoveryKey') || 'Not Generated';
             renderUserPermissionsTable();
             switchTab('dashboard-tab');
         } else {
@@ -1553,6 +1570,19 @@
         }
 
         alert('Admin Profile settings saved!');
+    }
+
+    function generateNewRecoveryKey() {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        let key = '';
+        for (let i = 0; i < 16; i++) {
+            if (i > 0 && i % 4 === 0) key += '-';
+            key += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+
+        SafeStorage.setItem('appAdminRecoveryKey', key);
+        document.getElementById('adminRecoveryKeyDisplay').value = key;
+        alert('New admin recovery key generated successfully! Please record it safely.');
     }
 
     function editUserProfile(userId) {
@@ -2610,7 +2640,7 @@
     function executePasswordReset() {
         const recoveryKey = document.getElementById('recoveryCodeInput').value.trim();
         const newPass = document.getElementById('newResetPassInput').value;
-        const masterRecoveryKey = SafeStorage.getItem('appAdminRecoveryKey') || 'master123';
+        const masterRecoveryKey = SafeStorage.getItem('appAdminRecoveryKey') || 'SATISH-1234';
 
         if (recoveryKey !== masterRecoveryKey) {
             document.getElementById('forgotError').innerText = 'Invalid Recovery Passcode!';
