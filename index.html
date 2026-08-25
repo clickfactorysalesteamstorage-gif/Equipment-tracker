@@ -1012,7 +1012,7 @@
 
         <div id="adminPassBox" style="display: none; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); text-align: left;">
             <label style="font-size: 0.75rem; font-weight: bold; color: var(--text-muted);">ADMIN PASSWORD:</label>
-            <input type="password" id="adminPasswordInput" placeholder="Default: admin123" style="width: 100%; padding: 10px; margin: 6px 0 10px 0; border: 1px solid var(--border); border-radius: var(--radius-sm);" onkeypress="handleAdminLoginKey(event)">
+            <input type="password" id="adminPasswordInput" placeholder="Enter password" style="width: 100%; padding: 10px; margin: 6px 0 10px 0; border: 1px solid var(--border); border-radius: var(--radius-sm);" onkeypress="handleAdminLoginKey(event)">
             <button class="btn btn-primary btn-sm" style="width: 100%;" onclick="validateAdminPassword()">Login as Admin</button>
             
             <!-- Forgot Password Link -->
@@ -1035,11 +1035,11 @@
             <h3 style="font-size: 1rem;">Reset Admin Password</h3>
             <button class="btn btn-secondary btn-sm" onclick="closeForgotPasswordModal()">✕ Close</button>
         </div>
-        <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">Enter the recovery passcode or backup word to reset your admin password.</p>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">Enter your master recovery passcode to reset your admin password.</p>
         
         <div class="input-group" style="margin-bottom: 10px;">
             <label>Recovery Passcode</label>
-            <input type="password" id="recoveryCodeInput" placeholder="Enter master key (Default: satish123)">
+            <input type="password" id="recoveryCodeInput" placeholder="Enter recovery key">
         </div>
 
         <div class="input-group" style="margin-bottom: 14px;">
@@ -2610,9 +2610,9 @@
     function executePasswordReset() {
         const recoveryKey = document.getElementById('recoveryCodeInput').value.trim();
         const newPass = document.getElementById('newResetPassInput').value;
-        const defaultMasterRecoveryKey = 'satish123'; // Change recovery key here if needed
+        const masterRecoveryKey = SafeStorage.getItem('appAdminRecoveryKey') || 'master123';
 
-        if (recoveryKey !== defaultMasterRecoveryKey) {
+        if (recoveryKey !== masterRecoveryKey) {
             document.getElementById('forgotError').innerText = 'Invalid Recovery Passcode!';
             return;
         }
