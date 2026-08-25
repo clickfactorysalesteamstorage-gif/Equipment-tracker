@@ -1233,8 +1233,15 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
+    // SAFETY LOCK: Block syncing until existing cloud data is fully loaded
+    window.isCloudLoaded = false; 
+
     // Sync all data AND admin settings to Firestore
     window.syncToCloud = async () => {
+        if (!window.isCloudLoaded) {
+            console.log("Sync blocked: Protecting existing cloud database.");
+            return;
+        }
         try {
             await setDoc(doc(db, "gear_control", "state"), {
                 masterEquipment,
@@ -1255,9 +1262,10 @@
 
     // Watch Firestore for changes
     onSnapshot(doc(db, "gear_control", "state"), (docSnap) => {
+        window.isCloudDownloading = true; // Suppress auto-sync loop
+
         if (docSnap.exists()) {
             const data = docSnap.data();
-            window.isCloudDownloading = true;
 
             // Global Logout Check on Password Version Change
             const remotePassVersion = data.passwordVersion || '1';
@@ -1283,12 +1291,8 @@
                 userProfiles = data.userProfiles;
                 localStorage.setItem('gearUserProfiles', JSON.stringify(userProfiles));
             }
-
-            // Sync and apply Admin credentials & global settings
             if (data.adminSettings) {
                 const settings = data.adminSettings;
-                
-                // Allow Manual Checkout
                 allowManualCheckout = settings.allowManualCheckout === 'true';
                 localStorage.setItem('appAllowManualCheckout', settings.allowManualCheckout);
                 
@@ -1302,12 +1306,10 @@
                         'OFF (Scanner required for all check-outs)';
                 }
 
-                // Admin Security Credentials
                 localStorage.setItem('appAdminPassword', settings.adminPassword);
                 localStorage.setItem('appAdminDisplayName', settings.adminDisplayName);
                 localStorage.setItem('appAdminRecoveryKey', settings.adminRecoveryKey);
 
-                // Update UI elements in real time
                 const activeName = currentRole === 'admin' ? settings.adminDisplayName : (currentUserNameSession || 'Staff Member');
                 const activeUserName = document.getElementById('activeUserName');
                 const mobileActiveUserName = document.getElementById('mobileActiveUserName');
@@ -1320,12 +1322,18 @@
                 if (keyDisplay) keyDisplay.value = settings.adminRecoveryKey;
             }
 
+            window.isCloudLoaded = true; // First load finished! Safe to sync now.
             window.isCloudDownloading = false;
 
             renderDashboard();
             renderMasterEquipmentTable();
             if (typeof renderUserPermissionsTable === "function") renderUserPermissionsTable();
             if (typeof renderLoginUserList === "function") renderLoginUserList();
+        } else {
+            // Fresh database setup
+            window.isCloudLoaded = true;
+            window.isCloudDownloading = false;
+            window.syncToCloud(); 
         }
     });
 </script>
