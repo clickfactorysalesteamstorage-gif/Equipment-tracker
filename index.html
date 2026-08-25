@@ -1240,6 +1240,7 @@
                 masterEquipment,
                 gearLogs,
                 userProfiles,
+                passwordVersion: SafeStorage.getItem('appPasswordVersion') || '1',
                 adminSettings: {
                     allowManualCheckout: SafeStorage.getItem('appAllowManualCheckout'),
                     adminDisplayName: SafeStorage.getItem('appAdminDisplayName') || 'Administrator',
@@ -1257,6 +1258,18 @@
         if (docSnap.exists()) {
             const data = docSnap.data();
             window.isCloudDownloading = true;
+
+            // Global Logout Check on Password Version Change
+            const remotePassVersion = data.passwordVersion || '1';
+            const localPassVersion = SafeStorage.getItem('appPasswordVersion') || '1';
+            if (remotePassVersion !== localPassVersion) {
+                SafeStorage.setItem('appPasswordVersion', remotePassVersion);
+                SafeStorage.removeItem('appUserRole');
+                SafeStorage.removeItem('appUserName');
+                SafeStorage.removeItem('appUserMobile');
+                window.location.reload();
+                return;
+            }
 
             if (data.masterEquipment) {
                 masterEquipment = data.masterEquipment;
@@ -1725,6 +1738,11 @@
         renderDashboard();
     }
 
+    function triggerGlobalPasswordResetLogout() {
+        const currentVer = parseInt(SafeStorage.getItem('appPasswordVersion') || '1', 10);
+        SafeStorage.setItem('appPasswordVersion', (currentVer + 1).toString());
+    }
+
     function updateAdminProfileCredentials() {
         const nameVal = document.getElementById('adminDisplayNameInput').value.trim();
         const currentPass = document.getElementById('adminCurrentPassInput').value;
@@ -1757,7 +1775,9 @@
             document.getElementById('adminCurrentPassInput').value = '';
             document.getElementById('adminNewPassInput').value = '';
             document.getElementById('adminConfirmPassInput').value = '';
-            alert('Admin Password updated successfully!');
+            
+            triggerGlobalPasswordResetLogout();
+            alert('Admin Password updated successfully! All active sessions across devices have been logged out.');
             return;
         }
 
@@ -2846,7 +2866,8 @@
         }
 
         SafeStorage.setItem('appAdminPassword', newPass);
-        alert('Admin password has been reset successfully! You can now log in with your new password.');
+        triggerGlobalPasswordResetLogout();
+        alert('Admin password has been reset successfully! All active sessions across devices have been logged out.');
         closeForgotPasswordModal();
         document.getElementById('adminPasswordInput').value = '';
         document.getElementById('loginError').innerText = '';
