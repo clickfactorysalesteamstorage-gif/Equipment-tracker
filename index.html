@@ -780,7 +780,7 @@
                         <div class="input-group"><label>Place</label><input type="text" id="place"></div>
                         <div class="input-group"><label>Event</label><input type="text" id="event"></div>
                         <div class="input-group"><label>Shoot Incharge</label><input type="text" id="shootIncharge"></div>
-                        <div class="input-group"><label>Mobile Number</label><input type="tel" id="mobileNumber" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></div>
+                        <div class="input-group"><label>Mobile Number</label><input type="tel" id="mobileNumber"></div>
                         
                         <div class="input-group"><label>Time Out Date</label><input type="date" id="timeOutDate"></div>
                         <div class="input-group"><label>Time Out Time</label><input type="time" id="timeOutTime"></div>
@@ -847,7 +847,7 @@
                 <h3>Add New Staff Profile</h3>
                 <div class="form-grid" style="margin-top: 10px;">
                     <div class="input-group"><label>Staff Full Name</label><input type="text" id="newStaffName"></div>
-                    <div class="input-group"><label>Mobile Number</label><input type="tel" id="newStaffMobile" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></div>
+                    <div class="input-group"><label>Mobile Number</label><input type="tel" id="newStaffMobile"></div>
                     <div class="input-group"><label>Staff ID</label><input type="text" id="newStaffId"></div>
                     <div class="input-group"><label>Team</label><input type="text" id="newStaffTeam"></div>
                 </div>
@@ -1014,11 +1014,41 @@
             <label style="font-size: 0.75rem; font-weight: bold; color: var(--text-muted);">ADMIN PASSWORD:</label>
             <input type="password" id="adminPasswordInput" placeholder="Default: admin123" style="width: 100%; padding: 10px; margin: 6px 0 10px 0; border: 1px solid var(--border); border-radius: var(--radius-sm);" onkeypress="handleAdminLoginKey(event)">
             <button class="btn btn-primary btn-sm" style="width: 100%;" onclick="validateAdminPassword()">Login as Admin</button>
+            
+            <!-- Forgot Password Link -->
+            <div style="text-align: right; margin-top: 6px;">
+                <a href="#" onclick="openForgotPasswordModal(); return false;" style="font-size: 0.75rem; color: var(--primary); text-decoration: underline;">Forgot Password?</a>
+            </div>
+
             <div id="loginError" style="color: var(--danger); font-size: 0.75rem; margin-top: 6px; font-weight: bold;"></div>
         </div>
 
         <div style="margin: 12px 0 6px 0; font-size: 0.75rem; color: var(--text-muted); font-weight: bold; text-align: left; text-transform: uppercase;">Staff Profiles</div>
         <div id="loginUserList"></div>
+    </div>
+</div>
+
+<!-- FORGOT PASSWORD MODAL -->
+<div id="forgotPasswordModal" class="overlay" style="display: none; z-index: 2500;">
+    <div class="dialog-card" style="max-width: 400px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 12px;">
+            <h3 style="font-size: 1rem;">Reset Admin Password</h3>
+            <button class="btn btn-secondary btn-sm" onclick="closeForgotPasswordModal()">✕ Close</button>
+        </div>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">Enter the recovery passcode or backup word to reset your admin password.</p>
+        
+        <div class="input-group" style="margin-bottom: 10px;">
+            <label>Recovery Passcode</label>
+            <input type="password" id="recoveryCodeInput" placeholder="Enter master key (Default: satish123)">
+        </div>
+
+        <div class="input-group" style="margin-bottom: 14px;">
+            <label>New Admin Password</label>
+            <input type="password" id="newResetPassInput" placeholder="At least 4 characters">
+        </div>
+
+        <button class="btn btn-primary btn-sm" style="width: 100%;" onclick="executePasswordReset()">Reset Password</button>
+        <div id="forgotError" style="color: var(--danger); font-size: 0.75rem; margin-top: 8px; font-weight: bold; text-align: center;"></div>
     </div>
 </div>
 
@@ -1145,23 +1175,6 @@
         </div>
     </div>
 </div>
-
-<!-- Firebase SDK integration loaded safely via script module tag -->
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    
-    const firebaseConfig = {
-      apiKey: "AIzaSyCQfBqkEKo_MuhFDnYtvdp-v1humYZwdAo",
-      authDomain: "equipment-tracker-f3dd6.firebaseapp.com",
-      projectId: "equipment-tracker-f3dd6",
-      storageBucket: "equipment-tracker-f3dd6.firebasestorage.app",
-      messagingSenderId: "639545661428",
-      appId: "1:639545661428:web:0f71fc68e78cc8d448cba1"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    window.firebaseApp = app;
-</script>
 
 <script>
     const SafeStorage = {
@@ -2460,7 +2473,7 @@
                             <label style="font-size: 0.65rem; font-weight: bold; color: var(--text-muted);">TEAM & INCHARGE</label>
                             <input type="text" id="log-edit-team-${log.id}" class="inline-edit-input" placeholder="Team" value="${log.team || ''}">
                             <input type="text" id="log-edit-incharge-${log.id}" class="inline-edit-input" placeholder="Incharge" value="${log.shootIncharge || ''}">
-                            <input type="tel" inputmode="numeric" pattern="[0-9]*" id="log-edit-mobile-${log.id}" class="inline-edit-input" placeholder="Mobile" value="${log.mobileNumber || ''}" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                            <input type="tel" id="log-edit-mobile-${log.id}" class="inline-edit-input" placeholder="Mobile" value="${log.mobileNumber || ''}">
                         </td>
                         <td>
                             <input type="date" id="log-edit-timeoutdate-${log.id}" class="inline-edit-input" value="${log.timeOutDate || ''}">
@@ -2581,6 +2594,39 @@
         } else {
             document.getElementById('loginError').innerText = 'Incorrect Password!';
         }
+    }
+
+    function openForgotPasswordModal() {
+        document.getElementById('recoveryCodeInput').value = '';
+        document.getElementById('newResetPassInput').value = '';
+        document.getElementById('forgotError').innerText = '';
+        document.getElementById('forgotPasswordModal').style.display = 'flex';
+    }
+
+    function closeForgotPasswordModal() {
+        document.getElementById('forgotPasswordModal').style.display = 'none';
+    }
+
+    function executePasswordReset() {
+        const recoveryKey = document.getElementById('recoveryCodeInput').value.trim();
+        const newPass = document.getElementById('newResetPassInput').value;
+        const defaultMasterRecoveryKey = 'satish123'; // Change recovery key here if needed
+
+        if (recoveryKey !== defaultMasterRecoveryKey) {
+            document.getElementById('forgotError').innerText = 'Invalid Recovery Passcode!';
+            return;
+        }
+
+        if (!newPass || newPass.length < 4) {
+            document.getElementById('forgotError').innerText = 'New password must be at least 4 characters long.';
+            return;
+        }
+
+        SafeStorage.setItem('appAdminPassword', newPass);
+        alert('Admin password has been reset successfully! You can now log in with your new password.');
+        closeForgotPasswordModal();
+        document.getElementById('adminPasswordInput').value = '';
+        document.getElementById('loginError').innerText = '';
     }
 
     function handleAdminLoginKey(e) {
