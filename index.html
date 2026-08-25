@@ -1216,6 +1216,23 @@
     </div>
 </div>
 
+<!-- Firebase App & Config Initialization Script -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    
+    const firebaseConfig = {
+      apiKey: "AIzaSyDPJXI_mJQZujupOrrr4R-PDOXKOhJu9SU",
+      authDomain: "gear-control.firebaseapp.com",
+      projectId: "gear-control",
+      storageBucket: "gear-control.firebasestorage.app",
+      messagingSenderId: "824320932894",
+      appId: "1:824320932894:web:ca29e9f52c01e88442420f"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+</script>
+
 <script>
     const SafeStorage = {
         getItem(key) {
