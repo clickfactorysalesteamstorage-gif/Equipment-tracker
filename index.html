@@ -847,9 +847,10 @@
                 <h3>Add New Staff Profile</h3>
                 <div class="form-grid" style="margin-top: 10px;">
                     <div class="input-group"><label>Staff Full Name</label><input type="text" id="newStaffName"></div>
-                    <div class="input-group"><label>Mobile Number</label><input type="tel" id="newStaffMobile"></div>
+                    <div class="input-group"><label>Mobile Number</label><input type="tel" id="newStaffMobile" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></div>
                     <div class="input-group"><label>Staff ID</label><input type="text" id="newStaffId"></div>
                     <div class="input-group"><label>Team</label><input type="text" id="newStaffTeam"></div>
+                    <div class="input-group"><label>Account Password</label><input type="password" id="newStaffPassword" placeholder="Set user password"></div>
                 </div>
                 <button class="btn btn-primary" style="width: 100%;" onclick="createNewUserProfile()">Create Profile</button>
             </div>
@@ -1034,6 +1035,15 @@
             <div id="loginError" style="color: var(--danger); font-size: 0.75rem; margin-top: 6px; font-weight: bold;"></div>
         </div>
 
+        <!-- STAFF PASSWORD PROMPT MODAL -->
+        <div id="staffPassBox" style="display: none; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); text-align: left;">
+            <label style="font-size: 0.75rem; font-weight: bold; color: var(--text-muted);" id="staffPromptLabel">STAFF PASSWORD:</label>
+            <input type="password" id="staffPasswordInput" placeholder="Enter password" style="width: 100%; padding: 10px; margin: 6px 0 10px 0; border: 1px solid var(--border); border-radius: var(--radius-sm);" onkeypress="handleStaffLoginKey(event)">
+            <button class="btn btn-primary btn-sm" style="width: 100%;" onclick="validateStaffPassword()">Login as Staff</button>
+            <button class="btn btn-secondary btn-sm" style="width: 100%; margin-top: 4px;" onclick="cancelStaffPasswordPrompt()">Cancel</button>
+            <div id="staffLoginError" style="color: var(--danger); font-size: 0.75rem; margin-top: 6px; font-weight: bold;"></div>
+        </div>
+
         <div style="margin: 12px 0 6px 0; font-size: 0.75rem; color: var(--text-muted); font-weight: bold; text-align: left; text-transform: uppercase;">Staff Profiles</div>
         <div id="loginUserList"></div>
     </div>
@@ -1208,6 +1218,7 @@
     let pendingConfirmCallback = null;
     let allowManualCheckout = SafeStorage.getItem('appAllowManualCheckout') === 'true';
     let currentBarcodePrintMeta = { barcode: '', name: '' };
+    let pendingStaffLoginProfile = null;
 
     function showConfirmationModal({ title, message, icon = '⚠️', confirmBtnText = 'Confirm', confirmBtnClass = 'btn-primary', onConfirm }) {
         document.getElementById('confirmTitle').innerText = title;
@@ -1371,7 +1382,7 @@
     SafeStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
 
     let userProfiles = JSON.parse(SafeStorage.getItem('gearUserProfiles')) || [
-        { id: 'STAFF-1', name: 'Standard Staff Operator', mobile: '9876543210', team: 'Camera Crew', permissions: 'restricted' }
+        { id: 'STAFF-1', name: 'Standard Staff Operator', mobile: '9876543210', team: 'Camera Crew', permissions: 'restricted', password: 'password123' }
     ];
 
     let adminEntryMethod = 'scanner';
@@ -1422,13 +1433,55 @@
     function renderLoginUserList() {
         const container = document.getElementById('loginUserList');
         container.innerHTML = userProfiles.map(u => `
-            <div class="role-option" onclick="selectProfile('user', '${u.name}', '${u.mobile || ''}')">
+            <div class="role-option" onclick="promptStaffPassword('${u.name}', '${u.mobile || ''}')">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <span>👤 ${u.name}</span>
                     <span class="role-pill role-user">${u.id}</span>
                 </div>
             </div>
         `).join('');
+    }
+
+    function promptStaffPassword(name, mobile) {
+        pendingStaffLoginProfile = { name, mobile };
+        document.getElementById('adminPassBox').style.display = 'none';
+        document.getElementById('staffPromptLabel').innerText = `PASSWORD FOR ${name.toUpperCase()}:`;
+        document.getElementById('staffPasswordInput').value = '';
+        document.getElementById('staffLoginError').innerText = '';
+        document.getElementById('staffPassBox').style.display = 'block';
+        document.getElementById('staffPasswordInput').focus();
+    }
+
+    function cancelStaffPasswordPrompt() {
+        pendingStaffLoginProfile = null;
+        document.getElementById('staffPassBox').style.display = 'none';
+        document.getElementById('staffPasswordInput').value = '';
+    }
+
+    function validateStaffPassword() {
+        if (!pendingStaffLoginProfile) return;
+        const enteredPass = document.getElementById('staffPasswordInput').value;
+        const profile = userProfiles.find(u => u.name === pendingStaffLoginProfile.name);
+        
+        const requiredPass = profile && profile.password ? profile.password : 'password123';
+
+        if (enteredPass === requiredPass) {
+            document.getElementById('staffLoginError').innerText = '';
+            document.getElementById('staffPasswordInput').value = '';
+            document.getElementById('staffPassBox').style.display = 'none';
+            const tempProfile = pendingStaffLoginProfile;
+            pendingStaffLoginProfile = null;
+            selectProfile('user', tempProfile.name, tempProfile.mobile);
+        } else {
+            document.getElementById('staffLoginError').innerText = 'Incorrect Password!';
+        }
+    }
+
+    function handleStaffLoginKey(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            validateStaffPassword();
+        }
     }
 
     function selectProfile(role, name, mobile) {
@@ -2608,6 +2661,7 @@
     }
 
     function showAdminPasswordInput() {
+        document.getElementById('staffPassBox').style.display = 'none';
         document.getElementById('adminPassBox').style.display = 'block';
         document.getElementById('adminPasswordInput').focus();
     }
@@ -2700,9 +2754,15 @@
         const mobile = document.getElementById('newStaffMobile').value.trim();
         const id = document.getElementById('newStaffId').value.trim();
         const team = document.getElementById('newStaffTeam').value.trim();
+        const password = document.getElementById('newStaffPassword').value.trim();
 
         if (!name || !id) {
             alert('Please enter Staff Name and Staff ID.');
+            return;
+        }
+
+        if (!password || password.length < 4) {
+            alert('Please enter a valid password (at least 4 characters long).');
             return;
         }
 
@@ -2713,16 +2773,18 @@
             confirmBtnText: 'Create Profile',
             confirmBtnClass: 'btn-primary',
             onConfirm: () => {
-                userProfiles.push({ id, name, mobile, team, permissions: 'restricted' });
+                userProfiles.push({ id, name, mobile, team, permissions: 'restricted', password });
                 SafeStorage.setItem('gearUserProfiles', JSON.stringify(userProfiles));
                 
                 document.getElementById('newStaffName').value = '';
                 document.getElementById('newStaffMobile').value = '';
                 document.getElementById('newStaffId').value = '';
                 document.getElementById('newStaffTeam').value = '';
+                document.getElementById('newStaffPassword').value = '';
 
                 renderLoginUserList();
                 renderUserPermissionsTable();
+                alert('Staff profile and account password created successfully!');
             }
         });
     }
