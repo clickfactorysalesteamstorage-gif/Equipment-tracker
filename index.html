@@ -1233,24 +1233,30 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Global helper to push data to the Cloud
+    // Sync all data AND admin settings to Firestore
     window.syncToCloud = async () => {
         try {
             await setDoc(doc(db, "gear_control", "state"), {
                 masterEquipment,
                 gearLogs,
-                userProfiles
+                userProfiles,
+                adminSettings: {
+                    allowManualCheckout: SafeStorage.getItem('appAllowManualCheckout'),
+                    adminDisplayName: SafeStorage.getItem('appAdminDisplayName') || 'Administrator',
+                    adminPassword: SafeStorage.getItem('appAdminPassword') || 'admin123',
+                    adminRecoveryKey: SafeStorage.getItem('appAdminRecoveryKey')
+                }
             });
         } catch (error) {
             console.error("Firestore sync error:", error);
         }
     };
 
-    // Watch Firestore for changes and update client UI
+    // Watch Firestore for changes
     onSnapshot(doc(db, "gear_control", "state"), (docSnap) => {
         if (docSnap.exists()) {
             const data = docSnap.data();
-            window.isCloudDownloading = true; // Prevent update loop
+            window.isCloudDownloading = true;
 
             if (data.masterEquipment) {
                 masterEquipment = data.masterEquipment;
@@ -1265,9 +1271,44 @@
                 localStorage.setItem('gearUserProfiles', JSON.stringify(userProfiles));
             }
 
+            // Sync and apply Admin credentials & global settings
+            if (data.adminSettings) {
+                const settings = data.adminSettings;
+                
+                // Allow Manual Checkout
+                allowManualCheckout = settings.allowManualCheckout === 'true';
+                localStorage.setItem('appAllowManualCheckout', settings.allowManualCheckout);
+                
+                const toggleSwitch = document.getElementById('adminManualCheckoutSwitch');
+                if (toggleSwitch) toggleSwitch.checked = allowManualCheckout;
+                
+                const statusText = document.getElementById('manualCheckoutToggleStatus');
+                if (statusText) {
+                    statusText.innerText = allowManualCheckout ? 
+                        'ON (Manual checkboxes allowed for check-out)' : 
+                        'OFF (Scanner required for all check-outs)';
+                }
+
+                // Admin Security Credentials
+                localStorage.setItem('appAdminPassword', settings.adminPassword);
+                localStorage.setItem('appAdminDisplayName', settings.adminDisplayName);
+                localStorage.setItem('appAdminRecoveryKey', settings.adminRecoveryKey);
+
+                // Update UI elements in real time
+                const activeName = currentRole === 'admin' ? settings.adminDisplayName : (currentUserNameSession || 'Staff Member');
+                const activeUserName = document.getElementById('activeUserName');
+                const mobileActiveUserName = document.getElementById('mobileActiveUserName');
+                if (activeUserName) activeUserName.innerText = activeName;
+                if (mobileActiveUserName) mobileActiveUserName.innerText = activeName;
+
+                const nameInput = document.getElementById('adminDisplayNameInput');
+                const keyDisplay = document.getElementById('adminRecoveryKeyDisplay');
+                if (nameInput) nameInput.value = settings.adminDisplayName;
+                if (keyDisplay) keyDisplay.value = settings.adminRecoveryKey;
+            }
+
             window.isCloudDownloading = false;
 
-            // Re-render UI elements
             renderDashboard();
             renderMasterEquipmentTable();
             if (typeof renderUserPermissionsTable === "function") renderUserPermissionsTable();
