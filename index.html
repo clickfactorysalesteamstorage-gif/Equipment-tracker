@@ -1006,70 +1006,89 @@
     </div>
 </div>
 
-<!-- LOGIN OVERLAY -->
-<div id="loginOverlay" class="overlay" style="display: flex;">
-    <div class="dialog-card">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 12px;">
-            <h2 style="font-size: 1.1rem;">Workspace Login</h2>
-            <button class="btn btn-secondary btn-sm" onclick="closeLoginModal()">✕ Close</button>
-        </div>
-        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 12px; text-align: center;">Select profile to access logs</p>
+<!-- REDESIGNED BEAUTIFUL LOGIN OVERLAY -->
+<div id="loginOverlay" class="overlay" style="display: flex; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px);">
+    <div class="dialog-card" style="max-width: 440px; border-radius: 20px; padding: 36px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35); border: 1px solid rgba(255, 255, 255, 0.1);">
         
-        <div class="role-option" onclick="showAdminPasswordInput()">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span>👑 Admin Profile</span>
-                <span class="role-pill role-admin">Full Access</span>
-            </div>
+        <!-- Header Branding -->
+        <div style="text-align: center; margin-bottom: 24px;">
+            <div style="font-size: 2.75rem; margin-bottom: 8px;">📦</div>
+            <h2 style="font-size: 1.5rem; font-weight: 800; color: #0f172a; letter-spacing: -0.02em;">Gear Control Portal</h2>
+            <p style="color: var(--text-muted); font-size: 0.875rem; margin-top: 4px;">Select your workspace profile to sign in</p>
         </div>
 
-        <div id="adminPassBox" style="display: none; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); text-align: left;">
-            <label style="font-size: 0.75rem; font-weight: bold; color: var(--text-muted);">ADMIN PASSWORD:</label>
-            <input type="password" id="adminPasswordInput" placeholder="Enter password" style="width: 100%; padding: 10px; margin: 6px 0 10px 0; border: 1px solid var(--border); border-radius: var(--radius-sm);" onkeypress="handleAdminLoginKey(event)">
-            <button class="btn btn-primary btn-sm" style="width: 100%;" onclick="validateAdminPassword()">Login as Admin</button>
+        <!-- Admin Profile Button Option -->
+        <div class="role-option" onclick="showAdminPasswordInput()" style="display: flex; align-items: center; justify-content: space-between; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border-left: 4px solid #8b5cf6; padding: 14px 18px; border-radius: 12px;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="font-size: 1.25rem;">👑</span>
+                <div>
+                    <strong style="display: block; font-size: 0.95rem; color: #0f172a;">Administrator Profile</strong>
+                    <span style="font-size: 0.75rem; color: var(--text-muted);">Full system & security controls</span>
+                </div>
+            </div>
+            <span class="role-pill role-admin" style="font-size: 0.65rem;">Secure</span>
+        </div>
+
+        <!-- Admin Password Box (Hidden by default) -->
+        <div id="adminPassBox" style="display: none; margin-top: 14px; padding: 16px; background: #f8fafc; border: 1px solid var(--border); border-radius: 12px; text-align: left;">
+            <label style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; display: block; margin-bottom: 6px;">Admin Passcode</label>
+            <input type="password" id="adminPasswordInput" placeholder="Enter admin password..." style="width: 100%; padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.95rem; background: white;" onkeypress="handleAdminLoginKey(event)">
             
-            <!-- Forgot Password Link -->
-            <div style="text-align: right; margin-top: 6px;">
-                <a href="#" onclick="openForgotPasswordModal(); return false;" style="font-size: 0.75rem; color: var(--primary); text-decoration: underline;">Forgot Password?</a>
+            <div style="display: flex; gap: 8px; margin-top: 10px;">
+                <button class="btn btn-primary btn-sm" style="flex: 2;" onclick="validateAdminPassword()">Sign In</button>
+                <button class="btn btn-secondary btn-sm" style="flex: 1;" onclick="cancelAdminPasswordPrompt()">Cancel</button>
             </div>
 
+            <div style="text-align: right; margin-top: 8px;">
+                <a href="#" onclick="openForgotPasswordModal(); return false;" style="font-size: 0.75rem; color: var(--primary); text-decoration: underline; font-weight: 600;">Forgot Password?</a>
+            </div>
             <div id="loginError" style="color: var(--danger); font-size: 0.75rem; margin-top: 6px; font-weight: bold;"></div>
         </div>
 
-        <!-- STAFF PASSWORD PROMPT MODAL -->
-        <div id="staffPassBox" style="display: none; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); text-align: left;">
-            <label style="font-size: 0.75rem; font-weight: bold; color: var(--text-muted);" id="staffPromptLabel">STAFF PASSWORD:</label>
-            <input type="password" id="staffPasswordInput" placeholder="Enter password" style="width: 100%; padding: 10px; margin: 6px 0 10px 0; border: 1px solid var(--border); border-radius: var(--radius-sm);" onkeypress="handleStaffLoginKey(event)">
-            <button class="btn btn-primary btn-sm" style="width: 100%;" onclick="validateStaffPassword()">Login as Staff</button>
-            <button class="btn btn-secondary btn-sm" style="width: 100%; margin-top: 4px;" onclick="cancelStaffPasswordPrompt()">Cancel</button>
+        <!-- Staff Password Box (Hidden by default) -->
+        <div id="staffPassBox" style="display: none; margin-top: 14px; padding: 16px; background: #f8fafc; border: 1px solid var(--border); border-radius: 12px; text-align: left;">
+            <label style="font-size: 0.75rem; font-weight: 700; color: var(--primary); text-transform: uppercase; display: block; margin-bottom: 6px;" id="staffPromptLabel">Staff Password</label>
+            <input type="password" id="staffPasswordInput" placeholder="Enter your staff password..." style="width: 100%; padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.95rem; background: white;" onkeypress="handleStaffLoginKey(event)">
+            
+            <div style="display: flex; gap: 8px; margin-top: 10px;">
+                <button class="btn btn-primary btn-sm" style="flex: 2;" onclick="validateStaffPassword()">Verify & Login</button>
+                <button class="btn btn-secondary btn-sm" style="flex: 1;" onclick="cancelStaffPasswordPrompt()">Cancel</button>
+            </div>
             <div id="staffLoginError" style="color: var(--danger); font-size: 0.75rem; margin-top: 6px; font-weight: bold;"></div>
         </div>
 
-        <div style="margin: 12px 0 6px 0; font-size: 0.75rem; color: var(--text-muted); font-weight: bold; text-align: left; text-transform: uppercase;">Staff Profiles</div>
-        <div id="loginUserList"></div>
+        <!-- Staff Profiles Section Header -->
+        <div style="margin: 20px 0 10px 0; font-size: 0.75rem; color: var(--text-muted); font-weight: 800; text-align: left; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 6px;">
+            <span>Staff Operators</span>
+            <div style="flex: 1; height: 1px; background: var(--border);"></div>
+        </div>
+
+        <!-- Scrollable Staff Profile List container -->
+        <div id="loginUserList" style="max-height: 220px; overflow-y: auto; padding-right: 4px;"></div>
     </div>
 </div>
 
 <!-- FORGOT PASSWORD MODAL -->
 <div id="forgotPasswordModal" class="overlay" style="display: none; z-index: 2500;">
-    <div class="dialog-card" style="max-width: 400px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 12px;">
-            <h3 style="font-size: 1rem;">Reset Admin Password</h3>
-            <button class="btn btn-secondary btn-sm" onclick="closeForgotPasswordModal()">✕ Close</button>
+    <div class="dialog-card" style="max-width: 400px; border-radius: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 16px;">
+            <h3 style="font-size: 1.1rem; font-weight: 800;">Reset Admin Password</h3>
+            <button class="btn btn-secondary btn-sm" onclick="closeForgotPasswordModal()" style="min-height: 32px; padding: 4px 8px;">✕</button>
         </div>
-        <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">Enter your master recovery passcode to reset your admin password.</p>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px; line-height: 1.4;">Enter your secure master recovery key generated from the admin dashboard to reset credentials.</p>
         
-        <div class="input-group" style="margin-bottom: 10px;">
+        <div class="input-group" style="margin-bottom: 12px;">
             <label>Recovery Passcode</label>
             <input type="password" id="recoveryCodeInput" placeholder="Enter recovery key">
         </div>
 
-        <div class="input-group" style="margin-bottom: 14px;">
+        <div class="input-group" style="margin-bottom: 18px;">
             <label>New Admin Password</label>
             <input type="password" id="newResetPassInput" placeholder="At least 4 characters">
         </div>
 
-        <button class="btn btn-primary btn-sm" style="width: 100%;" onclick="executePasswordReset()">Reset Password</button>
-        <div id="forgotError" style="color: var(--danger); font-size: 0.75rem; margin-top: 8px; font-weight: bold; text-align: center;"></div>
+        <button class="btn btn-primary" style="width: 100%; padding: 12px;" onclick="executePasswordReset()">Reset Password</button>
+        <div id="forgotError" style="color: var(--danger); font-size: 0.75rem; margin-top: 10px; font-weight: bold; text-align: center;"></div>
     </div>
 </div>
 
@@ -1433,11 +1452,15 @@
     function renderLoginUserList() {
         const container = document.getElementById('loginUserList');
         container.innerHTML = userProfiles.map(u => `
-            <div class="role-option" onclick="promptStaffPassword('${u.name}', '${u.mobile || ''}')">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span>👤 ${u.name}</span>
-                    <span class="role-pill role-user">${u.id}</span>
+            <div class="role-option" onclick="promptStaffPassword('${u.name}', '${u.mobile || ''}')" style="display: flex; align-items: center; justify-content: space-between; background: #f8fafc; border: 1px solid var(--border); padding: 12px 16px; border-radius: 10px; margin-bottom: 8px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 1.1rem;">👤</span>
+                    <div>
+                        <strong style="display: block; font-size: 0.9rem; color: #0f172a;">${u.name}</strong>
+                        <span style="font-size: 0.7rem; color: var(--text-muted);">ID: ${u.id}</span>
+                    </div>
                 </div>
+                <span class="role-pill role-user" style="font-size: 0.65rem;">Staff</span>
             </div>
         `).join('');
     }
@@ -1445,7 +1468,7 @@
     function promptStaffPassword(name, mobile) {
         pendingStaffLoginProfile = { name, mobile };
         document.getElementById('adminPassBox').style.display = 'none';
-        document.getElementById('staffPromptLabel').innerText = `PASSWORD FOR ${name.toUpperCase()}:`;
+        document.getElementById('staffPromptLabel').innerText = `PASSWORD FOR ${name.toUpperCase()}`;
         document.getElementById('staffPasswordInput').value = '';
         document.getElementById('staffLoginError').innerText = '';
         document.getElementById('staffPassBox').style.display = 'block';
@@ -1482,6 +1505,12 @@
             e.preventDefault();
             validateStaffPassword();
         }
+    }
+
+    function cancelAdminPasswordPrompt() {
+        document.getElementById('adminPassBox').style.display = 'none';
+        document.getElementById('adminPasswordInput').value = '';
+        document.getElementById('loginError').innerText = '';
     }
 
     function selectProfile(role, name, mobile) {
