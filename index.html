@@ -731,7 +731,7 @@
             <div class="content-card">
                 <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
                     <h3 id="logSectionTitle">Recent Shoots & Gear Logs</h3>
-                    <input type="text" id="searchInput" onkeyup="filterLogs()" placeholder="Search client, event, or team..." style="padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); width: 100%; min-height: 44px;">
+                    <input type="text" id="searchInput" onkeyup="filterLogs()" placeholder="Search client, event, or incharge..." style="padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); width: 100%; min-height: 44px;">
                 </div>
                 
                 <div class="table-responsive">
@@ -1543,6 +1543,16 @@
         } else {
             document.getElementById('loginOverlay').style.display = 'none';
             applyRolePermissions(currentRole);
+        }
+
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('date').value = today;
+        document.getElementById('timeOutDate').value = today;
+        
+        const toggleSwitch = document.getElementById('adminManualCheckoutSwitch');
+        if (toggleSwitch) {
+            toggleSwitch.checked = allowManualCheckout;
+            toggleManualCheckoutSetting(allowManualCheckout);
         }
 
         // Initialize default recovery key if not set
@@ -3056,7 +3066,21 @@
 
     function formatDateTime(dateStr, timeStr) {
         if (!dateStr && !timeStr) return 'N/A';
-        return `${dateStr || ''} ${timeStr || ''}`.trim();
+        
+        let formattedTime = timeStr || '';
+        // If it's in 24-hour format "HH:mm" or "HH:mm:ss" convert to 12-hour AM/PM
+        if (timeStr && timeStr.includes(':') && !timeStr.toUpperCase().includes('M')) {
+            let parts = timeStr.split(':');
+            let h = parseInt(parts[0], 10);
+            let m = parts[1].substring(0, 2); // ensure we only grab minutes
+            let ampm = h >= 12 ? 'PM' : 'AM';
+            h = h % 12;
+            h = h ? h : 12; 
+            let paddedHour = h < 10 ? '0' + h : h;
+            formattedTime = `${paddedHour}:${m} ${ampm}`;
+        }
+
+        return `${dateStr || ''} ${formattedTime}`.trim();
     }
 
     function toggleStatus(id) {
