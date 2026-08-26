@@ -1162,6 +1162,7 @@
         <div class="detail-grid">
             <div class="detail-item"><span>Client ID</span><strong id="detailClientId">-</strong></div>
             <div class="detail-item"><span>Event / Place</span><strong id="detailEventPlace">-</strong></div>
+            <div class="detail-item"><span>Client Event Date</span><strong id="detailEventDate">-</strong></div>
             <div class="detail-item"><span>Shoot Incharge</span><strong id="detailIncharge">-</strong></div>
             <div class="detail-item"><span>Contact</span><strong id="detailMobile">-</strong></div>
             <div class="detail-item"><span>Time Out</span><strong id="detailTimeOut">-</strong></div>
@@ -1543,16 +1544,6 @@
         } else {
             document.getElementById('loginOverlay').style.display = 'none';
             applyRolePermissions(currentRole);
-        }
-
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('date').value = today;
-        document.getElementById('timeOutDate').value = today;
-        
-        const toggleSwitch = document.getElementById('adminManualCheckoutSwitch');
-        if (toggleSwitch) {
-            toggleSwitch.checked = allowManualCheckout;
-            toggleManualCheckoutSetting(allowManualCheckout);
         }
 
         // Initialize default recovery key if not set
@@ -2782,6 +2773,7 @@
         document.getElementById('detailClientName').innerText = record.clientName;
         document.getElementById('detailClientId').innerText = record.clientId || 'N/A';
         document.getElementById('detailEventPlace').innerText = `${record.event || '-'} (${record.place || '-'})`;
+        document.getElementById('detailEventDate').innerText = record.date || record.timeOutDate || 'N/A';
         document.getElementById('detailIncharge').innerText = record.shootIncharge || 'N/A';
         document.getElementById('detailMobile').innerText = record.mobileNumber || 'N/A';
         
@@ -3005,12 +2997,11 @@
 
         const clientId = document.getElementById('clientId').value || 'N/A';
         const event = document.getElementById('event').value || 'N/A';
-        const date = document.getElementById('date').value || 'N/A';
         const place = document.getElementById('place').value || 'N/A';
 
         showConfirmationModal({
             title: 'Confirm Booking & Dispatch?',
-            message: `• Client: ${clientName} (ID: ${clientId})\n• Event: ${event} on ${date} (${place})\n• Total Dispatched Items: ${gearData.length} type(s)`,
+            message: `• Client: ${clientName} (ID: ${clientId})\n• Event: ${event} (${place})\n• Total Dispatched Items: ${gearData.length} type(s)`,
             icon: '📋',
             confirmBtnText: 'Confirm & Dispatch',
             confirmBtnClass: 'btn-primary',
@@ -3033,7 +3024,7 @@
             id: Date.now(),
             clientName: clientName,
             clientId: document.getElementById('clientId').value,
-            date: document.getElementById('date').value,
+            date: autoDateStr,
             place: document.getElementById('place').value,
             event: document.getElementById('event').value,
             shootIncharge: document.getElementById('shootIncharge').value,
@@ -3053,8 +3044,6 @@
         document.getElementById('checklistForm').reset();
         scannedQuantities = {};
         updateEntryInterface();
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('date').value = today;
         
         renderDashboard();
         if (currentRole === 'admin') {
