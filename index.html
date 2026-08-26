@@ -739,7 +739,7 @@
                         <thead>
                             <tr>
                                 <th>Client / Event</th>
-                                <th>Team / Incharge</th>
+                                <th>Incharge</th>
                                 <th>Time Out</th>
                                 <th>Time In (Returned)</th>
                                 <th>Status</th>
@@ -775,7 +775,6 @@
                     <div class="form-grid">
                         <div class="input-group"><label>Client Name</label><input type="text" id="clientName" required></div>
                         <div class="input-group"><label>Client ID</label><input type="text" id="clientId"></div>
-                        <div class="input-group"><label>Team</label><input type="text" id="team"></div>
                         <div class="input-group"><label>Event Date</label><input type="date" id="date"></div>
                         <div class="input-group"><label>Place</label><input type="text" id="place"></div>
                         <div class="input-group"><label>Event</label><input type="text" id="event"></div>
@@ -849,7 +848,6 @@
                     <div class="input-group"><label>Staff Full Name</label><input type="text" id="newStaffName"></div>
                     <div class="input-group"><label>Mobile Number</label><input type="tel" id="newStaffMobile" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></div>
                     <div class="input-group"><label>Staff ID</label><input type="text" id="newStaffId"></div>
-                    <div class="input-group"><label>Team</label><input type="text" id="newStaffTeam"></div>
                     <div class="input-group"><label>Account Password</label><input type="password" id="newStaffPassword" placeholder="Set user password"></div>
                 </div>
                 <button class="btn btn-primary" style="width: 100%;" onclick="createNewUserProfile()">Create Profile</button>
@@ -1167,7 +1165,6 @@
         <div class="detail-grid">
             <div class="detail-item"><span>Client ID</span><strong id="detailClientId">-</strong></div>
             <div class="detail-item"><span>Event / Place</span><strong id="detailEventPlace">-</strong></div>
-            <div class="detail-item"><span>Team</span><strong id="detailTeam">-</strong></div>
             <div class="detail-item"><span>Shoot Incharge</span><strong id="detailIncharge">-</strong></div>
             <div class="detail-item"><span>Contact</span><strong id="detailMobile">-</strong></div>
             <div class="detail-item"><span>Time Out</span><strong id="detailTimeOut">-</strong></div>
@@ -1818,14 +1815,12 @@
     function saveEditUserProfile(userId) {
         const idInput = document.getElementById(`edit-user-id-${userId}`);
         const nameInput = document.getElementById(`edit-user-name-${userId}`);
-        const teamInput = document.getElementById(`edit-user-team-${userId}`);
         const permSelect = document.getElementById(`edit-user-perm-${userId}`);
 
         if (!idInput || !nameInput) return;
 
         const newId = idInput.value.trim();
         const newName = nameInput.value.trim();
-        const newTeam = teamInput ? teamInput.value.trim() : '';
         const newPerm = permSelect ? permSelect.value : 'restricted';
 
         if (!newId || !newName) {
@@ -1835,7 +1830,7 @@
 
         userProfiles = userProfiles.map(u => {
             if (u.id === userId) {
-                return { ...u, id: newId, name: newName, team: newTeam, permissions: newPerm };
+                return { ...u, id: newId, name: newName, permissions: newPerm };
             }
             return u;
         });
@@ -2617,7 +2612,6 @@
         const clientIdInput = document.getElementById(`log-edit-clientid-${id}`);
         const eventInput = document.getElementById(`log-edit-event-${id}`);
         const placeInput = document.getElementById(`log-edit-place-${id}`);
-        const teamInput = document.getElementById(`log-edit-team-${id}`);
         const inchargeInput = document.getElementById(`log-edit-incharge-${id}`);
         const mobileInput = document.getElementById(`log-edit-mobile-${id}`);
         const timeoutDateInput = document.getElementById(`log-edit-timeoutdate-${id}`);
@@ -2655,7 +2649,6 @@
                     clientId: clientIdInput ? clientIdInput.value.trim() : log.clientId,
                     event: eventInput ? eventInput.value.trim() : log.event,
                     place: placeInput ? placeInput.value.trim() : log.place,
-                    team: teamInput ? teamInput.value.trim() : log.team,
                     shootIncharge: inchargeInput ? inchargeInput.value.trim() : log.shootIncharge,
                     mobileNumber: mobileInput ? mobileInput.value.trim() : log.mobileNumber,
                     timeOutDate: timeoutDateInput ? timeoutDateInput.value : log.timeOutDate,
@@ -2720,8 +2713,7 @@
                             </div>
                         </td>
                         <td>
-                            <label style="font-size: 0.65rem; font-weight: bold; color: var(--text-muted);">TEAM & INCHARGE</label>
-                            <input type="text" id="log-edit-team-${log.id}" class="inline-edit-input" placeholder="Team" value="${log.team || ''}">
+                            <label style="font-size: 0.65rem; font-weight: bold; color: var(--text-muted);">INCHARGE</label>
                             <input type="text" id="log-edit-incharge-${log.id}" class="inline-edit-input" placeholder="Incharge" value="${log.shootIncharge || ''}">
                             <input type="tel" id="log-edit-mobile-${log.id}" class="inline-edit-input" placeholder="Mobile" value="${log.mobileNumber || ''}">
                         </td>
@@ -2767,8 +2759,7 @@
                         <span class="time-text">Items: ${log.gear.length} selected</span>
                     </td>
                     <td>
-                        ${log.team || '-'}
-                        <span class="time-text">Incharge: ${log.shootIncharge || '-'}</span>
+                        ${log.shootIncharge || '-'}
                     </td>
                     <td>${timeOutDisplay}</td>
                     <td><strong>${timeInDisplay}</strong></td>
@@ -2794,7 +2785,6 @@
         document.getElementById('detailClientName').innerText = record.clientName;
         document.getElementById('detailClientId').innerText = record.clientId || 'N/A';
         document.getElementById('detailEventPlace').innerText = `${record.event || '-'} (${record.place || '-'})`;
-        document.getElementById('detailTeam').innerText = record.team || 'N/A';
         document.getElementById('detailIncharge').innerText = record.shootIncharge || 'N/A';
         document.getElementById('detailMobile').innerText = record.mobileNumber || 'N/A';
         
@@ -2921,7 +2911,6 @@
         const name = document.getElementById('newStaffName').value.trim();
         const mobile = document.getElementById('newStaffMobile').value.trim();
         const id = document.getElementById('newStaffId').value.trim();
-        const team = document.getElementById('newStaffTeam').value.trim();
         const password = document.getElementById('newStaffPassword').value.trim();
 
         if (!name || !id) {
@@ -2936,18 +2925,17 @@
 
         showConfirmationModal({
             title: 'Create Staff Profile?',
-            message: `• Staff Name: ${name}\n• Staff ID: ${id}\n• Team: ${team || 'N/A'}`,
+            message: `• Staff Name: ${name}\n• Staff ID: ${id}`,
             icon: '👤',
             confirmBtnText: 'Create Profile',
             confirmBtnClass: 'btn-primary',
             onConfirm: () => {
-                userProfiles.push({ id, name, mobile, team, permissions: 'restricted', password });
+                userProfiles.push({ id, name, mobile, permissions: 'restricted', password });
                 SafeStorage.setItem('gearUserProfiles', JSON.stringify(userProfiles));
                 
                 document.getElementById('newStaffName').value = '';
                 document.getElementById('newStaffMobile').value = '';
                 document.getElementById('newStaffId').value = '';
-                document.getElementById('newStaffTeam').value = '';
                 document.getElementById('newStaffPassword').value = '';
 
                 renderLoginUserList();
@@ -3043,7 +3031,6 @@
             id: Date.now(),
             clientName: clientName,
             clientId: document.getElementById('clientId').value,
-            team: document.getElementById('team').value,
             date: document.getElementById('date').value,
             place: document.getElementById('place').value,
             event: document.getElementById('event').value,
