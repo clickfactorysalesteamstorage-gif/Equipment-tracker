@@ -780,9 +780,6 @@
                         <div class="input-group"><label>Event</label><input type="text" id="event"></div>
                         <div class="input-group"><label>Shoot Incharge</label><input type="text" id="shootIncharge"></div>
                         <div class="input-group"><label>Mobile Number</label><input type="tel" id="mobileNumber" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></div>
-                        
-                        <div class="input-group"><label>Time Out Date</label><input type="date" id="timeOutDate"></div>
-                        <div class="input-group"><label>Time Out Time</label><input type="time" id="timeOutTime"></div>
                     </div>
 
                     <!-- TRIGGER BUTTON FOR NEW BOOKING CHECK-OUT SCANNER -->
@@ -1527,7 +1524,7 @@
     SafeStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
 
     let userProfiles = JSON.parse(SafeStorage.getItem('gearUserProfiles')) || [
-        { id: 'STAFF-1', name: 'Standard Staff Operator', mobile: '9876543210', team: 'Camera Crew', permissions: 'restricted', password: 'password123' }
+        { id: 'STAFF-1', name: 'Standard Staff Operator', mobile: '9876543210', permissions: 'restricted', password: 'password123' }
     ];
 
     let adminEntryMethod = 'scanner';
@@ -1546,16 +1543,6 @@
         } else {
             document.getElementById('loginOverlay').style.display = 'none';
             applyRolePermissions(currentRole);
-        }
-
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('date').value = today;
-        document.getElementById('timeOutDate').value = today;
-        
-        const toggleSwitch = document.getElementById('adminManualCheckoutSwitch');
-        if (toggleSwitch) {
-            toggleSwitch.checked = allowManualCheckout;
-            toggleManualCheckoutSetting(allowManualCheckout);
         }
 
         // Initialize default recovery key if not set
@@ -3027,6 +3014,11 @@
         const currentActiveUserName = currentUserNameSession || SafeStorage.getItem('appUserName') || 'Staff';
         const creatorMobile = SafeStorage.getItem('appUserMobile') || '';
         
+        // Automatically capture exact current date and time
+        const now = new Date();
+        const autoDateStr = now.toISOString().split('T')[0];
+        const autoTimeStr = now.toTimeString().split(' ')[0].substring(0, 5);
+
         const record = {
             id: Date.now(),
             clientName: clientName,
@@ -3036,8 +3028,8 @@
             event: document.getElementById('event').value,
             shootIncharge: document.getElementById('shootIncharge').value,
             mobileNumber: document.getElementById('mobileNumber').value,
-            timeOutDate: document.getElementById('timeOutDate').value,
-            timeOutTime: document.getElementById('timeOutTime').value,
+            timeOutDate: autoDateStr,
+            timeOutTime: autoTimeStr,
             actualReturnTimeStamp: null,
             gear: gearData,
             status: 'OUT ON SHOOT',
@@ -3053,7 +3045,6 @@
         updateEntryInterface();
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('date').value = today;
-        document.getElementById('timeOutDate').value = today;
         
         renderDashboard();
         if (currentRole === 'admin') {
