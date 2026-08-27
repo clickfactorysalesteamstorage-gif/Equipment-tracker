@@ -976,6 +976,22 @@
     </div>
 </div>
 
+<!-- DISPATCH WHATSAPP SHARE MODAL -->
+<div id="whatsappShareModal" class="overlay" style="display: none; z-index: 2500;">
+    <div class="dialog-card" style="max-width: 450px; text-align: center;">
+        <div style="font-size: 2.5rem; margin-bottom: 8px;">📲</div>
+        <h3 style="margin-bottom: 8px; font-size: 1.2rem; color: #0f172a;">Dispatch Saved Successfully!</h3>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px;">Would you like to share this booking and dispatch summary via WhatsApp?</p>
+        
+        <div id="whatsappPreviewBox" style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 12px; text-align: left; font-size: 0.8rem; font-family: monospace; max-height: 160px; overflow-y: auto; margin-bottom: 20px; white-space: pre-wrap; word-break: break-all;"></div>
+
+        <div style="display: flex; gap: 10px; justify-content: center;">
+            <button class="btn btn-secondary" style="flex: 1;" onclick="closeWhatsappShareModal()">Skip / Close</button>
+            <button class="btn btn-success" style="flex: 1; background: #25d366; color: white;" onclick="sendDispatchToWhatsapp()">💬 Share to WhatsApp</button>
+        </div>
+    </div>
+</div>
+
 <!-- DEVELOPER INFO MODAL -->
 <div id="devInfoModal" class="overlay" style="display: none;">
     <div class="dialog-card" style="max-width: 500px;">
@@ -1377,6 +1393,7 @@
     let allowManualCheckout = SafeStorage.getItem('appAllowManualCheckout') === 'true';
     let currentBarcodePrintMeta = { barcode: '', name: '' };
     let pendingStaffLoginProfile = null;
+    let lastDispatchedRecordForWhatsapp = null;
 
     function showConfirmationModal({ title, message, icon = '⚠️', confirmBtnText = 'Confirm', confirmBtnClass = 'btn-primary', onConfirm }) {
         document.getElementById('confirmTitle').innerText = title;
@@ -3098,12 +3115,65 @@
         scannedQuantities = {};
         updateEntryInterface();
         
+        // Save record reference for WhatsApp prompt
+        lastDispatchedRecordForWhatsapp = record;
+        
         renderDashboard();
+        
+        // Prompt WhatsApp Share Modal
+        openWhatsappShareModal(record);
+    }
+
+    function openWhatsappShareModal(record) {
+        lastDispatchedRecordForWhatsapp = record;
+        const formattedTimeOut = formatDateTime(record.timeOutDate, record.timeOutTime);
+        const itemsListStr = record.gear.map(g => `• ${g.name} (Qty: ${g.qty})`).join('\n');
+        
+        const messageSummary = `📦 *GEAR CONTROL - NEW DISPATCH* 📦\n\n` +
+            `👤 *Client:* ${record.clientName}\n` +
+            `🆔 *Client ID:* ${record.clientId || 'N/A'}\n` +
+            `🎯 *Event:* ${record.event || 'N/A'} at ${record.place || 'N/A'}\n` +
+            `📅 *Date:* ${record.date || 'N/A'}\n` +
+            `🕒 *Time Out:* ${formattedTimeOut}\n` +
+            `📞 *Incharge / Mobile:* ${record.shootIncharge || 'N/A'} (${record.mobileNumber || 'N/A'})\n\n` +
+            `📋 *Dispatched Items:*\n${itemsListStr}\n\n` +
+            `_Logged by: ${record.createdBy}_`;
+
+        document.getElementById('whatsappPreviewBox').innerText = messageSummary;
+        document.getElementById('whatsappShareModal').style.display = 'flex';
+    }
+
+    function closeWhatsappShareModal() {
+        document.getElementById('whatsappShareModal').style.display = 'none';
+        lastDispatchedRecordForWhatsapp = null;
         if (currentRole === 'admin') {
             switchTab('dashboard-tab');
         } else {
             alert('Checkout Sheet saved successfully!');
         }
+    }
+
+    function sendDispatchToWhatsapp() {
+        if (!lastDispatchedRecordForWhatsapp) return;
+        const record = lastDispatchedRecordForWhatsapp;
+        const formattedTimeOut = formatDateTime(record.timeOutDate, record.timeOutTime);
+        const itemsListStr = record.gear.map(g => `• ${g.name} (Qty: ${g.qty})`).join('\n');
+
+        const messageSummary = `📦 *GEAR CONTROL - NEW DISPATCH* 📦\n\n` +
+            `👤 *Client:* ${record.clientName}\n` +
+            `🆔 *Client ID:* ${record.clientId || 'N/A'}\n` +
+            `🎯 *Event:* ${record.event || 'N/A'} at ${record.place || 'N/A'}\n` +
+            `📅 *Date:* ${record.date || 'N/A'}\n` +
+            `🕒 *Time Out:* ${formattedTimeOut}\n` +
+            `📞 *Incharge / Mobile:* ${record.shootIncharge || 'N/A'} (${record.mobileNumber || 'N/A'})\n\n` +
+            `📋 *Dispatched Items:*\n${itemsListStr}\n\n` +
+            `_Logged by: ${record.createdBy}_`;
+
+        const encodedMessage = encodeURIComponent(messageSummary);
+        const whatsappUrl = `https://api.whatsapp.com/send?text=${encodedMessage}`;
+        window.open(whatsappUrl, '_blank');
+
+        closeWhatsappShareModal();
     }
 
     function formatDateTime(dateStr, timeStr) {
