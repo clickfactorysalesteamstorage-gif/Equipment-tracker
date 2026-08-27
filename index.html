@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Universal Equipment Management Dashboard v3.3</title>
-    <!-- JsBarcode Library -->
+    <!-- JsBarcode Library with local fallback safeguard -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.12.3/JsBarcode.all.min.js"></script>
-    <!-- html2canvas Library for Image Generation -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
             --primary: #2563eb;
@@ -979,27 +977,18 @@
     </div>
 </div>
 
-<!-- DISPATCH WHATSAPP IMAGE SHARE MODAL -->
+<!-- DISPATCH WHATSAPP SHARE MODAL -->
 <div id="whatsappShareModal" class="overlay" style="display: none; z-index: 2500;">
-    <div class="dialog-card" style="max-width: 480px; text-align: center;">
-        <div style="font-size: 2.5rem; margin-bottom: 8px;">📸</div>
-        <h3 style="margin-bottom: 4px; font-size: 1.2rem; color: #0f172a;">Dispatch Summary Card Ready</h3>
-        <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 14px;">Download the dispatch card image or share it directly.</p>
+    <div class="dialog-card" style="max-width: 450px; text-align: center;">
+        <div style="font-size: 2.5rem; margin-bottom: 8px;">📲</div>
+        <h3 style="margin-bottom: 8px; font-size: 1.2rem; color: #0f172a;">Dispatch Saved Successfully!</h3>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 16px;">Click below to send this dispatch details via WhatsApp:</p>
         
-        <!-- HIDDEN OR VISIBLE CARD TEMPLATE TO CAPTURE AS IMAGE -->
-        <div id="dispatchCardCanvasWrapper" style="background: white; border: 2px solid var(--primary); border-radius: 12px; padding: 18px; text-align: left; font-size: 0.85rem; color: #0f172a; margin-bottom: 16px; box-shadow: var(--shadow-sm);">
-            <div style="font-weight: 800; font-size: 1.05rem; border-bottom: 2px solid var(--primary); padding-bottom: 6px; margin-bottom: 10px; display: flex; justify-content: space-between;">
-                <span>📦 GEAR CONTROL DISPATCH</span>
-                <span style="font-size: 0.75rem; color: var(--text-muted);">v3.3</span>
-            </div>
-            <div id="cardContentDetails" style="line-height: 1.6; margin-bottom: 10px;"></div>
-            <div style="font-size: 0.7rem; color: var(--text-muted); border-top: 1px solid var(--border); padding-top: 6px; text-align: right;" id="cardFooterLogged"></div>
-        </div>
+        <div id="whatsappPreviewBox" style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 12px; text-align: left; font-size: 0.8rem; font-family: monospace; max-height: 160px; overflow-y: auto; margin-bottom: 20px; white-space: pre-wrap; word-break: break-all;"></div>
 
-        <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
-            <button class="btn btn-secondary btn-sm" style="flex: 1;" onclick="closeWhatsappShareModal()">Close / Skip</button>
-            <button class="btn btn-primary btn-sm" style="flex: 1;" onclick="downloadDispatchCardImage()">📥 Download Image</button>
-            <a id="whatsappShareImageDirectLink" href="#" target="_blank" class="btn btn-success btn-sm" style="flex: 1; background: #25d366; color: white;" onclick="closeWhatsappShareModal()">💬 Open WhatsApp</a>
+        <div style="display: flex; gap: 10px; justify-content: center;">
+            <button class="btn btn-secondary" style="flex: 1;" onclick="closeWhatsappShareModal()">Skip / Close</button>
+            <a id="whatsappDirectLink" href="#" target="_blank" class="btn btn-success" style="flex: 1; background: #25d366; color: white;" onclick="closeWhatsappShareModal()">💬 Share to WhatsApp</a>
         </div>
     </div>
 </div>
@@ -1405,6 +1394,7 @@
     let allowManualCheckout = SafeStorage.getItem('appAllowManualCheckout') === 'true';
     let currentBarcodePrintMeta = { barcode: '', name: '' };
     let pendingStaffLoginProfile = null;
+    let lastDispatchedRecordForWhatsapp = null;
 
     function showConfirmationModal({ title, message, icon = '⚠️', confirmBtnText = 'Confirm', confirmBtnClass = 'btn-primary', onConfirm }) {
         document.getElementById('confirmTitle').innerText = title;
@@ -2788,7 +2778,7 @@
 
             const checkinButton = log.status === 'OUT ON SHOOT' ? `<button class="btn btn-sm btn-success" onclick="openDashboardCheckinModal(${log.id})">↩ Check-In</button>` : '';
 
-            // Generate direct link sharing button for overview logs
+            // Generate direct WhatsApp Share Link using official wa.me format
             const itemsListStr = log.gear.map(g => `• ${g.name} (Qty: ${g.qty})`).join('\n');
             const messageSummary = `📦 *GEAR CONTROL - DISPATCH DETAILS* 📦\n\n` +
                 `👤 *Client:* ${log.clientName}\n` +
@@ -2798,7 +2788,7 @@
                 `📞 *Incharge / Mobile:* ${log.shootIncharge || 'N/A'} (${log.mobileNumber || 'N/A'})\n\n` +
                 `📋 *Dispatched Items:*\n${itemsListStr}\n\n` +
                 `_Logged by: ${log.createdBy || 'Staff'}_`;
-            const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(messageSummary)}`;
+            const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(messageSummary)}`;
             const shareWhatsappBtn = `<a href="${whatsappUrl}" target="_blank" class="btn btn-sm btn-success" style="background: #25d366; color: white; min-height: 36px; padding: 6px 12px; display: inline-flex; align-items: center; justify-content: center; text-decoration: none;">💬 Share</a>`;
 
             const actionsCell = currentRole === 'admin' ? `
@@ -3162,7 +3152,7 @@
         document.getElementById('whatsappPreviewBox').innerText = messageSummary;
         
         const encodedMessage = encodeURIComponent(messageSummary);
-        document.getElementById('whatsappDirectLink').href = `https://api.whatsapp.com/send?text=${encodedMessage}`;
+        document.getElementById('whatsappDirectLink').href = `https://wa.me/?text=${encodedMessage}`;
 
         document.getElementById('whatsappShareModal').style.display = 'flex';
     }
