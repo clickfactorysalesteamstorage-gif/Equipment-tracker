@@ -1166,7 +1166,7 @@
             <div class="detail-item"><span>Shoot Incharge</span><strong id="detailIncharge">-</strong></div>
             <div class="detail-item"><span>Contact</span><strong id="detailMobile">-</strong></div>
             <div class="detail-item"><span>Time Out</span><strong id="detailTimeOut">-</strong></div>
-            <div class="detail-item"><span>Time In (Returned History)</span><strong id="detailTimeIn">-</strong></div>
+            <div class="detail-item"><span>Returned History (Time In)</span><strong id="detailTimeIn">-</strong></div>
             <div class="detail-item"><span>Logged By</span><strong id="detailCreatedBy">-</strong></div>
         </div>
 
@@ -2220,10 +2220,17 @@
             log.gear.splice(itemIdx, 1);
         }
         
+        const now = new Date();
+        const returnTimestamp = now.toLocaleDateString('en-GB') + ', ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+        
+        if (!log.returnHistory) {
+            log.returnHistory = [];
+        }
+        log.returnHistory.push(`Returned ${currentItem.name} on ${returnTimestamp}`);
+        log.actualReturnTimeStamp = returnTimestamp;
+
         if (log.gear.length === 0) {
             log.status = 'RETURNED';
-            const now = new Date();
-            log.actualReturnTimeStamp = now.toLocaleDateString('en-GB') + ', ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
             SafeStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
             alert('All items returned! Shoot status updated to RETURNED.');
             closeDashboardCheckinModal();
@@ -2246,10 +2253,17 @@
             confirmBtnText: 'Return All Gear',
             confirmBtnClass: 'btn-success',
             onConfirm: () => {
+                const now = new Date();
+                const returnTimestamp = now.toLocaleDateString('en-GB') + ', ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+                
+                if (!log.returnHistory) {
+                    log.returnHistory = [];
+                }
+                log.returnHistory.push(`Force returned all remaining items on ${returnTimestamp}`);
+                
                 log.gear = [];
                 log.status = 'RETURNED';
-                const now = new Date();
-                log.actualReturnTimeStamp = now.toLocaleDateString('en-GB') + ', ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+                log.actualReturnTimeStamp = returnTimestamp;
                 
                 SafeStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
                 closeDashboardCheckinModal();
@@ -2778,7 +2792,16 @@
         document.getElementById('detailMobile').innerText = record.mobileNumber || 'N/A';
         
         document.getElementById('detailTimeOut').innerText = formatDateTime(record.timeOutDate, record.timeOutTime);
-        document.getElementById('detailTimeIn').innerText = record.status === 'RETURNED' && record.actualReturnTimeStamp ? record.actualReturnTimeStamp : 'Not Returned Yet';
+        
+        // Build returned history string if partial or full history exists
+        let returnHistoryText = 'Not Returned Yet';
+        if (record.returnHistory && record.returnHistory.length > 0) {
+            returnHistoryText = record.returnHistory.join('<br>');
+        } else if (record.status === 'RETURNED' && record.actualReturnTimeStamp) {
+            returnHistoryText = record.actualReturnTimeStamp;
+        }
+        document.getElementById('detailTimeIn').innerHTML = returnHistoryText;
+
         document.getElementById('detailCreatedBy').innerText = `${record.createdBy || 'Staff'} ${record.creatorMobile ? '(' + record.creatorMobile + ')' : ''}`;
 
         const statusTag = document.getElementById('detailStatusTag');
@@ -3032,6 +3055,7 @@
             timeOutDate: autoDateStr,
             timeOutTime: autoTimeStr,
             actualReturnTimeStamp: null,
+            returnHistory: [],
             gear: gearData,
             status: 'OUT ON SHOOT',
             createdBy: currentActiveUserName,
@@ -3079,7 +3103,10 @@
                 if (log.status === 'OUT ON SHOOT') {
                     log.status = 'RETURNED';
                     const now = new Date();
-                    log.actualReturnTimeStamp = now.toLocaleDateString('en-GB') + ', ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+                    const returnTimestamp = now.toLocaleDateString('en-GB') + ', ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+                    if (!log.returnHistory) log.returnHistory = [];
+                    log.returnHistory.push(`Marked fully returned on ${returnTimestamp}`);
+                    log.actualReturnTimeStamp = returnTimestamp;
                 } else {
                     log.status = 'OUT ON SHOOT';
                     log.actualReturnTimeStamp = null;
