@@ -982,14 +982,13 @@
     <div class="dialog-card" style="max-width: 450px; text-align: center;">
         <div style="font-size: 2.5rem; margin-bottom: 8px;">📲</div>
         <h3 style="margin-bottom: 8px; font-size: 1.2rem; color: #0f172a;">Dispatch Saved Successfully!</h3>
-        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px;">Would you like to share this booking and dispatch summary via WhatsApp?</p>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px;">Click below to open WhatsApp and share this dispatch summary:</p>
         
         <div id="whatsappPreviewBox" style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 12px; text-align: left; font-size: 0.8rem; font-family: monospace; max-height: 160px; overflow-y: auto; margin-bottom: 20px; white-space: pre-wrap; word-break: break-all;"></div>
 
         <div style="display: flex; gap: 10px; justify-content: center;">
             <button class="btn btn-secondary" style="flex: 1;" onclick="closeWhatsappShareModal()">Skip / Close</button>
-            <!-- DIRECT HTML ANCHOR TAG TO ENSURE REDIRECTION WORKS WITHOUT POPUP BLOCKERS -->
-            <a id="whatsappDirectLink" href="#" target="_blank" class="btn btn-success" style="flex: 1; background: #25d366; color: white; text-decoration: none; display: inline-flex; align-items: center; justify-content: center;" onclick="closeWhatsappShareModal()">💬 Share to WhatsApp</a>
+            <a id="whatsappDirectLink" href="#" target="_blank" class="btn btn-success" style="flex: 1; background: #25d366; color: white;" onclick="closeWhatsappShareModal()">💬 Share to WhatsApp</a>
         </div>
     </div>
 </div>
@@ -2778,8 +2777,18 @@
 
             const checkinButton = log.status === 'OUT ON SHOOT' ? `<button class="btn btn-sm btn-success" onclick="openDashboardCheckinModal(${log.id})">↩ Check-In</button>` : '';
 
-            // Share to WhatsApp button on Overview Table row
-            const shareWhatsappBtn = `<button class="btn btn-sm btn-success" style="background: #25d366; color: white; min-height: 36px; padding: 6px 12px;" onclick="shareOverviewLogToWhatsapp('${encodeURIComponent(log.clientName)}', '${encodeURIComponent(log.event || 'N/A')}', '${encodeURIComponent(log.place || 'N/A')}', '${encodeURIComponent(log.date || log.timeOutDate || 'N/A')}', '${encodeURIComponent(formatDateTime(log.timeOutDate, log.timeOutTime))}', '${encodeURIComponent(log.shootIncharge || 'N/A')}', '${encodeURIComponent(log.mobileNumber || 'N/A')}', '${encodeURIComponent(log.createdBy || 'Staff')}', '${encodeURIComponent(JSON.stringify(log.gear))}')">💬 Share</button>`;
+            // Generate WhatsApp share link dynamically for each row
+            const itemsListStr = log.gear.map(g => `• ${g.name} (Qty: ${g.qty})`).join('\n');
+            const messageSummary = `📦 *GEAR CONTROL - DISPATCH DETAILS* 📦\n\n` +
+                `👤 *Client:* ${log.clientName}\n` +
+                `🎯 *Event:* ${log.event || 'N/A'} at ${log.place || 'N/A'}\n` +
+                `📅 *Date:* ${log.date || log.timeOutDate || 'N/A'}\n` +
+                `🕒 *Time Out:* ${formatDateTime(log.timeOutDate, log.timeOutTime)}\n` +
+                `📞 *Incharge / Mobile:* ${log.shootIncharge || 'N/A'} (${log.mobileNumber || 'N/A'})\n\n` +
+                `📋 *Dispatched Items:*\n${itemsListStr}\n\n` +
+                `_Logged by: ${log.createdBy || 'Staff'}_`;
+            const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(messageSummary)}`;
+            const shareWhatsappBtn = `<a href="${whatsappUrl}" target="_blank" class="btn btn-sm btn-success" style="background: #25d366; color: white; min-height: 36px; padding: 6px 12px; display: inline-flex; align-items: center; justify-content: center; text-decoration: none;">💬 Share</a>`;
 
             const actionsCell = currentRole === 'admin' ? `
                 <td>
@@ -2818,24 +2827,6 @@
         document.getElementById('metric-total').innerText = visibleLogs.length;
         document.getElementById('metric-out').innerText = activeOut;
         document.getElementById('metric-returned').innerText = totalReturned;
-    }
-
-    function shareOverviewLogToWhatsapp(cName, cEvent, cPlace, cDate, cTimeOut, cIncharge, cMobile, cCreator, gearJsonStr) {
-        const decodedGear = JSON.parse(decodeURIComponent(gearJsonStr));
-        const itemsListStr = decodedGear.map(g => `• ${g.name} (Qty: ${g.qty})`).join('\n');
-
-        const messageSummary = `📦 *GEAR CONTROL - DISPATCH DETAILS* 📦\n\n` +
-            `👤 *Client:* ${decodeURIComponent(cName)}\n` +
-            `🎯 *Event:* ${decodeURIComponent(cEvent)} at ${decodeURIComponent(cPlace)}\n` +
-            `📅 *Date:* ${decodeURIComponent(cDate)}\n` +
-            `🕒 *Time Out:* ${decodeURIComponent(cTimeOut)}\n` +
-            `📞 *Incharge / Mobile:* ${decodeURIComponent(cIncharge)} (${decodeURIComponent(cMobile)})\n\n` +
-            `📋 *Dispatched Items:*\n${itemsListStr}\n\n` +
-            `_Logged by: ${decodeURIComponent(cCreator)}_`;
-
-        const encodedMessage = encodeURIComponent(messageSummary);
-        const whatsappUrl = `https://api.whatsapp.com/send?text=${encodedMessage}`;
-        window.open(whatsappUrl, '_blank');
     }
 
     function openDetailModal(id) {
@@ -3159,7 +3150,6 @@
 
         document.getElementById('whatsappPreviewBox').innerText = messageSummary;
         
-        // Generate direct URL for the modal anchor button
         const encodedMessage = encodeURIComponent(messageSummary);
         document.getElementById('whatsappDirectLink').href = `https://api.whatsapp.com/send?text=${encodedMessage}`;
 
@@ -3174,10 +3164,6 @@
         } else {
             alert('Checkout Sheet saved successfully!');
         }
-    }
-
-    function sendDispatchToWhatsapp() {
-        closeWhatsappShareModal();
     }
 
     function formatDateTime(dateStr, timeStr) {
