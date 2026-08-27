@@ -2777,16 +2777,21 @@
 
             const checkinButton = log.status === 'OUT ON SHOOT' ? `<button class="btn btn-sm btn-success" onclick="openDashboardCheckinModal(${log.id})">↩ Check-In</button>` : '';
 
+            // NEW: Share to WhatsApp button on Overview Table row
+            const recordJsonStr = encodeURIComponent(JSON.stringify(log));
+            const shareWhatsappBtn = `<button class="btn btn-sm btn-success" style="background: #25d366; color: white; min-height: 36px; padding: 6px 12px;" onclick="shareOverviewLogToWhatsapp('${encodeURIComponent(log.clientName)}', '${encodeURIComponent(log.event || 'N/A')}', '${encodeURIComponent(log.place || 'N/A')}', '${encodeURIComponent(log.date || log.timeOutDate || 'N/A')}', '${encodeURIComponent(formatDateTime(log.timeOutDate, log.timeOutTime))}', '${encodeURIComponent(log.shootIncharge || 'N/A')}', '${encodeURIComponent(log.mobileNumber || 'N/A')}', '${encodeURIComponent(log.createdBy || 'Staff')}', '${encodeURIComponent(JSON.stringify(log.gear))}')">💬 Share</button>`;
+
             const actionsCell = currentRole === 'admin' ? `
                 <td>
                     <div class="table-action-cell">
                         ${checkinButton}
+                        ${shareWhatsappBtn}
                         <button class="btn btn-sm btn-secondary" onclick="openDetailModal(${log.id})">Details</button>
                         <button class="btn btn-sm btn-warning" onclick="editLogRecord(${log.id})">✏️ Edit</button>
                         <button class="btn btn-sm btn-danger" onclick="deleteRecord(${log.id})">🗑️ Delete</button>
                     </div>
                 </td>
-            ` : `<td><div class="table-action-cell">${checkinButton} <button class="btn btn-sm btn-secondary" onclick="openDetailModal(${log.id})">Details</button></div></td>`;
+            ` : `<td><div class="table-action-cell">${checkinButton} ${shareWhatsappBtn} <button class="btn btn-sm btn-secondary" onclick="openDetailModal(${log.id})">Details</button></div></td>`;
 
             return `
                 <tr>
@@ -2813,6 +2818,24 @@
         document.getElementById('metric-total').innerText = visibleLogs.length;
         document.getElementById('metric-out').innerText = activeOut;
         document.getElementById('metric-returned').innerText = totalReturned;
+    }
+
+    function shareOverviewLogToWhatsapp(cName, cEvent, cPlace, cDate, cTimeOut, cIncharge, cMobile, cCreator, gearJsonStr) {
+        const decodedGear = JSON.parse(decodeURIComponent(gearJsonStr));
+        const itemsListStr = decodedGear.map(g => `• ${g.name} (Qty: ${g.qty})`).join('\n');
+
+        const messageSummary = `📦 *GEAR CONTROL - DISPATCH DETAILS* 📦\n\n` +
+            `👤 *Client:* ${decodeURIComponent(cName)}\n` +
+            `🎯 *Event:* ${decodeURIComponent(cEvent)} at ${decodeURIComponent(cPlace)}\n` +
+            `📅 *Date:* ${decodeURIComponent(cDate)}\n` +
+            `🕒 *Time Out:* ${decodeURIComponent(cTimeOut)}\n` +
+            `📞 *Incharge / Mobile:* ${decodeURIComponent(cIncharge)} (${decodeURIComponent(cMobile)})\n\n` +
+            `📋 *Dispatched Items:*\n${itemsListStr}\n\n` +
+            `_Logged by: ${decodeURIComponent(cCreator)}_`;
+
+        const encodedMessage = encodeURIComponent(messageSummary);
+        const whatsappUrl = `https://api.whatsapp.com/send?text=${encodedMessage}`;
+        window.open(whatsappUrl, '_blank');
     }
 
     function openDetailModal(id) {
