@@ -1166,7 +1166,7 @@
             <div class="detail-item"><span>Shoot Incharge</span><strong id="detailIncharge">-</strong></div>
             <div class="detail-item"><span>Contact</span><strong id="detailMobile">-</strong></div>
             <div class="detail-item"><span>Time Out</span><strong id="detailTimeOut">-</strong></div>
-            <div class="detail-item"><span>Time In (Returned)</span><strong id="detailTimeIn">-</strong></div>
+            <div class="detail-item"><span>Time In (Returned History)</span><strong id="detailTimeIn">-</strong></div>
             <div class="detail-item"><span>Logged By</span><strong id="detailCreatedBy">-</strong></div>
         </div>
 
@@ -2778,7 +2778,7 @@
         document.getElementById('detailMobile').innerText = record.mobileNumber || 'N/A';
         
         document.getElementById('detailTimeOut').innerText = formatDateTime(record.timeOutDate, record.timeOutTime);
-        document.getElementById('detailTimeIn').innerText = record.status === 'RETURNED' && record.actualReturnTimeStamp ? record.actualReturnTimeStamp : '-';
+        document.getElementById('detailTimeIn').innerText = record.status === 'RETURNED' && record.actualReturnTimeStamp ? record.actualReturnTimeStamp : 'Not Returned Yet';
         document.getElementById('detailCreatedBy').innerText = `${record.createdBy || 'Staff'} ${record.creatorMobile ? '(' + record.creatorMobile + ')' : ''}`;
 
         const statusTag = document.getElementById('detailStatusTag');
