@@ -3115,12 +3115,7 @@
         scannedQuantities = {};
         updateEntryInterface();
         
-        // Save record reference for WhatsApp prompt
-        lastDispatchedRecordForWhatsapp = record;
-        
         renderDashboard();
-        
-        // Prompt WhatsApp Share Modal
         openWhatsappShareModal(record);
     }
 
