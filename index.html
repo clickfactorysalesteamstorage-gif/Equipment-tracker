@@ -2223,7 +2223,7 @@
         if (log.gear.length === 0) {
             log.status = 'RETURNED';
             const now = new Date();
-            log.actualReturnTimeStamp = now.toLocaleDateString('en-GB') + ', ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            log.actualReturnTimeStamp = now.toLocaleDateString('en-GB') + ', ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
             SafeStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
             alert('All items returned! Shoot status updated to RETURNED.');
             closeDashboardCheckinModal();
@@ -2249,7 +2249,7 @@
                 log.gear = [];
                 log.status = 'RETURNED';
                 const now = new Date();
-                log.actualReturnTimeStamp = now.toLocaleDateString('en-GB') + ', ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                log.actualReturnTimeStamp = now.toLocaleDateString('en-GB') + ', ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
                 
                 SafeStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
                 closeDashboardCheckinModal();
@@ -2626,7 +2626,7 @@
 
                 if (newStatus === 'RETURNED' && log.status !== 'RETURNED') {
                     const now = new Date();
-                    actualReturnTimeStamp = now.toLocaleDateString('en-GB') + ', ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    actualReturnTimeStamp = now.toLocaleDateString('en-GB') + ', ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
                 } else if (newStatus === 'OUT ON SHOOT') {
                     actualReturnTimeStamp = null;
                 }
@@ -3079,7 +3079,7 @@
                 if (log.status === 'OUT ON SHOOT') {
                     log.status = 'RETURNED';
                     const now = new Date();
-                    log.actualReturnTimeStamp = now.toLocaleDateString('en-GB') + ', ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    log.actualReturnTimeStamp = now.toLocaleDateString('en-GB') + ', ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
                 } else {
                     log.status = 'OUT ON SHOOT';
                     log.actualReturnTimeStamp = null;
