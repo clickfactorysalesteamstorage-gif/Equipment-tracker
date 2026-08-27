@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Universal Equipment Management Dashboard v3.3</title>
-    <!-- JsBarcode Library with local fallback safeguard -->
+    <!-- JsBarcode Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.12.3/JsBarcode.all.min.js"></script>
+    <!-- html2canvas Library for Image Snapshot Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
             --primary: #2563eb;
@@ -977,12 +979,12 @@
     </div>
 </div>
 
-<!-- WHATSAPP SHARE CARD PREVIEW MODAL -->
+<!-- DISPATCH WHATSAPP IMAGE PREVIEW MODAL -->
 <div id="whatsappShareModal" class="overlay" style="display: none; z-index: 2500;">
     <div class="dialog-card" style="max-width: 480px; text-align: center;">
         <div style="font-size: 2.5rem; margin-bottom: 4px;">📸</div>
         <h3 style="margin-bottom: 4px; font-size: 1.2rem; color: #0f172a;">Dispatch Summary Card</h3>
-        <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 12px;">Download this summary card as an image to share on WhatsApp.</p>
+        <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 12px;">Download this card as an image or share details via WhatsApp text.</p>
         
         <!-- RENDERED CARD WRAPPER TO SNAPSHOT AS IMAGE -->
         <div id="dispatchCardCanvasWrapper" style="background: white; border: 2px solid var(--primary); border-radius: 12px; padding: 18px; text-align: left; font-size: 0.85rem; color: #0f172a; margin-bottom: 16px; box-shadow: var(--shadow-sm);">
@@ -997,7 +999,7 @@
         <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
             <button class="btn btn-secondary btn-sm" style="flex: 1;" onclick="closeWhatsappShareModal()">Close / Skip</button>
             <button class="btn btn-primary btn-sm" style="flex: 1; background: var(--success);" onclick="downloadDispatchCardImage()">📥 Download Image</button>
-            <a id="whatsappShareImageDirectLink" href="#" target="_blank" class="btn btn-success btn-sm" style="flex: 1; background: #25d366; color: white;" onclick="closeWhatsappShareModal()">💬 Open WhatsApp</a>
+            <a id="whatsappShareImageDirectLink" href="#" target="_blank" class="btn btn-success btn-sm" style="flex: 1; background: #25d366; color: white;" onclick="closeWhatsappShareModal()">💬 Share Text</a>
         </div>
     </div>
 </div>
@@ -3174,12 +3176,35 @@
             `📋 *Dispatched Items:*\n${itemsListStr}\n\n` +
             `_Logged by: ${record.createdBy}_`;
 
+        const detailsHtml = `
+            <strong>Client:</strong> ${record.clientName}<br>
+            <strong>Event:</strong> ${record.event || 'N/A'} (${record.place || 'N/A'})<br>
+            <strong>Time Out:</strong> ${formattedTimeOut}<br>
+            <strong>Incharge:</strong> ${record.shootIncharge || 'N/A'} (${record.mobileNumber || 'N/A'})<br>
+            <strong>Items:</strong> ${record.gear.length} type(s)
+        `;
+        document.getElementById('cardContentDetails').innerHTML = detailsHtml;
+        document.getElementById('cardFooterLogged').innerText = `Logged by: ${record.createdBy}`;
+
         document.getElementById('whatsappPreviewBox').innerText = messageSummary;
         
         const encodedMessage = encodeURIComponent(messageSummary);
-        document.getElementById('whatsappDirectLink').href = `https://wa.me/?text=${encodedMessage}`;
+        document.getElementById('whatsappShareImageDirectLink').href = `https://wa.me/?text=${encodedMessage}`;
 
         document.getElementById('whatsappShareModal').style.display = 'flex';
+    }
+
+    function downloadDispatchCardImage() {
+        const cardElement = document.getElementById('dispatchCardCanvasWrapper');
+        if (!cardElement) return;
+
+        html2canvas(cardElement, { scale: 2 }).then(canvas => {
+            const imageURL = canvas.toDataURL("image/png");
+            let a = document.createElement("a");
+            a.href = imageURL;
+            a.download = `Dispatch_${Date.now()}.png`;
+            a.click();
+        });
     }
 
     function closeWhatsappShareModal() {
