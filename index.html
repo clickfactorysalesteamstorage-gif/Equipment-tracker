@@ -2861,7 +2861,7 @@
         } else {
             historyTbody.innerHTML = `
                 <tr>
-                    <td style="font-size: 0.8rem; color: var(--text-muted); padding: 8px 10px; text-align: center;">
+                    <td style="font-size: 0.80rem; color: var(--text-muted); padding: 8px 10px; text-align: center;">
                         No return history recorded yet.
                     </td>
                 </tr>
@@ -3166,7 +3166,9 @@
 
         const encodedMessage = encodeURIComponent(messageSummary);
         const whatsappUrl = `https://api.whatsapp.com/send?text=${encodedMessage}`;
-        window.open(whatsappUrl, '_blank');
+        
+        // Direct browser location redirect
+        window.location.href = whatsappUrl;
 
         closeWhatsappShareModal();
     }
