@@ -775,15 +775,11 @@
                     <div class="form-grid">
                         <div class="input-group"><label>Client Name</label><input type="text" id="clientName" required></div>
                         <div class="input-group"><label>Client ID</label><input type="text" id="clientId"></div>
-                        <div class="input-group"><label>Team</label><input type="text" id="team"></div>
                         <div class="input-group"><label>Event Date</label><input type="date" id="date"></div>
                         <div class="input-group"><label>Place</label><input type="text" id="place"></div>
                         <div class="input-group"><label>Event</label><input type="text" id="event"></div>
                         <div class="input-group"><label>Shoot Incharge</label><input type="text" id="shootIncharge"></div>
                         <div class="input-group"><label>Mobile Number</label><input type="tel" id="mobileNumber" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></div>
-                        
-                        <div class="input-group"><label>Time Out Date</label><input type="date" id="timeOutDate"></div>
-                        <div class="input-group"><label>Time Out Time</label><input type="time" id="timeOutTime"></div>
                     </div>
 
                     <!-- TRIGGER BUTTON FOR NEW BOOKING CHECK-OUT SCANNER -->
@@ -1167,7 +1163,6 @@
         <div class="detail-grid">
             <div class="detail-item"><span>Client ID</span><strong id="detailClientId">-</strong></div>
             <div class="detail-item"><span>Event / Place</span><strong id="detailEventPlace">-</strong></div>
-            <div class="detail-item"><span>Team</span><strong id="detailTeam">-</strong></div>
             <div class="detail-item"><span>Shoot Incharge</span><strong id="detailIncharge">-</strong></div>
             <div class="detail-item"><span>Contact</span><strong id="detailMobile">-</strong></div>
             <div class="detail-item"><span>Time Out</span><strong id="detailTimeOut">-</strong></div>
@@ -1567,7 +1562,6 @@
 
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('date').value = today;
-        document.getElementById('timeOutDate').value = today;
         
         const toggleSwitch = document.getElementById('adminManualCheckoutSwitch');
         if (toggleSwitch) {
@@ -1601,7 +1595,6 @@
             `📦 *EQUIPMENT CHECKOUT & RETURN SUMMARY* 📦\n\n` +
             `👤 *Client:* ${record.clientName} (ID: ${record.clientId || 'N/A'})\n` +
             `🎥 *Event/Place:* ${record.event || '-'} (${record.place || '-'})\n` +
-            `👥 *Team:* ${record.team || 'N/A'}\n` +
             `🧑‍✈️ *Incharge:* ${record.shootIncharge || 'N/A'}\n` +
             `📞 *Mobile:* ${record.mobileNumber || 'N/A'}\n` +
             `⏰ *Time Out:* ${formatDateTime(record.timeOutDate, record.timeOutTime)}\n` +
@@ -2682,11 +2675,8 @@
         const clientIdInput = document.getElementById(`log-edit-clientid-${id}`);
         const eventInput = document.getElementById(`log-edit-event-${id}`);
         const placeInput = document.getElementById(`log-edit-place-${id}`);
-        const teamInput = document.getElementById(`log-edit-team-${id}`);
         const inchargeInput = document.getElementById(`log-edit-incharge-${id}`);
         const mobileInput = document.getElementById(`log-edit-mobile-${id}`);
-        const timeoutDateInput = document.getElementById(`log-edit-timeoutdate-${id}`);
-        const timeoutTimeInput = document.getElementById(`log-edit-timeouttime-${id}`);
         const statusSelect = document.getElementById(`log-edit-status-${id}`);
 
         if (!clientInput) return;
@@ -2720,11 +2710,8 @@
                     clientId: clientIdInput ? clientIdInput.value.trim() : log.clientId,
                     event: eventInput ? eventInput.value.trim() : log.event,
                     place: placeInput ? placeInput.value.trim() : log.place,
-                    team: teamInput ? teamInput.value.trim() : log.team,
                     shootIncharge: inchargeInput ? inchargeInput.value.trim() : log.shootIncharge,
                     mobileNumber: mobileInput ? mobileInput.value.trim() : log.mobileNumber,
-                    timeOutDate: timeoutDateInput ? timeoutDateInput.value : log.timeOutDate,
-                    timeOutTime: timeoutTimeInput ? timeoutTimeInput.value : log.timeOutTime,
                     status: newStatus,
                     actualReturnTimeStamp: actualReturnTimeStamp,
                     gear: JSON.parse(JSON.stringify(activeTempGearList))
@@ -2785,15 +2772,11 @@
                             </div>
                         </td>
                         <td>
-                            <label style="font-size: 0.65rem; font-weight: bold; color: var(--text-muted);">TEAM & INCHARGE</label>
-                            <input type="text" id="log-edit-team-${log.id}" class="inline-edit-input" placeholder="Team" value="${log.team || ''}">
+                            <label style="font-size: 0.65rem; font-weight: bold; color: var(--text-muted);">INCHARGE</label>
                             <input type="text" id="log-edit-incharge-${log.id}" class="inline-edit-input" placeholder="Incharge" value="${log.shootIncharge || ''}">
                             <input type="tel" id="log-edit-mobile-${log.id}" class="inline-edit-input" placeholder="Mobile" value="${log.mobileNumber || ''}">
                         </td>
-                        <td>
-                            <input type="date" id="log-edit-timeoutdate-${log.id}" class="inline-edit-input" value="${log.timeOutDate || ''}">
-                            <input type="time" id="log-edit-timeouttime-${log.id}" class="inline-edit-input" value="${log.timeOutTime || ''}">
-                        </td>
+                        <td><strong>${timeOutDisplay}</strong></td>
                         <td><strong>${timeInDisplay}</strong></td>
                         <td>
                             <select id="log-edit-status-${log.id}" class="inline-edit-input">
@@ -2834,7 +2817,6 @@
                         <span class="time-text">Items: ${log.gear.length} selected</span>
                     </td>
                     <td>
-                        ${log.team || '-'}
                         <span class="time-text">Incharge: ${log.shootIncharge || '-'}</span>
                     </td>
                     <td>${timeOutDisplay}</td>
@@ -2862,7 +2844,6 @@
         document.getElementById('detailClientName').innerText = record.clientName;
         document.getElementById('detailClientId').innerText = record.clientId || 'N/A';
         document.getElementById('detailEventPlace').innerText = `${record.event || '-'} (${record.place || '-'})`;
-        document.getElementById('detailTeam').innerText = record.team || 'N/A';
         document.getElementById('detailIncharge').innerText = record.shootIncharge || 'N/A';
         document.getElementById('detailMobile').innerText = record.mobileNumber || 'N/A';
         
@@ -3122,18 +3103,22 @@
         const currentActiveUserName = currentUserNameSession || SafeStorage.getItem('appUserName') || 'Staff';
         const creatorMobile = SafeStorage.getItem('appUserMobile') || '';
         
+        const now = new Date();
+        const autoDateStr = document.getElementById('date').value || now.toISOString().split('T')[0];
+        const autoTimeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
         const record = {
             id: Date.now(),
             clientName: clientName,
             clientId: document.getElementById('clientId').value,
-            team: document.getElementById('team').value,
-            date: document.getElementById('date').value,
+            team: '',
+            date: autoDateStr,
             place: document.getElementById('place').value,
             event: document.getElementById('event').value,
             shootIncharge: document.getElementById('shootIncharge').value,
             mobileNumber: document.getElementById('mobileNumber').value,
-            timeOutDate: document.getElementById('timeOutDate').value,
-            timeOutTime: document.getElementById('timeOutTime').value,
+            timeOutDate: autoDateStr,
+            timeOutTime: autoTimeStr,
             actualReturnTimeStamp: null,
             gear: gearData,
             returnHistory: [],
@@ -3150,7 +3135,6 @@
         updateEntryInterface();
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('date').value = today;
-        document.getElementById('timeOutDate').value = today;
         
         renderDashboard();
         if (currentRole === 'admin') {
