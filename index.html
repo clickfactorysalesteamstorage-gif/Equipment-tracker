@@ -1234,10 +1234,8 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // SAFETY LOCK: Block syncing until existing cloud data is fully loaded
     window.isCloudLoaded = false; 
 
-    // Sync all data AND admin settings to Firestore
     window.syncToCloud = async () => {
         if (!window.isCloudLoaded) {
             console.log("Sync blocked: Protecting existing cloud database.");
@@ -1261,14 +1259,12 @@
         }
     };
 
-    // Watch Firestore for changes
     onSnapshot(doc(db, "gear_control", "state"), (docSnap) => {
-        window.isCloudDownloading = true; // Suppress auto-sync loop
+        window.isCloudDownloading = true;
 
         if (docSnap.exists()) {
             const data = docSnap.data();
 
-            // Global Logout Check on Password Version Change
             const remotePassVersion = data.passwordVersion || '1';
             const localPassVersion = SafeStorage.getItem('appPasswordVersion') || '1';
             if (remotePassVersion !== localPassVersion) {
@@ -1323,7 +1319,7 @@
                 if (keyDisplay) keyDisplay.value = settings.adminRecoveryKey;
             }
 
-            window.isCloudLoaded = true; // First load finished! Safe to sync now.
+            window.isCloudLoaded = true;
             window.isCloudDownloading = false;
 
             renderDashboard();
@@ -1331,7 +1327,6 @@
             if (typeof renderUserPermissionsTable === "function") renderUserPermissionsTable();
             if (typeof renderLoginUserList === "function") renderLoginUserList();
         } else {
-            // Fresh database setup
             window.isCloudLoaded = true;
             window.isCloudDownloading = false;
             window.syncToCloud(); 
@@ -1349,7 +1344,6 @@
                 window._memStore = window._memStore || {};
                 window._memStore[key] = val;
             }
-            // Sync to cloud automatically if not currently downloading cloud changes
             if (window.syncToCloud && !window.isCloudDownloading) {
                 window.syncToCloud();
             }
@@ -1563,7 +1557,6 @@
             toggleManualCheckoutSetting(allowManualCheckout);
         }
 
-        // Initialize default recovery key if not set
         if (!SafeStorage.getItem('appAdminRecoveryKey')) {
             SafeStorage.setItem('appAdminRecoveryKey', 'SATISH-' + Math.floor(1000 + Math.random() * 9000));
         }
@@ -1572,7 +1565,7 @@
         renderDashboard();
     });
 
-    // WHATSAPP SHARE FEATURE INTEGRATION
+    // ROBUST WHATSAPP REDIRECT FUNCTION (POPUP-SAFE)
     function shareLogOnWhatsApp(id) {
         const record = gearLogs.find(log => log.id === id);
         if (!record) return;
@@ -1592,8 +1585,13 @@
             `_Logged by: ${record.createdBy || 'Staff'}_`;
 
         const encodedMessage = encodeURIComponent(message);
-        const whatsappUrl = `https://api.whatsapp.com/send?text=${encodedMessage}`;
-        window.open(whatsappUrl, '_blank');
+        const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
+        
+        // Attempt popup first, fallback to direct location redirect if blocked
+        const win = window.open(whatsappUrl, '_blank');
+        if (!win || win.closed || typeof win.closed === 'undefined') {
+            window.location.href = whatsappUrl;
+        }
     }
 
     function shareActiveModalOnWhatsApp() {
@@ -1699,7 +1697,6 @@
         const currentProfileObj = userProfiles.find(u => u.name === userName);
         const hasFullAccess = role === 'admin' || (currentProfileObj && currentProfileObj.permissions === 'full');
 
-        // Navigation elements
         const tabOverview = document.getElementById('tabOverviewBtn');
         const tabNewSheet = document.getElementById('tabNewSheetBtn');
         const tabEquipment = document.getElementById('tabEquipmentBtn');
