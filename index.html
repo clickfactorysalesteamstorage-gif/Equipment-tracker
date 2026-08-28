@@ -1193,6 +1193,7 @@
         </div>
 
         <div class="actions-bar no-print">
+            <button class="btn" style="background: #25d366; color: white;" onclick="shareActiveModalOnWhatsApp()">💬 Share on WhatsApp</button>
             <button class="btn btn-primary" onclick="window.print()">🖨️ Print Sheet</button>
         </div>
     </div>
@@ -1367,6 +1368,7 @@
     let allowManualCheckout = SafeStorage.getItem('appAllowManualCheckout') === 'true';
     let currentBarcodePrintMeta = { barcode: '', name: '' };
     let pendingStaffLoginProfile = null;
+    let activeDetailModalLogId = null;
 
     function showConfirmationModal({ title, message, icon = '⚠️', confirmBtnText = 'Confirm', confirmBtnClass = 'btn-primary', onConfirm }) {
         document.getElementById('confirmTitle').innerText = title;
@@ -1569,6 +1571,36 @@
         renderMasterEquipmentTable();
         renderDashboard();
     });
+
+    // WHATSAPP SHARE FEATURE INTEGRATION
+    function shareLogOnWhatsApp(id) {
+        const record = gearLogs.find(log => log.id === id);
+        if (!record) return;
+
+        let gearText = record.gear.map((item) => `• ${item.name} (Qty: ${item.qty})`).join('\n');
+        
+        const message = 
+            `📦 *EQUIPMENT CHECKOUT SUMMARY* 📦\n\n` +
+            `👤 *Client:* ${record.clientName} (ID: ${record.clientId || 'N/A'})\n` +
+            `🎥 *Event/Place:* ${record.event || '-'} (${record.place || '-'})\n` +
+            `👥 *Team:* ${record.team || 'N/A'}\n` +
+            `🧑‍✈️ *Incharge:* ${record.shootIncharge || 'N/A'}\n` +
+            `📞 *Mobile:* ${record.mobileNumber || 'N/A'}\n` +
+            `⏰ *Time Out:* ${formatDateTime(record.timeOutDate, record.timeOutTime)}\n` +
+            `🏷️ *Status:* ${record.status}\n\n` +
+            `*Dispatched Gear:*\n${gearText}\n\n` +
+            `_Logged by: ${record.createdBy || 'Staff'}_`;
+
+        const encodedMessage = encodeURIComponent(message);
+        const whatsappUrl = `https://api.whatsapp.com/send?text=${encodedMessage}`;
+        window.open(whatsappUrl, '_blank');
+    }
+
+    function shareActiveModalOnWhatsApp() {
+        if (activeDetailModalLogId !== null) {
+            shareLogOnWhatsApp(activeDetailModalLogId);
+        }
+    }
 
     function closeLoginModal() {
         if (!currentRole) {
@@ -2548,7 +2580,6 @@
             const masterMatch = masterEquipment.find(m => m.name.toUpperCase() === itemName.toUpperCase());
             const totalStock = masterMatch ? (masterMatch.stock || 5) : 5;
             
-            // Calculate available stock excluding this current booking
             const dispatchedMap = getCurrentlyDispatchedMap(editingLogId);
             const otherOut = dispatchedMap[itemName.toUpperCase()] || 0;
             const maxAllowed = Math.max(0, totalStock - otherOut);
@@ -2747,17 +2778,19 @@
             }
 
             const checkinButton = log.status === 'OUT ON SHOOT' ? `<button class="btn btn-sm btn-success" onclick="openDashboardCheckinModal(${log.id})">↩ Check-In</button>` : '';
+            const whatsappBtn = `<button class="btn btn-sm" style="background: #25d366; color: white;" onclick="shareLogOnWhatsApp(${log.id})">💬 WhatsApp</button>`;
 
             const actionsCell = currentRole === 'admin' ? `
                 <td>
                     <div class="table-action-cell">
                         ${checkinButton}
+                        ${whatsappBtn}
                         <button class="btn btn-sm btn-secondary" onclick="openDetailModal(${log.id})">Details</button>
                         <button class="btn btn-sm btn-warning" onclick="editLogRecord(${log.id})">✏️ Edit</button>
                         <button class="btn btn-sm btn-danger" onclick="deleteRecord(${log.id})">🗑️ Delete</button>
                     </div>
                 </td>
-            ` : `<td><div class="table-action-cell">${checkinButton} <button class="btn btn-sm btn-secondary" onclick="openDetailModal(${log.id})">Details</button></div></td>`;
+            ` : `<td><div class="table-action-cell">${checkinButton} ${whatsappBtn} <button class="btn btn-sm btn-secondary" onclick="openDetailModal(${log.id})">Details</button></div></td>`;
 
             return `
                 <tr>
@@ -2788,6 +2821,7 @@
     }
 
     function openDetailModal(id) {
+        activeDetailModalLogId = id;
         const record = gearLogs.find(log => log.id === id);
         if (!record) return;
 
@@ -2824,6 +2858,7 @@
     }
 
     function closeDetailModal() {
+        activeDetailModalLogId = null;
         document.getElementById('detailModal').style.display = 'none';
     }
 
