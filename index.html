@@ -1521,6 +1521,7 @@
     
     gearLogs = gearLogs.map(log => {
         if (log.status === 'OUT') log.status = 'OUT ON SHOOT';
+        if (!log.returnHistory) log.returnHistory = [];
         return log;
     });
     SafeStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
@@ -1565,15 +1566,22 @@
         renderDashboard();
     });
 
-    // ROBUST WHATSAPP REDIRECT FUNCTION (POPUP-SAFE)
+    // WHATSAPP SHARE WITH RETURNED ITEM HISTORY & REMAINING OUT ITEMS
     function shareLogOnWhatsApp(id) {
         const record = gearLogs.find(log => log.id === id);
         if (!record) return;
 
         let gearText = record.gear.map((item) => `• ${item.name} (Qty: ${item.qty})`).join('\n');
-        
+        if (!gearText) gearText = '_All items returned_';
+
+        let historyText = '';
+        if (record.returnHistory && record.returnHistory.length > 0) {
+            historyText = `\n\n*↩️ Returned Item History:*\n` + 
+                record.returnHistory.map(h => `• ${h.qty}x ${h.name} _(${h.timestamp})_`).join('\n');
+        }
+
         const message = 
-            `📦 *EQUIPMENT CHECKOUT SUMMARY* 📦\n\n` +
+            `📦 *EQUIPMENT CHECKOUT & RETURN SUMMARY* 📦\n\n` +
             `👤 *Client:* ${record.clientName} (ID: ${record.clientId || 'N/A'})\n` +
             `🎥 *Event/Place:* ${record.event || '-'} (${record.place || '-'})\n` +
             `👥 *Team:* ${record.team || 'N/A'}\n` +
@@ -1581,13 +1589,13 @@
             `📞 *Mobile:* ${record.mobileNumber || 'N/A'}\n` +
             `⏰ *Time Out:* ${formatDateTime(record.timeOutDate, record.timeOutTime)}\n` +
             `🏷️ *Status:* ${record.status}\n\n` +
-            `*Dispatched Gear:*\n${gearText}\n\n` +
+            `*Currently Out On Shoot:*\n${gearText}` +
+            historyText + `\n\n` +
             `_Logged by: ${record.createdBy || 'Staff'}_`;
 
         const encodedMessage = encodeURIComponent(message);
         const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
         
-        // Attempt popup first, fallback to direct location redirect if blocked
         const win = window.open(whatsappUrl, '_blank');
         if (!win || win.closed || typeof win.closed === 'undefined') {
             window.location.href = whatsappUrl;
@@ -2258,18 +2266,23 @@
         const currentItem = log.gear[itemIdx];
         let currentQty = parseInt(currentItem.qty, 10) || 1;
 
+        if (!log.returnHistory) log.returnHistory = [];
+        const now = new Date();
+        const timeStr = now.toLocaleDateString('en-GB') + ', ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
         if (currentQty > 1) {
             currentItem.qty = (currentQty - 1).toString();
+            log.returnHistory.unshift({ name: currentItem.name, qty: 1, timestamp: timeStr });
             logDashboardCheckinTerminal(`↩ CHECKED IN: 1x ${currentItem.name} (${currentItem.qty} remaining)`);
         } else {
+            log.returnHistory.unshift({ name: currentItem.name, qty: 1, timestamp: timeStr });
             logDashboardCheckinTerminal(`↩ FULLY RETURNED: ${currentItem.name}`);
             log.gear.splice(itemIdx, 1);
         }
         
         if (log.gear.length === 0) {
             log.status = 'RETURNED';
-            const now = new Date();
-            log.actualReturnTimeStamp = now.toLocaleDateString('en-GB') + ', ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            log.actualReturnTimeStamp = timeStr;
             SafeStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
             alert('All items returned! Shoot status updated to RETURNED.');
             closeDashboardCheckinModal();
@@ -2292,10 +2305,17 @@
             confirmBtnText: 'Return All Gear',
             confirmBtnClass: 'btn-success',
             onConfirm: () => {
+                const now = new Date();
+                const timeStr = now.toLocaleDateString('en-GB') + ', ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                
+                if (!log.returnHistory) log.returnHistory = [];
+                log.gear.forEach(g => {
+                    log.returnHistory.unshift({ name: g.name, qty: parseInt(g.qty, 10) || 1, timestamp: timeStr });
+                });
+
                 log.gear = [];
                 log.status = 'RETURNED';
-                const now = new Date();
-                log.actualReturnTimeStamp = now.toLocaleDateString('en-GB') + ', ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                log.actualReturnTimeStamp = timeStr;
                 
                 SafeStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
                 closeDashboardCheckinModal();
@@ -3085,6 +3105,7 @@
             timeOutTime: document.getElementById('timeOutTime').value,
             actualReturnTimeStamp: null,
             gear: gearData,
+            returnHistory: [],
             status: 'OUT ON SHOOT',
             createdBy: currentActiveUserName,
             creatorMobile: creatorMobile
