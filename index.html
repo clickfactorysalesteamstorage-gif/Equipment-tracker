@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Universal Equipment Management Dashboard v3.3</title>
-    <!-- JsBarcode Library -->
+    <!-- JsBarcode Library with local fallback safeguard -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.12.3/JsBarcode.all.min.js"></script>
-    <!-- html2canvas Library for Image Snapshot Generation -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
             --primary: #2563eb;
@@ -520,7 +518,6 @@
             min-height: 42px;
             white-space: nowrap;
             transition: var(--transition);
-            text-decoration: none;
         }
 
         .btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-sm); }
@@ -734,7 +731,7 @@
             <div class="content-card">
                 <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
                     <h3 id="logSectionTitle">Recent Shoots & Gear Logs</h3>
-                    <input type="text" id="searchInput" onkeyup="filterLogs()" placeholder="Search client, event, or incharge..." style="padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); width: 100%; min-height: 44px;">
+                    <input type="text" id="searchInput" onkeyup="filterLogs()" placeholder="Search client, event, or team..." style="padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); width: 100%; min-height: 44px;">
                 </div>
                 
                 <div class="table-responsive">
@@ -742,7 +739,7 @@
                         <thead>
                             <tr>
                                 <th>Client / Event</th>
-                                <th>Incharge</th>
+                                <th>Team / Incharge</th>
                                 <th>Time Out</th>
                                 <th>Time In (Returned)</th>
                                 <th>Status</th>
@@ -778,11 +775,15 @@
                     <div class="form-grid">
                         <div class="input-group"><label>Client Name</label><input type="text" id="clientName" required></div>
                         <div class="input-group"><label>Client ID</label><input type="text" id="clientId"></div>
+                        <div class="input-group"><label>Team</label><input type="text" id="team"></div>
                         <div class="input-group"><label>Event Date</label><input type="date" id="date"></div>
                         <div class="input-group"><label>Place</label><input type="text" id="place"></div>
                         <div class="input-group"><label>Event</label><input type="text" id="event"></div>
                         <div class="input-group"><label>Shoot Incharge</label><input type="text" id="shootIncharge"></div>
                         <div class="input-group"><label>Mobile Number</label><input type="tel" id="mobileNumber" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></div>
+                        
+                        <div class="input-group"><label>Time Out Date</label><input type="date" id="timeOutDate"></div>
+                        <div class="input-group"><label>Time Out Time</label><input type="time" id="timeOutTime"></div>
                     </div>
 
                     <!-- TRIGGER BUTTON FOR NEW BOOKING CHECK-OUT SCANNER -->
@@ -848,6 +849,7 @@
                     <div class="input-group"><label>Staff Full Name</label><input type="text" id="newStaffName"></div>
                     <div class="input-group"><label>Mobile Number</label><input type="tel" id="newStaffMobile" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></div>
                     <div class="input-group"><label>Staff ID</label><input type="text" id="newStaffId"></div>
+                    <div class="input-group"><label>Team</label><input type="text" id="newStaffTeam"></div>
                     <div class="input-group"><label>Account Password</label><input type="password" id="newStaffPassword" placeholder="Set user password"></div>
                 </div>
                 <button class="btn btn-primary" style="width: 100%;" onclick="createNewUserProfile()">Create Profile</button>
@@ -975,31 +977,6 @@
         <div style="display: flex; gap: 10px; justify-content: center;">
             <button class="btn btn-secondary" style="flex: 1;" onclick="closeConfirmationModal(false)">Cancel</button>
             <button class="btn btn-primary" id="confirmActionBtn" style="flex: 1;" onclick="closeConfirmationModal(true)">Confirm & Save</button>
-        </div>
-    </div>
-</div>
-
-<!-- DISPATCH WHATSAPP IMAGE PREVIEW MODAL -->
-<div id="whatsappShareModal" class="overlay" style="display: none; z-index: 2500;">
-    <div class="dialog-card" style="max-width: 480px; text-align: center;">
-        <div style="font-size: 2.5rem; margin-bottom: 4px;">📸</div>
-        <h3 style="margin-bottom: 4px; font-size: 1.2rem; color: #0f172a;">Dispatch Summary Card</h3>
-        <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 12px;">Download this card as an image or share details via WhatsApp text.</p>
-        
-        <!-- RENDERED CARD WRAPPER TO SNAPSHOT AS IMAGE -->
-        <div id="dispatchCardCanvasWrapper" style="background: white; border: 2px solid var(--primary); border-radius: 12px; padding: 18px; text-align: left; font-size: 0.85rem; color: #0f172a; margin-bottom: 16px; box-shadow: var(--shadow-sm);">
-            <div style="font-weight: 800; font-size: 1.05rem; border-bottom: 2px solid var(--primary); padding-bottom: 6px; margin-bottom: 10px; display: flex; justify-content: space-between;">
-                <span>📦 GEAR CONTROL DISPATCH</span>
-                <span style="font-size: 0.75rem; color: var(--text-muted);">v3.3</span>
-            </div>
-            <div id="cardContentDetails" style="line-height: 1.6; margin-bottom: 10px;"></div>
-            <div style="font-size: 0.7rem; color: var(--text-muted); border-top: 1px solid var(--border); padding-top: 6px; text-align: right;" id="cardFooterLogged"></div>
-        </div>
-
-        <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
-            <button class="btn btn-secondary btn-sm" style="flex: 1;" onclick="closeWhatsappShareModal()">Close / Skip</button>
-            <button class="btn btn-primary btn-sm" style="flex: 1; background: var(--success);" onclick="downloadDispatchCardImage()">📥 Download Image</button>
-            <a id="whatsappShareImageDirectLink" href="#" target="_blank" class="btn btn-success btn-sm" style="flex: 1; background: #25d366; color: white;" onclick="closeWhatsappShareModal()">💬 Share Text</a>
         </div>
     </div>
 </div>
@@ -1190,11 +1167,11 @@
         <div class="detail-grid">
             <div class="detail-item"><span>Client ID</span><strong id="detailClientId">-</strong></div>
             <div class="detail-item"><span>Event / Place</span><strong id="detailEventPlace">-</strong></div>
-            <div class="detail-item"><span>Client Event Date</span><strong id="detailEventDate">-</strong></div>
+            <div class="detail-item"><span>Team</span><strong id="detailTeam">-</strong></div>
             <div class="detail-item"><span>Shoot Incharge</span><strong id="detailIncharge">-</strong></div>
             <div class="detail-item"><span>Contact</span><strong id="detailMobile">-</strong></div>
             <div class="detail-item"><span>Time Out</span><strong id="detailTimeOut">-</strong></div>
-            <div class="detail-item"><span>Time In (Returned History)</span><strong id="detailTimeIn">-</strong></div>
+            <div class="detail-item"><span>Time In</span><strong id="detailTimeIn">-</strong></div>
             <div class="detail-item"><span>Logged By</span><strong id="detailCreatedBy">-</strong></div>
         </div>
 
@@ -1210,21 +1187,6 @@
                     </tr>
                 </thead>
                 <tbody id="detailItemsTableBody">
-                    <!-- Populated dynamically -->
-                </tbody>
-            </table>
-        </div>
-
-        <!-- RETURNED EQUIPMENT LOG HISTORY SECTION -->
-        <h4 style="margin: 16px 0 8px 0; color: var(--success);">🔄 Returned Equipment Log History</h4>
-        <div class="table-responsive" style="max-height: 160px; margin-bottom: 16px; background: #f8fafc;">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Return Timestamp & Details</th>
-                    </tr>
-                </thead>
-                <tbody id="detailReturnHistoryTableBody">
                     <!-- Populated dynamically -->
                 </tbody>
             </table>
@@ -1405,7 +1367,6 @@
     let allowManualCheckout = SafeStorage.getItem('appAllowManualCheckout') === 'true';
     let currentBarcodePrintMeta = { barcode: '', name: '' };
     let pendingStaffLoginProfile = null;
-    let lastDispatchedRecordForWhatsapp = null;
 
     function showConfirmationModal({ title, message, icon = '⚠️', confirmBtnText = 'Confirm', confirmBtnClass = 'btn-primary', onConfirm }) {
         document.getElementById('confirmTitle').innerText = title;
@@ -1569,7 +1530,7 @@
     SafeStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
 
     let userProfiles = JSON.parse(SafeStorage.getItem('gearUserProfiles')) || [
-        { id: 'STAFF-1', name: 'Standard Staff Operator', mobile: '9876543210', permissions: 'restricted', password: 'password123' }
+        { id: 'STAFF-1', name: 'Standard Staff Operator', mobile: '9876543210', team: 'Camera Crew', permissions: 'restricted', password: 'password123' }
     ];
 
     let adminEntryMethod = 'scanner';
@@ -1588,6 +1549,16 @@
         } else {
             document.getElementById('loginOverlay').style.display = 'none';
             applyRolePermissions(currentRole);
+        }
+
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('date').value = today;
+        document.getElementById('timeOutDate').value = today;
+        
+        const toggleSwitch = document.getElementById('adminManualCheckoutSwitch');
+        if (toggleSwitch) {
+            toggleSwitch.checked = allowManualCheckout;
+            toggleManualCheckoutSetting(allowManualCheckout);
         }
 
         // Initialize default recovery key if not set
@@ -1847,12 +1818,14 @@
     function saveEditUserProfile(userId) {
         const idInput = document.getElementById(`edit-user-id-${userId}`);
         const nameInput = document.getElementById(`edit-user-name-${userId}`);
+        const teamInput = document.getElementById(`edit-user-team-${userId}`);
         const permSelect = document.getElementById(`edit-user-perm-${userId}`);
 
         if (!idInput || !nameInput) return;
 
         const newId = idInput.value.trim();
         const newName = nameInput.value.trim();
+        const newTeam = teamInput ? teamInput.value.trim() : '';
         const newPerm = permSelect ? permSelect.value : 'restricted';
 
         if (!newId || !newName) {
@@ -1862,7 +1835,7 @@
 
         userProfiles = userProfiles.map(u => {
             if (u.id === userId) {
-                return { ...u, id: newId, name: newName, permissions: newPerm };
+                return { ...u, id: newId, name: newName, team: newTeam, permissions: newPerm };
             }
             return u;
         });
@@ -2255,33 +2228,23 @@
 
         const currentItem = log.gear[itemIdx];
         let currentQty = parseInt(currentItem.qty, 10) || 1;
-        const now = new Date();
-        const returnTimestamp = now.toLocaleDateString('en-GB') + ', ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
 
-        if (!log.returnHistory) {
-            log.returnHistory = [];
-        }
-
-        let returnedItemName = currentItem.name;
         if (currentQty > 1) {
             currentItem.qty = (currentQty - 1).toString();
-            log.returnHistory.push(`Returned 1x ${currentItem.name} on ${returnTimestamp}`);
             logDashboardCheckinTerminal(`↩ CHECKED IN: 1x ${currentItem.name} (${currentItem.qty} remaining)`);
         } else {
-            log.returnHistory.push(`Returned fully ${currentItem.name} on ${returnTimestamp}`);
             logDashboardCheckinTerminal(`↩ FULLY RETURNED: ${currentItem.name}`);
             log.gear.splice(itemIdx, 1);
         }
         
-        log.actualReturnTimeStamp = returnTimestamp;
-
         if (log.gear.length === 0) {
             log.status = 'RETURNED';
+            const now = new Date();
+            log.actualReturnTimeStamp = now.toLocaleDateString('en-GB') + ', ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             SafeStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
             alert('All items returned! Shoot status updated to RETURNED.');
             closeDashboardCheckinModal();
             renderDashboard();
-            openWhatsappCheckinShareModal(log, `Returned 1x ${returnedItemName} on ${returnTimestamp}`);
         } else {
             SafeStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
             renderDashboardCheckinItemsTable();
@@ -2300,37 +2263,16 @@
             confirmBtnText: 'Return All Gear',
             confirmBtnClass: 'btn-success',
             onConfirm: () => {
-                const now = new Date();
-                const returnTimestamp = now.toLocaleDateString('en-GB') + ', ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
-                
-                if (!log.returnHistory) {
-                    log.returnHistory = [];
-                }
-                log.returnHistory.push(`Force returned all remaining items on ${returnTimestamp}`);
-                
                 log.gear = [];
                 log.status = 'RETURNED';
-                log.actualReturnTimeStamp = returnTimestamp;
+                const now = new Date();
+                log.actualReturnTimeStamp = now.toLocaleDateString('en-GB') + ', ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 
                 SafeStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
                 closeDashboardCheckinModal();
                 renderDashboard();
-                openWhatsappCheckinShareModal(log, `Force returned all remaining items on ${returnTimestamp}`);
             }
         });
-    }
-
-    function openWhatsappCheckinShareModal(log, actionSummary) {
-        const messageSummary = `↩ *GEAR CONTROL - RETURN UPDATE* ↩\n\n` +
-            `👤 *Client:* ${log.clientName}\n` +
-            `🎯 *Event:* ${log.event || 'N/A'}\n` +
-            `📋 *Action:* ${actionSummary}\n` +
-            `📌 *Status:* ${log.status}\n\n` +
-            `_Updated by: ${currentUserNameSession || 'Staff'}_`;
-
-        const encodedMessage = encodeURIComponent(messageSummary);
-        const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
-        window.open(whatsappUrl, '_blank');
     }
 
     function logDashboardCheckinTerminal(msg) {
@@ -2675,6 +2617,7 @@
         const clientIdInput = document.getElementById(`log-edit-clientid-${id}`);
         const eventInput = document.getElementById(`log-edit-event-${id}`);
         const placeInput = document.getElementById(`log-edit-place-${id}`);
+        const teamInput = document.getElementById(`log-edit-team-${id}`);
         const inchargeInput = document.getElementById(`log-edit-incharge-${id}`);
         const mobileInput = document.getElementById(`log-edit-mobile-${id}`);
         const timeoutDateInput = document.getElementById(`log-edit-timeoutdate-${id}`);
@@ -2701,9 +2644,7 @@
 
                 if (newStatus === 'RETURNED' && log.status !== 'RETURNED') {
                     const now = new Date();
-                    actualReturnTimeStamp = now.toLocaleDateString('en-GB') + ', ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
-                    if (!log.returnHistory) log.returnHistory = [];
-                    log.returnHistory.push(`Marked fully returned on ${actualReturnTimeStamp}`);
+                    actualReturnTimeStamp = now.toLocaleDateString('en-GB') + ', ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 } else if (newStatus === 'OUT ON SHOOT') {
                     actualReturnTimeStamp = null;
                 }
@@ -2714,6 +2655,7 @@
                     clientId: clientIdInput ? clientIdInput.value.trim() : log.clientId,
                     event: eventInput ? eventInput.value.trim() : log.event,
                     place: placeInput ? placeInput.value.trim() : log.place,
+                    team: teamInput ? teamInput.value.trim() : log.team,
                     shootIncharge: inchargeInput ? inchargeInput.value.trim() : log.shootIncharge,
                     mobileNumber: mobileInput ? mobileInput.value.trim() : log.mobileNumber,
                     timeOutDate: timeoutDateInput ? timeoutDateInput.value : log.timeOutDate,
@@ -2778,7 +2720,8 @@
                             </div>
                         </td>
                         <td>
-                            <label style="font-size: 0.65rem; font-weight: bold; color: var(--text-muted);">INCHARGE</label>
+                            <label style="font-size: 0.65rem; font-weight: bold; color: var(--text-muted);">TEAM & INCHARGE</label>
+                            <input type="text" id="log-edit-team-${log.id}" class="inline-edit-input" placeholder="Team" value="${log.team || ''}">
                             <input type="text" id="log-edit-incharge-${log.id}" class="inline-edit-input" placeholder="Incharge" value="${log.shootIncharge || ''}">
                             <input type="tel" id="log-edit-mobile-${log.id}" class="inline-edit-input" placeholder="Mobile" value="${log.mobileNumber || ''}">
                         </td>
@@ -2805,30 +2748,16 @@
 
             const checkinButton = log.status === 'OUT ON SHOOT' ? `<button class="btn btn-sm btn-success" onclick="openDashboardCheckinModal(${log.id})">↩ Check-In</button>` : '';
 
-            // Generate direct WhatsApp Share Link using official wa.me format
-            const itemsListStr = log.gear.map(g => `• ${g.name} (Qty: ${g.qty})`).join('\n');
-            const messageSummary = `📦 *GEAR CONTROL - DISPATCH DETAILS* 📦\n\n` +
-                `👤 *Client:* ${log.clientName}\n` +
-                `🎯 *Event:* ${log.event || 'N/A'} at ${log.place || 'N/A'}\n` +
-                `📅 *Date:* ${log.date || log.timeOutDate || 'N/A'}\n` +
-                `🕒 *Time Out:* ${timeOutDisplay}\n` +
-                `📞 *Incharge / Mobile:* ${log.shootIncharge || 'N/A'} (${log.mobileNumber || 'N/A'})\n\n` +
-                `📋 *Dispatched Items:*\n${itemsListStr}\n\n` +
-                `_Logged by: ${log.createdBy || 'Staff'}_`;
-            const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(messageSummary)}`;
-            const shareWhatsappBtn = `<a href="${whatsappUrl}" target="_blank" class="btn btn-sm btn-success" style="background: #25d366; color: white; min-height: 36px; padding: 6px 12px; display: inline-flex; align-items: center; justify-content: center; text-decoration: none;">💬 Share</a>`;
-
             const actionsCell = currentRole === 'admin' ? `
                 <td>
                     <div class="table-action-cell">
                         ${checkinButton}
-                        ${shareWhatsappBtn}
                         <button class="btn btn-sm btn-secondary" onclick="openDetailModal(${log.id})">Details</button>
                         <button class="btn btn-sm btn-warning" onclick="editLogRecord(${log.id})">✏️ Edit</button>
                         <button class="btn btn-sm btn-danger" onclick="deleteRecord(${log.id})">🗑️ Delete</button>
                     </div>
                 </td>
-            ` : `<td><div class="table-action-cell">${checkinButton} ${shareWhatsappBtn} <button class="btn btn-sm btn-secondary" onclick="openDetailModal(${log.id})">Details</button></div></td>`;
+            ` : `<td><div class="table-action-cell">${checkinButton} <button class="btn btn-sm btn-secondary" onclick="openDetailModal(${log.id})">Details</button></div></td>`;
 
             return `
                 <tr>
@@ -2838,7 +2767,8 @@
                         <span class="time-text">Items: ${log.gear.length} selected</span>
                     </td>
                     <td>
-                        ${log.shootIncharge || '-'}
+                        ${log.team || '-'}
+                        <span class="time-text">Incharge: ${log.shootIncharge || '-'}</span>
                     </td>
                     <td>${timeOutDisplay}</td>
                     <td><strong>${timeInDisplay}</strong></td>
@@ -2864,12 +2794,12 @@
         document.getElementById('detailClientName').innerText = record.clientName;
         document.getElementById('detailClientId').innerText = record.clientId || 'N/A';
         document.getElementById('detailEventPlace').innerText = `${record.event || '-'} (${record.place || '-'})`;
-        document.getElementById('detailEventDate').innerText = record.date || record.timeOutDate || 'N/A';
+        document.getElementById('detailTeam').innerText = record.team || 'N/A';
         document.getElementById('detailIncharge').innerText = record.shootIncharge || 'N/A';
         document.getElementById('detailMobile').innerText = record.mobileNumber || 'N/A';
         
         document.getElementById('detailTimeOut').innerText = formatDateTime(record.timeOutDate, record.timeOutTime);
-        document.getElementById('detailTimeIn').innerText = record.status === 'RETURNED' && record.actualReturnTimeStamp ? record.actualReturnTimeStamp : 'Not Returned Yet';
+        document.getElementById('detailTimeIn').innerText = record.status === 'RETURNED' && record.actualReturnTimeStamp ? record.actualReturnTimeStamp : '-';
         document.getElementById('detailCreatedBy').innerText = `${record.createdBy || 'Staff'} ${record.creatorMobile ? '(' + record.creatorMobile + ')' : ''}`;
 
         const statusTag = document.getElementById('detailStatusTag');
@@ -2889,26 +2819,6 @@
                 </tr>
             `;
         }).join('');
-
-        // Populate Returned Equipment History table inside modal
-        const historyTbody = document.getElementById('detailReturnHistoryTableBody');
-        if (record.returnHistory && record.returnHistory.length > 0) {
-            historyTbody.innerHTML = record.returnHistory.map((hist, hIdx) => `
-                <tr>
-                    <td style="font-size: 0.85rem; color: #065f46; background: #d1fae5; padding: 8px 10px; border-bottom: 1px solid var(--border);">
-                        ✓ ${hist}
-                    </td>
-                </tr>
-            `).join('');
-        } else {
-            historyTbody.innerHTML = `
-                <tr>
-                    <td style="font-size: 0.8rem; color: var(--text-muted); padding: 8px 10px; text-align: center;">
-                        No return history recorded yet.
-                    </td>
-                </tr>
-            `;
-        }
 
         document.getElementById('detailModal').style.display = 'flex';
     }
@@ -3011,6 +2921,7 @@
         const name = document.getElementById('newStaffName').value.trim();
         const mobile = document.getElementById('newStaffMobile').value.trim();
         const id = document.getElementById('newStaffId').value.trim();
+        const team = document.getElementById('newStaffTeam').value.trim();
         const password = document.getElementById('newStaffPassword').value.trim();
 
         if (!name || !id) {
@@ -3025,17 +2936,18 @@
 
         showConfirmationModal({
             title: 'Create Staff Profile?',
-            message: `• Staff Name: ${name}\n• Staff ID: ${id}`,
+            message: `• Staff Name: ${name}\n• Staff ID: ${id}\n• Team: ${team || 'N/A'}`,
             icon: '👤',
             confirmBtnText: 'Create Profile',
             confirmBtnClass: 'btn-primary',
             onConfirm: () => {
-                userProfiles.push({ id, name, mobile, permissions: 'restricted', password });
+                userProfiles.push({ id, name, mobile, team, permissions: 'restricted', password });
                 SafeStorage.setItem('gearUserProfiles', JSON.stringify(userProfiles));
                 
                 document.getElementById('newStaffName').value = '';
                 document.getElementById('newStaffMobile').value = '';
                 document.getElementById('newStaffId').value = '';
+                document.getElementById('newStaffTeam').value = '';
                 document.getElementById('newStaffPassword').value = '';
 
                 renderLoginUserList();
@@ -3108,11 +3020,12 @@
 
         const clientId = document.getElementById('clientId').value || 'N/A';
         const event = document.getElementById('event').value || 'N/A';
+        const date = document.getElementById('date').value || 'N/A';
         const place = document.getElementById('place').value || 'N/A';
 
         showConfirmationModal({
             title: 'Confirm Booking & Dispatch?',
-            message: `• Client: ${clientName} (ID: ${clientId})\n• Event: ${event} (${place})\n• Total Dispatched Items: ${gearData.length} type(s)`,
+            message: `• Client: ${clientName} (ID: ${clientId})\n• Event: ${event} on ${date} (${place})\n• Total Dispatched Items: ${gearData.length} type(s)`,
             icon: '📋',
             confirmBtnText: 'Confirm & Dispatch',
             confirmBtnClass: 'btn-primary',
@@ -3126,24 +3039,19 @@
         const currentActiveUserName = currentUserNameSession || SafeStorage.getItem('appUserName') || 'Staff';
         const creatorMobile = SafeStorage.getItem('appUserMobile') || '';
         
-        // Automatically capture exact current date and time
-        const now = new Date();
-        const autoDateStr = now.toISOString().split('T')[0];
-        const autoTimeStr = now.toTimeString().split(' ')[0].substring(0, 5);
-
         const record = {
             id: Date.now(),
             clientName: clientName,
             clientId: document.getElementById('clientId').value,
-            date: autoDateStr,
+            team: document.getElementById('team').value,
+            date: document.getElementById('date').value,
             place: document.getElementById('place').value,
             event: document.getElementById('event').value,
             shootIncharge: document.getElementById('shootIncharge').value,
             mobileNumber: document.getElementById('mobileNumber').value,
-            timeOutDate: autoDateStr,
-            timeOutTime: autoTimeStr,
+            timeOutDate: document.getElementById('timeOutDate').value,
+            timeOutTime: document.getElementById('timeOutTime').value,
             actualReturnTimeStamp: null,
-            returnHistory: [],
             gear: gearData,
             status: 'OUT ON SHOOT',
             createdBy: currentActiveUserName,
@@ -3156,60 +3064,11 @@
         document.getElementById('checklistForm').reset();
         scannedQuantities = {};
         updateEntryInterface();
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('date').value = today;
+        document.getElementById('timeOutDate').value = today;
         
         renderDashboard();
-        openWhatsappShareModal(record);
-    }
-
-    function openWhatsappShareModal(record) {
-        lastDispatchedRecordForWhatsapp = record;
-        const formattedTimeOut = formatDateTime(record.timeOutDate, record.timeOutTime);
-        const itemsListStr = record.gear.map(g => `• ${g.name} (Qty: ${g.qty})`).join('\n');
-        
-        const messageSummary = `📦 *GEAR CONTROL - NEW DISPATCH* 📦\n\n` +
-            `👤 *Client:* ${record.clientName}\n` +
-            `🆔 *Client ID:* ${record.clientId || 'N/A'}\n` +
-            `🎯 *Event:* ${record.event || 'N/A'} at ${record.place || 'N/A'}\n` +
-            `📅 *Date:* ${record.date || 'N/A'}\n` +
-            `🕒 *Time Out:* ${formattedTimeOut}\n` +
-            `📞 *Incharge / Mobile:* ${record.shootIncharge || 'N/A'} (${record.mobileNumber || 'N/A'})\n\n` +
-            `📋 *Dispatched Items:*\n${itemsListStr}\n\n` +
-            `_Logged by: ${record.createdBy}_`;
-
-        const detailsHtml = `
-            <strong>Client:</strong> ${record.clientName}<br>
-            <strong>Event:</strong> ${record.event || 'N/A'} (${record.place || 'N/A'})<br>
-            <strong>Time Out:</strong> ${formattedTimeOut}<br>
-            <strong>Incharge:</strong> ${record.shootIncharge || 'N/A'} (${record.mobileNumber || 'N/A'})<br>
-            <strong>Items:</strong> ${record.gear.length} type(s)
-        `;
-        document.getElementById('cardContentDetails').innerHTML = detailsHtml;
-        document.getElementById('cardFooterLogged').innerText = `Logged by: ${record.createdBy}`;
-
-        document.getElementById('whatsappPreviewBox').innerText = messageSummary;
-        
-        const encodedMessage = encodeURIComponent(messageSummary);
-        document.getElementById('whatsappShareImageDirectLink').href = `https://wa.me/?text=${encodedMessage}`;
-
-        document.getElementById('whatsappShareModal').style.display = 'flex';
-    }
-
-    function downloadDispatchCardImage() {
-        const cardElement = document.getElementById('dispatchCardCanvasWrapper');
-        if (!cardElement) return;
-
-        html2canvas(cardElement, { scale: 2 }).then(canvas => {
-            const imageURL = canvas.toDataURL("image/png");
-            let a = document.createElement("a");
-            a.href = imageURL;
-            a.download = `Dispatch_${Date.now()}.png`;
-            a.click();
-        });
-    }
-
-    function closeWhatsappShareModal() {
-        document.getElementById('whatsappShareModal').style.display = 'none';
-        lastDispatchedRecordForWhatsapp = null;
         if (currentRole === 'admin') {
             switchTab('dashboard-tab');
         } else {
@@ -3219,21 +3078,7 @@
 
     function formatDateTime(dateStr, timeStr) {
         if (!dateStr && !timeStr) return 'N/A';
-        
-        let formattedTime = timeStr || '';
-        // If it's in 24-hour format "HH:mm" or "HH:mm:ss" convert to 12-hour AM/PM
-        if (timeStr && timeStr.includes(':') && !timeStr.toUpperCase().includes('M')) {
-            let parts = timeStr.split(':');
-            let h = parseInt(parts[0], 10);
-            let m = parts[1].substring(0, 2); // ensure we only grab minutes
-            let ampm = h >= 12 ? 'PM' : 'AM';
-            h = h % 12;
-            h = h ? h : 12; 
-            let paddedHour = h < 10 ? '0' + h : h;
-            formattedTime = `${paddedHour}:${m} ${ampm}`;
-        }
-
-        return `${dateStr || ''} ${formattedTime}`.trim();
+        return `${dateStr || ''} ${timeStr || ''}`.trim();
     }
 
     function toggleStatus(id) {
@@ -3243,10 +3088,7 @@
                 if (log.status === 'OUT ON SHOOT') {
                     log.status = 'RETURNED';
                     const now = new Date();
-                    const returnTimestamp = now.toLocaleDateString('en-GB') + ', ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
-                    if (!log.returnHistory) log.returnHistory = [];
-                    log.returnHistory.push(`Marked fully returned on ${returnTimestamp}`);
-                    log.actualReturnTimeStamp = returnTimestamp;
+                    log.actualReturnTimeStamp = now.toLocaleDateString('en-GB') + ', ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 } else {
                     log.status = 'OUT ON SHOOT';
                     log.actualReturnTimeStamp = null;
