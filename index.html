@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Universal Equipment Management Dashboard v3.3 (Fresh Modern UI)</title>
+    <title>Universal Equipment Management Dashboard v3.3 (Fresh Modern UI with Button Names)</title>
     <!-- JsBarcode Library with local fallback safeguard -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.12.3/JsBarcode.all.min.js"></script>
     <style>
@@ -595,39 +595,33 @@
         }
 
         /* ==========================================
-           FINE-TUNED MOBILE ICON-ONLY BUTTONS (< 900px)
+           MOBILE TABLE ACTIONS BUTTON NAMES WITH ICONS
            ========================================== */
         @media (max-width: 899px) {
             .table-action-cell .btn, 
             .table-action-cell .btn-sm {
-                padding: 0 !important;
-                width: 38px !important;
-                height: 38px !important;
-                min-height: 38px !important;
-                min-width: 38px !important;
-                font-size: 0 !important;
+                padding: 6px 10px !important;
+                width: auto !important;
+                height: auto !important;
+                min-height: 32px !important;
+                min-width: unset !important;
+                font-size: 0.75rem !important;
                 display: inline-flex !important;
                 align-items: center !important;
                 justify-content: center !important;
-                border-radius: 50% !important; /* Fully round icons on mobile */
-                box-shadow: 0 4px 10px rgba(0,0,0,0.12) !important;
+                border-radius: 20px !important;
+                box-shadow: 0 3px 8px rgba(0,0,0,0.1) !important;
             }
             .table-action-cell .btn::after,
             .table-action-cell .btn-sm::after {
-                font-size: 1.1rem !important;
-                line-height: 1 !important;
+                content: none !important;
             }
-            .table-action-cell .btn-success::after { content: "↩"; }
-            .table-action-cell .btn[style*="background: #25d366"]::after { content: "💬"; }
-            .table-action-cell .btn-secondary::after { content: "ℹ️"; }
-            .table-action-cell .btn-warning::after { content: "✏️"; }
-            .table-action-cell .btn-danger::after { content: "🗑️"; }
             
             .table-action-cell {
                 display: flex !important;
                 flex-direction: row !important;
                 flex-wrap: wrap !important;
-                gap: 6px !important;
+                gap: 5px !important;
                 align-items: center !important;
             }
         }
@@ -654,7 +648,7 @@
 
             .table-action-cell .btn {
                 min-height: 36px;
-                padding: 6px 14px;
+                padding: 6px 12px;
                 font-size: 0.8rem;
             }
         }
