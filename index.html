@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Universal Equipment Management Dashboard v3.3 (Modernized Button Style)</title>
+    <title>Universal Equipment Management Dashboard v3.3 (Fresh Modern UI)</title>
     <!-- JsBarcode Library with local fallback safeguard -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.12.3/JsBarcode.all.min.js"></script>
     <style>
@@ -521,12 +521,12 @@
         .status-returned { background: var(--success-light); color: #065f46; border: 1px solid rgba(16, 185, 129, 0.3); }
 
         /* ==========================================
-           REFINED STYLISH BUTTON SYSTEM
+           FRESH MODERN BUTTON DESIGN (PILL/GRADIENT)
            ========================================== */
         .btn { 
-            padding: 11px 20px; 
+            padding: 12px 24px; 
             border: none; 
-            border-radius: var(--radius-md); 
+            border-radius: 50px; /* Modern Pill Style */
             font-weight: 700; 
             cursor: pointer; 
             font-size: 0.875rem;
@@ -534,64 +534,64 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            min-height: 44px;
+            min-height: 46px;
             white-space: nowrap;
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
             color: var(--text-dark);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6);
-            transition: var(--transition);
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
+            transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .btn:hover { 
-            transform: translateY(-2px); 
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.8); 
+            transform: translateY(-3px); 
+            box-shadow: 0 14px 25px -5px rgba(139, 92, 246, 0.25), 0 4px 10px rgba(0, 0, 0, 0.06); 
             color: var(--primary);
         }
         .btn:active { 
-            transform: translateY(1px); 
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08); 
+            transform: translateY(-1px); 
+            box-shadow: 0 6px 12px -3px rgba(0, 0, 0, 0.1); 
         }
 
         .btn-primary { 
             background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); 
             color: white; 
-            box-shadow: 0 6px 16px rgba(139, 92, 246, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            box-shadow: 0 10px 22px -4px rgba(139, 92, 246, 0.45);
         }
-        .btn-primary:hover { color: white; opacity: 0.95; box-shadow: 0 8px 22px rgba(139, 92, 246, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.4); }
+        .btn-primary:hover { color: white; opacity: 0.95; box-shadow: 0 14px 28px -4px rgba(139, 92, 246, 0.6); }
 
         .btn-success { 
             background: linear-gradient(135deg, #10b981 0%, #047857 100%); 
             color: white; 
-            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            box-shadow: 0 10px 22px -4px rgba(16, 185, 129, 0.45);
         }
-        .btn-success:hover { color: white; box-shadow: 0 8px 22px rgba(16, 185, 129, 0.45); }
+        .btn-success:hover { color: white; box-shadow: 0 14px 28px -4px rgba(16, 185, 129, 0.6); }
 
         .btn-secondary { 
-            background: linear-gradient(135deg, #64748b 0%, #475569 100%); 
+            background: linear-gradient(135deg, #64748b 0%, #334155 100%); 
             color: white; 
-            box-shadow: 0 4px 12px rgba(100, 116, 139, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 22px -4px rgba(100, 116, 139, 0.35);
         }
         .btn-secondary:hover { color: white; }
 
         .btn-warning { 
             background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%); 
             color: #ffffff; 
-            box-shadow: 0 6px 16px rgba(245, 158, 11, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            box-shadow: 0 10px 22px -4px rgba(245, 158, 11, 0.45);
         }
         .btn-warning:hover { color: white; }
 
         .btn-danger { 
             background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); 
             color: white; 
-            box-shadow: 0 6px 16px rgba(239, 68, 68, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            box-shadow: 0 10px 22px -4px rgba(239, 68, 68, 0.45);
         }
         .btn-danger:hover { color: white; }
 
         .btn-sm { 
-            padding: 6px 12px; 
+            padding: 6px 14px; 
             font-size: 0.8rem; 
             min-height: 36px; 
-            border-radius: var(--radius-sm);
+            border-radius: 30px;
         }
 
         /* ==========================================
@@ -609,7 +609,8 @@
                 display: inline-flex !important;
                 align-items: center !important;
                 justify-content: center !important;
-                border-radius: 12px !important;
+                border-radius: 50% !important; /* Fully round icons on mobile */
+                box-shadow: 0 4px 10px rgba(0,0,0,0.12) !important;
             }
             .table-action-cell .btn::after,
             .table-action-cell .btn-sm::after {
@@ -653,7 +654,7 @@
 
             .table-action-cell .btn {
                 min-height: 36px;
-                padding: 6px 12px;
+                padding: 6px 14px;
                 font-size: 0.8rem;
             }
         }
