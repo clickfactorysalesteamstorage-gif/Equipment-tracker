@@ -181,7 +181,7 @@
             padding: 8px 4px;
             border-top: 1px solid #334155;
             z-index: 999;
-            box-shadow: -4px 20px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
         }
 
         @media (min-width: 900px) {
@@ -582,25 +582,26 @@
         }
 
         /* ==========================================
-           MOBILE BUTTON SIZING ADJUSTMENTS (< 900px)
+           MOBILE ICON-ONLY BUTTON OPTIMIZATIONS (< 900px)
            ========================================== */
         @media (max-width: 899px) {
-            .btn {
-                padding: 6px 10px;
-                font-size: 0.75rem;
-                min-height: 32px;
-                gap: 4px;
+            .table-action-cell .btn {
+                padding: 6px;
+                min-width: 34px;
+                min-height: 34px;
+                font-size: 0;
+                justify-content: center;
+                gap: 0;
             }
-            .btn-sm {
-                padding: 4px 8px;
-                font-size: 0.7rem;
-                min-height: 28px;
+            .table-action-cell .btn::after {
+                font-size: 0.95rem;
             }
-            .actions-bar .btn {
-                padding: 8px 12px;
-                font-size: 0.8rem;
-                min-height: 36px;
-            }
+            /* Map button icons directly from their original text content */
+            .table-action-cell .btn-success::after { content: "↩"; font-size: 1rem; }
+            .table-action-cell .btn[style*="background: #25d366"]::after { content: "💬"; }
+            .table-action-cell .btn-secondary::after { content: "ℹ️"; }
+            .table-action-cell .btn-warning::after { content: "✏️"; }
+            .table-action-cell .btn-danger::after { content: "🗑️"; }
         }
 
         .actions-bar { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
@@ -2011,8 +2012,8 @@
                         </td>
                         <td>
                             <div class="table-action-cell">
-                                <button class="btn btn-sm btn-warning" onclick="editUserProfile('${u.id}')">✏️ Edit</button>
-                                <button class="btn btn-sm btn-danger" onclick="deleteUserProfile('${u.id}')">🗑️ Delete</button>
+                                <button class="btn btn-sm btn-warning" onclick="editUserProfile('${u.id}')">✏️</button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteUserProfile('${u.id}')">🗑️</button>
                             </div>
                         </td>
                     </tr>
@@ -2306,7 +2307,7 @@
                     <td><strong>${item.name}</strong></td>
                     <td style="text-align: center; font-weight: bold; color: var(--warning);">${item.qty}</td>
                     <td style="text-align: center;">
-                        <button type="button" class="btn btn-sm btn-success" onclick="checkinSingleLogItem(${idx})">↩ Return 1</button>
+                        <button type="button" class="btn btn-sm btn-success" onclick="checkinSingleLogItem(${idx})">↩ Return</button>
                     </td>
                 </tr>
             `;
@@ -2643,9 +2644,9 @@
                         <td style="text-align: center; font-weight: bold;">${item.stock}</td>
                         <td>
                             <div class="table-action-cell">
-                                <button class="btn btn-sm btn-secondary" onclick="openBarcodePrintModal('${item.barcode}', '${item.name}')">🖨️ Label</button>
-                                <button class="btn btn-sm btn-warning" onclick="editMasterEquipmentItem(${index})">✏️ Edit</button>
-                                <button class="btn btn-sm btn-danger" onclick="deleteMasterEquipmentItem(${index})">🗑️ Delete</button>
+                                <button class="btn btn-sm btn-secondary" onclick="openBarcodePrintModal('${item.barcode}', '${item.name}')">🖨️</button>
+                                <button class="btn btn-sm btn-warning" onclick="editMasterEquipmentItem(${index})">✏️</button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteMasterEquipmentItem(${index})">🗑️</button>
                             </div>
                         </td>
                     </tr>
