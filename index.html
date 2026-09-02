@@ -582,26 +582,42 @@
         }
 
         /* ==========================================
-           MOBILE ICON-ONLY BUTTON OPTIMIZATIONS (< 900px)
+           FINE-TUNED MOBILE ICON-ONLY BUTTONS (< 900px)
            ========================================== */
         @media (max-width: 899px) {
-            .table-action-cell .btn {
-                padding: 6px;
-                min-width: 34px;
-                min-height: 34px;
-                font-size: 0;
-                justify-content: center;
-                gap: 0;
+            .table-action-cell .btn, 
+            .table-action-cell .btn-sm {
+                padding: 0 !important;
+                width: 38px !important;
+                height: 38px !important;
+                min-height: 38px !important;
+                min-width: 38px !important;
+                font-size: 0 !important;
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                border-radius: 10px !important;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
             }
-            .table-action-cell .btn::after {
-                font-size: 0.95rem;
+            .table-action-cell .btn::after,
+            .table-action-cell .btn-sm::after {
+                font-size: 1.1rem !important;
+                line-height: 1 !important;
             }
-            /* Map button icons directly from their original text content */
-            .table-action-cell .btn-success::after { content: "↩"; font-size: 1rem; }
+            /* Explicit Icon Mapping based on button classes/contents */
+            .table-action-cell .btn-success::after { content: "↩"; }
             .table-action-cell .btn[style*="background: #25d366"]::after { content: "💬"; }
             .table-action-cell .btn-secondary::after { content: "ℹ️"; }
             .table-action-cell .btn-warning::after { content: "✏️"; }
             .table-action-cell .btn-danger::after { content: "🗑️"; }
+            
+            .table-action-cell {
+                display: flex !important;
+                flex-direction: row !important;
+                flex-wrap: wrap !important;
+                gap: 5px !important;
+                align-items: center !important;
+            }
         }
 
         .actions-bar { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
@@ -2307,7 +2323,7 @@
                     <td><strong>${item.name}</strong></td>
                     <td style="text-align: center; font-weight: bold; color: var(--warning);">${item.qty}</td>
                     <td style="text-align: center;">
-                        <button type="button" class="btn btn-sm btn-success" onclick="checkinSingleLogItem(${idx})">↩ Return</button>
+                        <button type="button" class="btn btn-sm btn-success" onclick="checkinSingleLogItem(${idx})">↩</button>
                     </td>
                 </tr>
             `;
@@ -2867,20 +2883,20 @@
                 `;
             }
 
-            const checkinButton = log.status === 'OUT ON SHOOT' ? `<button class="btn btn-sm btn-success" onclick="openDashboardCheckinModal(${log.id})">↩ Check-In</button>` : '';
-            const whatsappBtn = `<button class="btn btn-sm" style="background: #25d366; color: white;" onclick="shareLogOnWhatsApp(${log.id})">💬 WhatsApp</button>`;
+            const checkinButton = log.status === 'OUT ON SHOOT' ? `<button class="btn btn-sm btn-success" onclick="openDashboardCheckinModal(${log.id})">↩</button>` : '';
+            const whatsappBtn = `<button class="btn btn-sm" style="background: #25d366; color: white;" onclick="shareLogOnWhatsApp(${log.id})">💬</button>`;
 
             const actionsCell = currentRole === 'admin' ? `
                 <td>
                     <div class="table-action-cell">
                         ${checkinButton}
                         ${whatsappBtn}
-                        <button class="btn btn-sm btn-secondary" onclick="openDetailModal(${log.id})">Details</button>
-                        <button class="btn btn-sm btn-warning" onclick="editLogRecord(${log.id})">✏️ Edit</button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteRecord(${log.id})">🗑️ Delete</button>
+                        <button class="btn btn-sm btn-secondary" onclick="openDetailModal(${log.id})">ℹ️</button>
+                        <button class="btn btn-sm btn-warning" onclick="editLogRecord(${log.id})">✏️</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteRecord(${log.id})">🗑️</button>
                     </div>
                 </td>
-            ` : `<td><div class="table-action-cell">${checkinButton} ${whatsappBtn} <button class="btn btn-sm btn-secondary" onclick="openDetailModal(${log.id})">Details</button></div></td>`;
+            ` : `<td><div class="table-action-cell">${checkinButton} ${whatsappBtn} <button class="btn btn-sm btn-secondary" onclick="openDetailModal(${log.id})">ℹ️</button></div></td>`;
 
             return `
                 <tr>
