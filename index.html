@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Universal Equipment Management Dashboard v3.3 (Fresh Modern UI with Button Names)</title>
+    <title>Universal Equipment Management Dashboard v3.3 (Fresh Modern UI with Labeled Buttons)</title>
     <!-- JsBarcode Library with local fallback safeguard -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.12.3/JsBarcode.all.min.js"></script>
     <style>
@@ -521,12 +521,12 @@
         .status-returned { background: var(--success-light); color: #065f46; border: 1px solid rgba(16, 185, 129, 0.3); }
 
         /* ==========================================
-           FRESH MODERN BUTTON DESIGN (PILL/GRADIENT)
+           FRESH MODERN BUTTON DESIGN WITH LABELS
            ========================================== */
         .btn { 
             padding: 12px 24px; 
             border: none; 
-            border-radius: 50px; /* Modern Pill Style */
+            border-radius: 50px; 
             font-weight: 700; 
             cursor: pointer; 
             font-size: 0.875rem;
@@ -595,7 +595,7 @@
         }
 
         /* ==========================================
-           MOBILE TABLE ACTIONS BUTTON NAMES WITH ICONS
+           RESPONSIVE BUTTON LABELS (< 900px)
            ========================================== */
         @media (max-width: 899px) {
             .table-action-cell .btn, 
@@ -606,17 +606,9 @@
                 min-height: 32px !important;
                 min-width: unset !important;
                 font-size: 0.75rem !important;
-                display: inline-flex !important;
-                align-items: center !important;
-                justify-content: center !important;
                 border-radius: 20px !important;
                 box-shadow: 0 3px 8px rgba(0,0,0,0.1) !important;
             }
-            .table-action-cell .btn::after,
-            .table-action-cell .btn-sm::after {
-                content: none !important;
-            }
-            
             .table-action-cell {
                 display: flex !important;
                 flex-direction: row !important;
@@ -2038,8 +2030,8 @@
                         </td>
                         <td>
                             <div class="table-action-cell">
-                                <button class="btn btn-sm btn-warning" onclick="editUserProfile('${u.id}')">✏️</button>
-                                <button class="btn btn-sm btn-danger" onclick="deleteUserProfile('${u.id}')">🗑️</button>
+                                <button class="btn btn-sm btn-warning" onclick="editUserProfile('${u.id}')">✏️ Edit</button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteUserProfile('${u.id}')">🗑️ Delete</button>
                             </div>
                         </td>
                     </tr>
@@ -2333,7 +2325,7 @@
                     <td><strong>${item.name}</strong></td>
                     <td style="text-align: center; font-weight: bold; color: var(--warning);">${item.qty}</td>
                     <td style="text-align: center;">
-                        <button type="button" class="btn btn-sm btn-success" onclick="checkinSingleLogItem(${idx})">↩</button>
+                        <button type="button" class="btn btn-sm btn-success" onclick="checkinSingleLogItem(${idx})">↩ Return</button>
                     </td>
                 </tr>
             `;
@@ -2670,9 +2662,9 @@
                         <td style="text-align: center; font-weight: bold;">${item.stock}</td>
                         <td>
                             <div class="table-action-cell">
-                                <button class="btn btn-sm btn-secondary" onclick="openBarcodePrintModal('${item.barcode}', '${item.name}')">🖨️</button>
-                                <button class="btn btn-sm btn-warning" onclick="editMasterEquipmentItem(${index})">✏️</button>
-                                <button class="btn btn-sm btn-danger" onclick="deleteMasterEquipmentItem(${index})">🗑️</button>
+                                <button class="btn btn-sm btn-secondary" onclick="openBarcodePrintModal('${item.barcode}', '${item.name}')">🖨️ Label</button>
+                                <button class="btn btn-sm btn-warning" onclick="editMasterEquipmentItem(${index})">✏️ Edit</button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteMasterEquipmentItem(${index})">🗑️ Delete</button>
                             </div>
                         </td>
                     </tr>
@@ -2893,20 +2885,20 @@
                 `;
             }
 
-            const checkinButton = log.status === 'OUT ON SHOOT' ? `<button class="btn btn-sm btn-success" onclick="openDashboardCheckinModal(${log.id})">↩</button>` : '';
-            const whatsappBtn = `<button class="btn btn-sm" style="background: #25d366; color: white;" onclick="shareLogOnWhatsApp(${log.id})">💬</button>`;
+            const checkinButton = log.status === 'OUT ON SHOOT' ? `<button class="btn btn-sm btn-success" onclick="openDashboardCheckinModal(${log.id})">↩ Return</button>` : '';
+            const whatsappBtn = `<button class="btn btn-sm" style="background: #25d366; color: white;" onclick="shareLogOnWhatsApp(${log.id})">💬 WhatsApp</button>`;
 
             const actionsCell = currentRole === 'admin' ? `
                 <td>
                     <div class="table-action-cell">
                         ${checkinButton}
                         ${whatsappBtn}
-                        <button class="btn btn-sm btn-secondary" onclick="openDetailModal(${log.id})">ℹ️</button>
-                        <button class="btn btn-sm btn-warning" onclick="editLogRecord(${log.id})">✏️</button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteRecord(${log.id})">🗑️</button>
+                        <button class="btn btn-sm btn-secondary" onclick="openDetailModal(${log.id})">ℹ️ Details</button>
+                        <button class="btn btn-sm btn-warning" onclick="editLogRecord(${log.id})">✏️ Edit</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteRecord(${log.id})">🗑️ Delete</button>
                     </div>
                 </td>
-            ` : `<td><div class="table-action-cell">${checkinButton} ${whatsappBtn} <button class="btn btn-sm btn-secondary" onclick="openDetailModal(${log.id})">ℹ️</button></div></td>`;
+            ` : `<td><div class="table-action-cell">${checkinButton} ${whatsappBtn} <button class="btn btn-sm btn-secondary" onclick="openDetailModal(${log.id})">ℹ️ Details</button></div></td>`;
 
             return `
                 <tr>
