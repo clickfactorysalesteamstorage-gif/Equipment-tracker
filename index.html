@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Universal Equipment Management Dashboard v3.3 (Simplified Equipment Add)</title>
+    <title>Universal Equipment Management Dashboard v3.3 (Clean Equipment Add Menu)</title>
     <!-- JsBarcode Library with local fallback safeguard -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.12.3/JsBarcode.all.min.js"></script>
     <style>
@@ -940,7 +940,7 @@
             </div>
         </div>
 
-        <!-- TAB 3: ADD UPCOMING EQUIPMENT MASTER (ADMIN ONLY WITH MANUAL & SCANNER MODES - NO BARCODE COLUMN) -->
+        <!-- TAB 3: ADD UPCOMING EQUIPMENT MASTER (NO BARCODE COLUMN) -->
         <div id="equipment-tab" class="tab-content">
             <div class="content-card">
                 <h3 style="font-size: 0.85rem;">Add New Upcoming Equipment</h3>
@@ -2497,12 +2497,8 @@
         if (!log || !tbody) return;
 
         tbody.innerHTML = log.gear.map((item, idx) => {
-            const masterMatch = masterEquipment.find(m => m.name.toUpperCase() === item.name.toUpperCase());
-            const barcodeStr = masterMatch ? masterMatch.barcode : 'EQP-UNKNOWN';
-            
             return `
                 <tr>
-                    <td><span class="barcode-badge">${barcodeStr}</span></td>
                     <td><strong>${item.name}</strong></td>
                     <td style="text-align: center; font-weight: bold; color: var(--warning);">${item.qty}</td>
                     <td style="text-align: center;">
@@ -2528,16 +2524,13 @@
         if (!log) return;
 
         let matchedIndex = log.gear.findIndex(g => {
-            const masterMatch = masterEquipment.find(m => m.name.toUpperCase() === g.name.toUpperCase());
-            return (masterMatch && masterMatch.barcode.toLowerCase() === query) || 
-                   g.name.toLowerCase() === query || 
-                   query.includes(g.name.toLowerCase());
+            return g.name.toLowerCase() === query || query.includes(g.name.toLowerCase());
         });
 
         if (matchedIndex !== -1) {
             checkinSingleLogItem(matchedIndex);
         } else {
-            logDashboardCheckinTerminal(`<span style="color: #f87171;">✕ REJECTED: Barcode "${scannedCode}" was NOT assigned to this shoot!</span>`);
+            logDashboardCheckinTerminal(`<span style="color: #f87171;">✕ REJECTED: Item "${scannedCode}" was NOT assigned to this shoot!</span>`);
         }
     }
 
@@ -2632,7 +2625,6 @@
             return `
                 <tr>
                     <td style="text-align: center;">${index + 1}</td>
-                    <td><span class="barcode-badge">${eq.barcode}</span></td>
                     <td><strong>${eq.name}</strong></td>
                     <td style="text-align: center; font-weight: bold; color: ${inStock > 0 ? 'var(--success)' : 'var(--danger)'};">${inStock}</td>
                     <td style="text-align: center; font-weight: bold; color: var(--warning);">${outQty}</td>
