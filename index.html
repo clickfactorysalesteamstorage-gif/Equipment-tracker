@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Universal Equipment Management Dashboard v3.3 (Auto-Clean History)</title>
+    <title>Universal Equipment Management Dashboard v3.3 (Empty State Message Added)</title>
     <!-- JsBarcode Library with local fallback safeguard -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.12.3/JsBarcode.all.min.js"></script>
     <style>
@@ -46,7 +46,7 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
             background-color: var(--bg); 
             color: var(--text-dark); 
-            line-height: 1.4;
+            line-height: 1.45;
             padding-bottom: 75px;
             -webkit-font-smoothing: antialiased;
         }
@@ -201,7 +201,7 @@
             align-items: center;
             justify-content: center;
             gap: 1px;
-            font-size: 0.48rem;
+            font-size: 0.52rem;
             font-weight: 700;
             flex: 1;
             padding: 3px 0;
@@ -321,8 +321,8 @@
             .metric-card { padding: 20px; text-align: left; }
         }
 
-        .metric-card h3 { font-size: 0.52rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.01em; margin-bottom: 2px; }
-        .metric-card p { font-size: 1.1rem; font-weight: 800; letter-spacing: -0.02em; color: var(--primary); }
+        .metric-card h3 { font-size: 0.58rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.01em; margin-bottom: 2px; }
+        .metric-card p { font-size: 1.15rem; font-weight: 800; letter-spacing: -0.02em; color: var(--primary); }
 
         @media (min-width: 600px) {
             .metric-card h3 { font-size: 0.75rem; }
@@ -354,12 +354,12 @@
         @media (min-width: 1024px) { .form-grid { grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 24px; } }
 
         .input-group { display: flex; flex-direction: column; text-align: left; }
-        .input-group label { font-size: 0.65rem; font-weight: 700; margin-bottom: 3px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.02em; }
+        .input-group label { font-size: 0.7rem; font-weight: 700; margin-bottom: 3px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.02em; }
         .input-group input, .input-group select { 
             padding: 6px 10px; 
             border: 1px solid var(--border); 
             border-radius: var(--radius-sm); 
-            font-size: 0.8rem; 
+            font-size: 0.85rem; 
             width: 100%;
             min-height: 36px;
             background: var(--bg);
@@ -389,7 +389,7 @@
             border: none;
             border-radius: 6px;
             font-weight: 700;
-            font-size: 0.72rem;
+            font-size: 0.75rem;
             cursor: pointer;
             background: transparent;
             color: var(--text-muted);
@@ -416,13 +416,13 @@
             padding: 10px;
             border-radius: var(--radius-sm);
             margin-bottom: 10px;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             border: 1px solid var(--border);
             box-shadow: var(--neu-inset);
         }
 
         .detail-item { display: flex; flex-direction: column; }
-        .detail-item span { font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
+        .detail-item span { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
         .detail-item strong { color: var(--text-dark); margin-top: 1px; }
 
         .progress-bar-bg {
@@ -457,7 +457,7 @@
             padding: 8px 10px; 
             border-radius: 6px; 
             font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace; 
-            font-size: 0.72rem; 
+            font-size: 0.78rem; 
             max-height: 110px; 
             overflow-y: auto; 
             margin-top: 8px; 
@@ -477,10 +477,10 @@
             background: var(--bg);
         }
 
-        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.75rem; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.8rem; }
 
-        th { background-color: #cbd5e1; color: var(--text-dark); padding: 6px 4px; position: sticky; top: 0; z-index: 10; font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; white-space: nowrap; }
-        td { padding: 6px 4px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+        th { background-color: #cbd5e1; color: var(--text-dark); padding: 6px 4px; position: sticky; top: 0; z-index: 10; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; white-space: nowrap; }
+        td { padding: 8px 6px; border-bottom: 1px solid var(--border); vertical-align: middle; }
         tr:nth-child(even) { background-color: rgba(255, 255, 255, 0.4); }
         tr.selected-row { background-color: #ede9fe !important; }
         tr.scanned-checkout { background-color: #ede9fe !important; }
@@ -490,14 +490,14 @@
 
         .inline-edit-input {
             width: 100%;
-            padding: 4px 6px;
+            padding: 5px 8px;
             border: 1px solid var(--primary);
             border-radius: 4px;
-            font-size: 0.72rem;
+            font-size: 0.78rem;
             font-weight: 700;
             background: var(--bg);
             margin-bottom: 2px;
-            min-height: 28px;
+            min-height: 30px;
             box-shadow: var(--neu-inset);
         }
 
@@ -519,7 +519,7 @@
             margin-bottom: 4px;
         }
 
-        .status-tag { padding: 2px 6px; border-radius: 20px; font-size: 0.6rem; font-weight: 700; text-align: center; display: inline-block; white-space: nowrap; }
+        .status-tag { padding: 3px 8px; border-radius: 20px; font-size: 0.65rem; font-weight: 700; text-align: center; display: inline-block; white-space: nowrap; }
         .status-out { background: var(--warning-light); color: #92400e; border: 1px solid rgba(245, 158, 11, 0.3); }
         .status-returned { background: var(--success-light); color: #065f46; border: 1px solid rgba(16, 185, 129, 0.3); }
 
@@ -657,7 +657,7 @@
                 min-width: 75px !important;
                 min-height: 32px !important;
                 padding: 5px 10px !important;
-                font-size: 0.75rem !important;
+                font-size: 0.78rem !important;
             }
         }
 
@@ -862,11 +862,11 @@
             </div>
         </div>
 
-        <!-- TAB 1.5: HISTORY LOGS (RETURNED PREVIOUS ENTRIES WITH 30-DAY AUTO-CLEANUP) -->
+        <!-- TAB 1.5: HISTORY LOGS (RETURNED PREVIOUS ENTRIES) -->
         <div id="history-tab" class="tab-content">
             <div class="content-card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">
-                    <h3 style="font-size: 0.85rem;">📜 History Logs (Auto-clears after 30 days)</h3>
+                    <h3 style="font-size: 0.85rem;">📜 Returned Previous Entries History</h3>
                     <input type="text" id="historySearchInput" onkeyup="filterHistoryLogs()" placeholder="Search history..." style="padding: 5px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.75rem; width: 100%; max-width: 160px; min-height: 32px; box-shadow: var(--neu-inset); background: var(--bg);">
                 </div>
 
@@ -1183,8 +1183,8 @@
             <input type="password" id="adminPasswordInput" placeholder="Enter admin password..." style="width: 100%; padding: 7px 9px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.8rem; background: var(--bg); box-shadow: var(--neu-inset);" onkeypress="handleAdminLoginKey(event)">
             
             <div style="display: flex; gap: 6px; margin-top: 6px;">
-                <button class="btn btn-sm btn-primary" style="flex: 2; width: auto; min-width: unset;" onclick="validateAdminPassword()">Sign In</button>
-                <button class="btn btn-sm btn-secondary" style="flex: 1; width: auto; min-width: unset;" onclick="cancelAdminPasswordPrompt()">Cancel</button>
+                <button class="btn btn-sm btn-primary" style="flex: 2;" onclick="validateAdminPassword()">Sign In</button>
+                <button class="btn btn-sm btn-secondary" style="flex: 1;" onclick="cancelAdminPasswordPrompt()">Cancel</button>
             </div>
 
             <div style="text-align: right; margin-top: 4px;">
@@ -1199,8 +1199,8 @@
             <input type="password" id="staffPasswordInput" placeholder="Enter your staff password..." style="width: 100%; padding: 7px 9px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.8rem; background: var(--bg); box-shadow: var(--neu-inset);" onkeypress="handleStaffLoginKey(event)">
             
             <div style="display: flex; gap: 6px; margin-top: 6px;">
-                <button class="btn btn-sm btn-primary" style="flex: 2; width: auto; min-width: unset;" onclick="validateStaffPassword()">Verify & Login</button>
-                <button class="btn btn-sm btn-secondary" style="flex: 1; width: auto; min-width: unset;" onclick="cancelStaffPasswordPrompt()">Cancel</button>
+                <button class="btn btn-sm btn-primary" style="flex: 2;" onclick="validateStaffPassword()">Verify & Login</button>
+                <button class="btn btn-sm btn-secondary" style="flex: 1;" onclick="cancelStaffPasswordPrompt()">Cancel</button>
             </div>
             <div id="staffLoginError" style="color: var(--danger); font-size: 0.65rem; margin-top: 3px; font-weight: bold;"></div>
         </div>
@@ -1221,7 +1221,7 @@
     <div class="dialog-card" style="max-width: 360px; border-radius: 14px;">
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 6px; margin-bottom: 10px;">
             <h3 style="font-size: 0.9rem; font-weight: 800;">Reset Admin Password</h3>
-            <button class="btn btn-sm btn-secondary" onclick="closeForgotPasswordModal()" style="min-height: 24px; padding: 2px 5px; width: auto; min-width: unset;">✕</button>
+            <button class="btn btn-secondary btn-sm" onclick="closeForgotPasswordModal()" style="min-height: 24px; padding: 2px 5px;">✕</button>
         </div>
         <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 10px; line-height: 1.35;">Enter your secure master recovery key generated from the admin dashboard to reset credentials.</p>
         
@@ -1248,7 +1248,7 @@
                 <h3 style="font-size: 0.85rem; color: white;">📤 Check-Out Scanner</h3>
                 <span style="font-size: 0.65rem; color: #94a3b8;">Trigger gun scanner to add items</span>
             </div>
-            <button class="btn btn-sm btn-danger" onclick="closeCheckoutScannerModal()" style="width: auto; min-width: unset;">✕ Close</button>
+            <button class="btn btn-danger btn-sm" onclick="closeCheckoutScannerModal()">✕ Close</button>
         </div>
 
         <div style="margin: 8px 0;">
@@ -1269,7 +1269,7 @@
                 <h3 style="font-size: 0.85rem; color: #10b981;">↩ Direct Check-In Terminal</h3>
                 <span style="font-size: 0.65rem; color: #94a3b8;">Client: <strong id="dashCheckinClientName" style="color: white;">-</strong></span>
             </div>
-            <button class="btn btn-sm btn-danger" onclick="closeDashboardCheckinModal()" style="width: auto; min-width: unset;">✕ Close</button>
+            <button class="btn btn-danger btn-sm" onclick="closeDashboardCheckinModal()">✕ Close</button>
         </div>
 
         <div style="margin: 8px 0;">
@@ -1309,7 +1309,7 @@
                 <h3 id="detailClientName" style="font-size: 0.95rem;">Client Name</h3>
                 <span id="detailStatusTag" class="status-tag status-out">OUT ON SHOOT</span>
             </div>
-            <button class="btn btn-sm btn-secondary no-print" onclick="closeDetailModal()" style="width: auto; min-width: unset;">✕ Close</button>
+            <button class="btn btn-secondary btn-sm no-print" onclick="closeDetailModal()">✕ Close</button>
         </div>
 
         <div class="detail-grid">
@@ -1357,8 +1357,8 @@
         </div>
 
         <div class="actions-bar no-print">
-            <button class="btn" style="background: #25d366; color: white; padding: 6px 12px; font-size: 0.72rem; width: auto;" onclick="shareActiveModalOnWhatsApp()">💬 WhatsApp</button>
-            <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.72rem; width: auto;" onclick="window.print()">🖨️ Print</button>
+            <button class="btn" style="background: #25d366; color: white; padding: 6px 12px; font-size: 0.72rem;" onclick="shareActiveModalOnWhatsApp()">💬 Share on WhatsApp</button>
+            <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.72rem;" onclick="window.print()">🖨️ Print Sheet</button>
         </div>
     </div>
 </div>
@@ -1374,9 +1374,9 @@
         </div>
 
         <div class="actions-bar no-print" style="justify-content: center; gap: 4px;">
-            <button class="btn btn-primary btn-sm" style="width: auto; min-width: unset;" onclick="downloadBarcodeAsPNG()">💾 PNG</button>
-            <button class="btn btn-secondary btn-sm" style="width: auto; min-width: unset;" onclick="window.print()">🖨️ Print</button>
-            <button class="btn btn-secondary btn-sm" style="width: auto; min-width: unset;" onclick="closeBarcodePrintModal()">✕ Close</button>
+            <button class="btn btn-primary btn-sm" onclick="downloadBarcodeAsPNG()">💾 PNG</button>
+            <button class="btn btn-secondary btn-sm" onclick="window.print()">🖨️ Print</button>
+            <button class="btn btn-secondary btn-sm" onclick="closeBarcodePrintModal()">✕ Close</button>
         </div>
     </div>
 </div>
@@ -1446,11 +1446,10 @@
             }
             if (data.gearLogs) {
                 gearLogs = data.gearLogs;
-                // Auto-cleanup logs older than 30 days that are already returned
                 const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
                 gearLogs = gearLogs.filter(log => {
                     if (log.status === 'RETURNED' && log.id && log.id < thirtyDaysAgo) {
-                        return false; // Remove old history
+                        return false;
                     }
                     return true;
                 });
@@ -1692,7 +1691,6 @@
 
     let gearLogs = JSON.parse(SafeStorage.getItem('gearDashboardLogs')) || [];
     
-    // Auto-cleanup logs older than 30 days that are already returned on load
     const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
     gearLogs = gearLogs.filter(log => {
         if (log.status === 'RETURNED' && log.id && log.id < thirtyDaysAgo) {
@@ -3024,96 +3022,100 @@
         // 1. ACTIVE SHOOTS TABLE (Only OUT ON SHOOT)
         const visibleLogs = allUserLogs.filter(log => log.status === 'OUT ON SHOOT');
 
-        tbody.innerHTML = visibleLogs.map(log => {
-            const timeOutDisplay = formatDateTime(log.timeOutDate, log.timeOutTime);
-            const timeInDisplay = log.status === 'RETURNED' && log.actualReturnTimeStamp ? log.actualReturnTimeStamp : '-';
+        if (visibleLogs.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 24px; font-weight: 600; font-size: 0.85rem;">📭 There are no active shoots right now.</td></tr>`;
+        } else {
+            tbody.innerHTML = visibleLogs.map(log => {
+                const timeOutDisplay = formatDateTime(log.timeOutDate, log.timeOutTime);
+                const timeInDisplay = log.status === 'RETURNED' && log.actualReturnTimeStamp ? log.actualReturnTimeStamp : '-';
 
-            if (editingLogId === log.id) {
-                const gearOptions = masterEquipment.map(eq => `<option value="${eq.name}">${eq.name} (${eq.barcode})</option>`).join('');
+                if (editingLogId === log.id) {
+                    const gearOptions = masterEquipment.map(eq => `<option value="${eq.name}">${eq.name} (${eq.barcode})</option>`).join('');
 
-                setTimeout(() => { renderLogGearEditRows(); }, 0);
+                    setTimeout(() => { renderLogGearEditRows(); }, 0);
+
+                    return `
+                        <tr class="editing-row">
+                            <td style="min-width: 150px;">
+                                <label style="font-size: 0.58rem; font-weight: bold; color: var(--text-muted);">CLIENT & ID</label>
+                                <input type="text" id="log-edit-client-${log.id}" class="inline-edit-input" placeholder="Client Name" value="${log.clientName}">
+                                <input type="text" id="log-edit-clientid-${log.id}" class="inline-edit-input" placeholder="Client ID" value="${log.clientId || ''}">
+                                
+                                <label style="font-size: 0.58rem; font-weight: bold; color: var(--text-muted); margin-top:2px;">EVENT & PLACE</label>
+                                <div style="display: flex; gap: 3px;">
+                                    <input type="text" id="log-edit-event-${log.id}" class="inline-edit-input" placeholder="Event" value="${log.event || ''}">
+                                    <input type="text" id="log-edit-place-${log.id}" class="inline-edit-input" placeholder="Place" value="${log.place || ''}">
+                                </div>
+
+                                <label style="font-size: 0.58rem; font-weight: bold; color: var(--primary); margin-top:3px; display:block;">📦 GEAR</label>
+                                <div class="gear-edit-box" id="log-edit-gear-container"></div>
+
+                                <div style="margin-top: 3px; display: flex; flex-direction: column; gap: 4px;">
+                                    <select id="add-gear-select-${log.id}" class="inline-edit-input" style="margin:0;" onchange="addTempGearItemFromSelect(${log.id})">
+                                        <option value="">+ Select Item from list...</option>
+                                        ${gearOptions}
+                                    </select>
+                                    <input type="text" id="add-gear-scan-${log.id}" class="inline-edit-input" style="margin:0; font-family: monospace;" placeholder="🔌 Scan barcode to add..." onkeypress="handleLogEditBarcodeScan(event, ${log.id})">
+                                </div>
+                            </td>
+                            <td>
+                                <label style="font-size: 0.58rem; font-weight: bold; color: var(--text-muted);">INCHARGE</label>
+                                <input type="text" id="log-edit-incharge-${log.id}" class="inline-edit-input" placeholder="Incharge" value="${log.shootIncharge || ''}">
+                                <input type="tel" id="log-edit-mobile-${log.id}" class="inline-edit-input" placeholder="Mobile" value="${log.mobileNumber || ''}">
+                            </td>
+                            <td><strong>${timeOutDisplay}</strong></td>
+                            <td><strong>${timeInDisplay}</strong></td>
+                            <td>
+                                <select id="log-edit-status-${log.id}" class="inline-edit-input">
+                                    <option value="OUT ON SHOOT" ${log.status === 'OUT ON SHOOT' ? 'selected' : ''}>OUT</option>
+                                    <option value="RETURNED" ${log.status === 'RETURNED' ? 'selected' : ''}>RETURNED</option>
+                                </select>
+                            </td>
+                            <td>
+                                <div class="table-action-cell">
+                                    <button class="btn btn-sm btn-primary" onclick="saveEditLogRecord(${log.id})">💾 Save</button>
+                                    <button class="btn btn-sm btn-secondary" onclick="cancelEditLogRecord()">✕</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }
+
+                const checkinButton = log.status === 'OUT ON SHOOT' ? `<button class="btn btn-sm btn-success" onclick="openDashboardCheckinModal(${log.id})">↩ Return</button>` : '';
+                const whatsappBtn = `<button class="btn btn-sm" style="background: #25d366; color: white;" onclick="shareLogOnWhatsApp(${log.id})">💬 WhatsApp</button>`;
+
+                const actionsCell = currentRole === 'admin' ? `
+                    <td>
+                        <div class="table-action-cell">
+                            ${checkinButton}
+                            ${whatsappBtn}
+                            <button class="btn btn-sm btn-secondary" onclick="openDetailModal(${log.id})">ℹ️ Details</button>
+                            <button class="btn btn-sm btn-warning" onclick="editLogRecord(${log.id})">✏️ Edit</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteRecord(${log.id})">🗑️ Delete</button>
+                        </div>
+                    </td>
+                ` : `<td><div class="table-action-cell">${checkinButton} ${whatsappBtn} <button class="btn btn-sm btn-secondary" onclick="openDetailModal(${log.id})">ℹ️ Details</button></div></td>`;
 
                 return `
-                    <tr class="editing-row">
-                        <td style="min-width: 150px;">
-                            <label style="font-size: 0.58rem; font-weight: bold; color: var(--text-muted);">CLIENT & ID</label>
-                            <input type="text" id="log-edit-client-${log.id}" class="inline-edit-input" placeholder="Client Name" value="${log.clientName}">
-                            <input type="text" id="log-edit-clientid-${log.id}" class="inline-edit-input" placeholder="Client ID" value="${log.clientId || ''}">
-                            
-                            <label style="font-size: 0.58rem; font-weight: bold; color: var(--text-muted); margin-top:2px;">EVENT & PLACE</label>
-                            <div style="display: flex; gap: 3px;">
-                                <input type="text" id="log-edit-event-${log.id}" class="inline-edit-input" placeholder="Event" value="${log.event || ''}">
-                                <input type="text" id="log-edit-place-${log.id}" class="inline-edit-input" placeholder="Place" value="${log.place || ''}">
-                            </div>
-
-                            <label style="font-size: 0.58rem; font-weight: bold; color: var(--primary); margin-top:3px; display:block;">📦 GEAR</label>
-                            <div class="gear-edit-box" id="log-edit-gear-container"></div>
-
-                            <div style="margin-top: 3px; display: flex; flex-direction: column; gap: 4px;">
-                                <select id="add-gear-select-${log.id}" class="inline-edit-input" style="margin:0;" onchange="addTempGearItemFromSelect(${log.id})">
-                                    <option value="">+ Select Item from list...</option>
-                                    ${gearOptions}
-                                </select>
-                                <input type="text" id="add-gear-scan-${log.id}" class="inline-edit-input" style="margin:0; font-family: monospace;" placeholder="🔌 Scan barcode to add..." onkeypress="handleLogEditBarcodeScan(event, ${log.id})">
-                            </div>
+                    <tr>
+                        <td>
+                            <strong>${log.clientName}</strong>
+                            <span class="time-text">${log.event || '-'} (${log.place || '-'})</span>
+                            <span class="time-text">${log.gear.length} item(s)</span>
                         </td>
                         <td>
-                            <label style="font-size: 0.58rem; font-weight: bold; color: var(--text-muted);">INCHARGE</label>
-                            <input type="text" id="log-edit-incharge-${log.id}" class="inline-edit-input" placeholder="Incharge" value="${log.shootIncharge || ''}">
-                            <input type="tel" id="log-edit-mobile-${log.id}" class="inline-edit-input" placeholder="Mobile" value="${log.mobileNumber || ''}">
+                            <span class="time-text">${log.shootIncharge || '-'}</span>
                         </td>
-                        <td><strong>${timeOutDisplay}</strong></td>
+                        <td>${timeOutDisplay}</td>
                         <td><strong>${timeInDisplay}</strong></td>
                         <td>
-                            <select id="log-edit-status-${log.id}" class="inline-edit-input">
-                                <option value="OUT ON SHOOT" ${log.status === 'OUT ON SHOOT' ? 'selected' : ''}>OUT</option>
-                                <option value="RETURNED" ${log.status === 'RETURNED' ? 'selected' : ''}>RETURNED</option>
-                            </select>
+                            <span class="status-tag status-out">Out</span>
                         </td>
-                        <td>
-                            <div class="table-action-cell">
-                                <button class="btn btn-sm btn-primary" onclick="saveEditLogRecord(${log.id})">💾 Save</button>
-                                <button class="btn btn-sm btn-secondary" onclick="cancelEditLogRecord()">✕</button>
-                            </div>
-                        </td>
+                        ${actionsCell}
                     </tr>
                 `;
-            }
-
-            const checkinButton = log.status === 'OUT ON SHOOT' ? `<button class="btn btn-sm btn-success" onclick="openDashboardCheckinModal(${log.id})">↩ Return</button>` : '';
-            const whatsappBtn = `<button class="btn btn-sm" style="background: #25d366; color: white;" onclick="shareLogOnWhatsApp(${log.id})">💬 WhatsApp</button>`;
-
-            const actionsCell = currentRole === 'admin' ? `
-                <td>
-                    <div class="table-action-cell">
-                        ${checkinButton}
-                        ${whatsappBtn}
-                        <button class="btn btn-sm btn-secondary" onclick="openDetailModal(${log.id})">ℹ️ Details</button>
-                        <button class="btn btn-sm btn-warning" onclick="editLogRecord(${log.id})">✏️ Edit</button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteRecord(${log.id})">🗑️ Delete</button>
-                    </div>
-                </td>
-            ` : `<td><div class="table-action-cell">${checkinButton} ${whatsappBtn} <button class="btn btn-sm btn-secondary" onclick="openDetailModal(${log.id})">ℹ️ Details</button></div></td>`;
-
-            return `
-                <tr>
-                    <td>
-                        <strong>${log.clientName}</strong>
-                        <span class="time-text">${log.event || '-'} (${log.place || '-'})</span>
-                        <span class="time-text">${log.gear.length} item(s)</span>
-                    </td>
-                    <td>
-                        <span class="time-text">${log.shootIncharge || '-'}</span>
-                    </td>
-                    <td>${timeOutDisplay}</td>
-                    <td><strong>${timeInDisplay}</strong></td>
-                    <td>
-                        <span class="status-tag status-out">Out</span>
-                    </td>
-                    ${actionsCell}
-                </tr>
-            `;
-        }).join('');
+            }).join('');
+        }
 
         // 2. HISTORY LOGS TABLE (Only RETURNED entries)
         if (historyTbody) {
