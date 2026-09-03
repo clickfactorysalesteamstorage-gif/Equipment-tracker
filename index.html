@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Universal Equipment Management Dashboard v3.3 (Reduced Glow Overlay)</title>
+    <title>Universal Equipment Management Dashboard v3.3 (Simplified Equipment Add)</title>
     <!-- JsBarcode Library with local fallback safeguard -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.12.3/JsBarcode.all.min.js"></script>
     <style>
@@ -245,8 +245,8 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(15, 23, 42, 0.35); /* Darker, less blinding backdrop */
-            backdrop-filter: blur(2px); /* Subtler blur */
+            background: rgba(15, 23, 42, 0.35); 
+            backdrop-filter: blur(2px); 
             display: flex;
             align-items: center;
             justify-content: center;
@@ -262,7 +262,7 @@
             width: 100%; 
             max-width: 520px; 
             text-align: left; 
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1); /* Clean shadow without excessive white glow */
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1); 
             max-height: 85vh; 
             overflow-y: auto;
             border: 1px solid var(--border);
@@ -820,7 +820,6 @@
                         <thead>
                             <tr>
                                 <th style="width: 28px; text-align: center;">S.No</th>
-                                <th>Barcode</th>
                                 <th>Equipment Name</th>
                                 <th style="width: 45px; text-align: center;">In Stock</th>
                                 <th style="width: 40px; text-align: center;">Out</th>
@@ -941,7 +940,7 @@
             </div>
         </div>
 
-        <!-- TAB 3: ADD UPCOMING EQUIPMENT MASTER (ADMIN ONLY WITH MANUAL & SCANNER MODES) -->
+        <!-- TAB 3: ADD UPCOMING EQUIPMENT MASTER (ADMIN ONLY WITH MANUAL & SCANNER MODES - NO BARCODE COLUMN) -->
         <div id="equipment-tab" class="tab-content">
             <div class="content-card">
                 <h3 style="font-size: 0.85rem;">Add New Upcoming Equipment</h3>
@@ -975,7 +974,6 @@
                         <thead>
                             <tr>
                                 <th style="width: 28px; text-align: center;">S.No</th>
-                                <th>Barcode</th>
                                 <th>Equipment Name</th>
                                 <th style="width: 40px; text-align: center;">Stock</th>
                                 <th style="width: 95px; text-align: center;">Actions</th>
@@ -1789,7 +1787,7 @@
             SafeStorage.setItem('gearMasterEquipmentObj', JSON.stringify(masterEquipment));
             renderMasterEquipmentTable();
             renderDashboard();
-            logEqTerminal(`<span style="color: #34d399;">✓ STOCK UPDATED: "${existingItem.name}" [${existingItem.barcode}] stock increased to ${existingItem.stock}.</span>`);
+            logEqTerminal(`<span style="color: #34d399;">✓ STOCK UPDATED: "${existingItem.name}" stock increased to ${existingItem.stock}.</span>`);
         } else {
             const barcode = query.startsWith('EQP-') ? query : generateUniqueBarcodeId(masterEquipment);
             const name = query.startsWith('EQP-') ? `SCANNED GEAR ${barcode}` : query;
@@ -1801,7 +1799,7 @@
 
             renderMasterEquipmentTable();
             renderDashboard();
-            logEqTerminal(`<span style="color: #60a5fa;">✓ NEW ITEM REGISTERED: "${name}" [${barcode}] with default stock 5.</span>`);
+            logEqTerminal(`<span style="color: #60a5fa;">✓ NEW ITEM REGISTERED: "${name}" with default stock 5.</span>`);
         }
     }
 
@@ -2308,7 +2306,6 @@
                 <tr>
                     <th style="width: 40px; text-align: center;">Select</th>
                     <th style="width: 30px; text-align: center;">S.No</th>
-                    <th>Barcode</th>
                     <th>Item Description</th>
                     <th style="width: 100px;">Available / Qty</th>
                 </tr>
@@ -2327,7 +2324,6 @@
                             <input type="checkbox" class="item-select" id="select-check-${index}" onchange="toggleAdminRow(${index})" style="width:16px; height:16px; cursor:pointer;" ${isOutOfStock ? 'disabled' : ''}>
                         </td>
                         <td style="text-align: center;">${index + 1}</td>
-                        <td><span class="barcode-badge">${item.barcode}</span></td>
                         <td>
                             <strong>${item.name}</strong>
                             ${isOutOfStock ? `<span class="status-tag" style="background:#fee2e2; color:#991b1b; font-size:0.55rem; margin-left:3px;">Out</span>` : ''}
@@ -2342,7 +2338,6 @@
             thead.innerHTML = `
                 <tr>
                     <th style="width: 30px; text-align: center;">S.No</th>
-                    <th>Barcode</th>
                     <th>Item Description</th>
                     <th style="width: 65px; text-align: center;">In Stock</th>
                     <th style="width: 40px; text-align: center;">Out</th>
@@ -2361,7 +2356,6 @@
                 return `
                     <tr id="item-row-${index}" class="${isOutOfStock && scannedQuantities[index] === 0 ? 'disabled-stock-row' : ''}">
                         <td style="text-align: center;">${index + 1}</td>
-                        <td><span class="barcode-badge">${item.barcode}</span></td>
                         <td>
                             <strong>${item.name}</strong>
                             ${isOutOfStock && scannedQuantities[index] === 0 ? `<span class="status-tag" style="background:#fee2e2; color:#991b1b; font-size:0.55rem; margin-left:3px;">Out</span>` : ''}
@@ -2465,7 +2459,7 @@
             if(statusCell) statusCell.innerHTML = `<span style="color: var(--primary); font-weight:bold;">Out</span>`;
             if(qtyCell) qtyCell.innerText = scannedQuantities[targetIndex];
             
-            logCheckoutTerminal(`✓ CHECK-OUT: ${item.name} [${item.barcode}] (Dispatched: ${scannedQuantities[targetIndex]} / Max Available: ${availableStock})`);
+            logCheckoutTerminal(`✓ CHECK-OUT: ${item.name} (Dispatched: ${scannedQuantities[targetIndex]} / Max Available: ${availableStock})`);
             if(row) row.scrollIntoView({ behavior: 'smooth', block: 'center' });
         } else {
             logCheckoutTerminal(`✕ UNKNOWN ITEM: "${scannedCode}" not found in inventory.`);
@@ -2685,7 +2679,7 @@
 
         showConfirmationModal({
             title: 'Add New Equipment?',
-            message: `• Item Name: ${name}\n• Total Stock: ${stock} units\n• Generated Barcode: ${barcode}`,
+            message: `• Item Name: ${name}\n• Total Stock: ${stock} units`,
             icon: '🎥',
             confirmBtnText: 'Add to Inventory',
             confirmBtnClass: 'btn-primary',
@@ -2749,7 +2743,7 @@
         const item = masterEquipment[index];
         showConfirmationModal({
             title: 'Delete Master Equipment?',
-            message: `Are you sure you want to permanently remove "${item.name}" [${item.barcode}] from inventory?`,
+            message: `Are you sure you want to permanently remove "${item.name}" from inventory?`,
             icon: '🗑️',
             confirmBtnText: 'Delete Item',
             confirmBtnClass: 'btn-danger',
@@ -2803,7 +2797,7 @@
             
             const sanitizedName = (currentBarcodePrintMeta.name || 'Equipment').replace(/[^a-zA-Z0-9]/g, '_');
             downloadLink.href = pngUrl;
-            downloadLink.download = `Barcode_${sanitizedName}_${currentBarcodePrintMeta.barcode || 'Code'}.png`;
+            downloadLink.download = `Barcode_${sanitizedName}.png`;
             
             document.body.appendChild(downloadLink);
             downloadLink.click();
@@ -2829,7 +2823,6 @@
                 return `
                     <tr class="editing-row">
                         <td style="text-align: center; font-weight: bold;">${index + 1}</td>
-                        <td><span class="barcode-badge">${item.barcode}</span></td>
                         <td><input type="text" id="edit-name-input-${index}" class="inline-edit-input" value="${item.name}"></td>
                         <td style="text-align: center;"><input type="number" id="edit-stock-input-${index}" class="inline-edit-input" style="width: 40px; text-align: center;" value="${item.stock}" min="1"></td>
                         <td>
@@ -2844,7 +2837,6 @@
                 return `
                     <tr>
                         <td style="text-align: center;">${index + 1}</td>
-                        <td><span class="barcode-badge">${item.barcode}</span></td>
                         <td><strong>${item.name}</strong></td>
                         <td style="text-align: center; font-weight: bold;">${item.stock}</td>
                         <td>
@@ -3030,7 +3022,7 @@
                 const timeInDisplay = log.status === 'RETURNED' && log.actualReturnTimeStamp ? log.actualReturnTimeStamp : '-';
 
                 if (editingLogId === log.id) {
-                    const gearOptions = masterEquipment.map(eq => `<option value="${eq.name}">${eq.name} (${eq.barcode})</option>`).join('');
+                    const gearOptions = masterEquipment.map(eq => `<option value="${eq.name}">${eq.name}</option>`).join('');
 
                     setTimeout(() => { renderLogGearEditRows(); }, 0);
 
@@ -3188,12 +3180,9 @@
 
         const tbody = document.getElementById('detailItemsTableBody');
         tbody.innerHTML = record.gear.map((item, index) => {
-            const masterMatch = masterEquipment.find(m => m.name.toUpperCase() === item.name.toUpperCase());
-            const barcodeStr = masterMatch ? masterMatch.barcode : 'EQP-UNKNOWN';
             return `
                 <tr>
                     <td style="text-align: center;">${index + 1}</td>
-                    <td><span class="barcode-badge">${barcodeStr}</span></td>
                     <td><strong>${item.name}</strong></td>
                     <td style="text-align: center;">${item.qty}</td>
                 </tr>
