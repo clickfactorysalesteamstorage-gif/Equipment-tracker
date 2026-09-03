@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Universal Equipment Management Dashboard v3.3 (WhatsApp New Tab)</title>
+    <title>Universal Equipment Management Dashboard v3.3 (WhatsApp Fixed)</title>
     <!-- JsBarcode Library with local fallback safeguard -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.12.3/JsBarcode.all.min.js"></script>
     <style>
@@ -1768,7 +1768,7 @@
         }
     }
 
-    // WHATSAPP SHARE WITH RETURNED ITEM HISTORY (OPENS IN NEW TAB)
+    // WHATSAPP SHARE WITH RETURNED ITEM HISTORY (OPENS IN NEW TAB GUARANTEED)
     function shareLogOnWhatsApp(id) {
         const record = gearLogs.find(log => log.id === id);
         if (!record) return;
@@ -1795,9 +1795,9 @@
             `_Logged by: ${record.createdBy || 'Staff'}_`;
 
         const encodedMessage = encodeURIComponent(message);
-        const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
+        const whatsappUrl = `https://api.whatsapp.com/send?text=${encodedMessage}`;
         
-        window.open(whatsappUrl, '_blank');
+        window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
     }
 
     function shareActiveModalOnWhatsApp() {
