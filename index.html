@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Universal Equipment Management Dashboard v3.3 (Uniform Even Mobile Buttons)</title>
+    <title>Universal Equipment Management Dashboard v3.3 (Optimized Mobile App Layout)</title>
     <!-- JsBarcode Library with local fallback safeguard -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.12.3/JsBarcode.all.min.js"></script>
     <style>
@@ -524,7 +524,7 @@
         .status-returned { background: var(--success-light); color: #065f46; border: 1px solid rgba(16, 185, 129, 0.3); }
 
         /* ==========================================
-           EXACT UNIFORM EXPANDED BUTTON SIZING 
+           EXACT UNIFORM EVEN EXPANDED BUTTON SIZING 
            ========================================== */
         .btn { 
             padding: 6px 12px; 
@@ -539,7 +539,7 @@
             gap: 4px;
             min-height: 30px;
             min-width: 82px;
-            width: 82px; /* Increased consistent wider size for all buttons */
+            width: 82px; 
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -611,7 +611,7 @@
         @media (max-width: 899px) {
             .table-action-cell {
                 display: grid !important;
-                grid-template-columns: repeat(2, 80px) !important; /* Perfect wider 2-column layout */
+                grid-template-columns: repeat(2, 80px) !important;
                 gap: 4px !important;
                 align-items: center !important;
                 justify-content: flex-start !important;
@@ -834,10 +834,10 @@
                 </div>
             </div>
 
-            <!-- DASHBOARD RECENT SHOOTS & GEAR LOGS -->
+            <!-- DASHBOARD RECENT SHOOTS & GEAR LOGS (SHOWS ONLY OUT ON SHOOT ENTRIES) -->
             <div class="content-card">
                 <div style="display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px;">
-                    <h3 id="logSectionTitle" style="font-size: 0.85rem;">Recent Shoots & Gear Logs</h3>
+                    <h3 id="logSectionTitle" style="font-size: 0.85rem;">Active Shoots (Out On Shoot)</h3>
                     <input type="text" id="searchInput" onkeyup="filterLogs()" placeholder="Search client, event..." style="padding: 5px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); width: 100%; min-height: 34px; box-shadow: var(--neu-inset); background: var(--bg); font-size: 0.75rem;">
                 </div>
                 
@@ -1859,7 +1859,7 @@
             document.getElementById('metric-total-label').innerText = 'Total Outings';
             document.getElementById('metric-out-label').innerText = 'Out On Shoot';
             document.getElementById('metric-returned-label').innerText = 'Returned';
-            document.getElementById('logSectionTitle').innerText = 'Recent Shoots & Gear Logs';
+            document.getElementById('logSectionTitle').innerText = 'Active Shoots (Out On Shoot)';
 
             document.getElementById('adminDisplayNameInput').value = SafeStorage.getItem('appAdminDisplayName') || 'Administrator';
             document.getElementById('adminRecoveryKeyDisplay').value = SafeStorage.getItem('appAdminRecoveryKey') || 'Not Generated';
@@ -1891,7 +1891,7 @@
             document.getElementById('metric-total-label').innerText = 'My Total Outings';
             document.getElementById('metric-out-label').innerText = 'My Gear Out On Shoot';
             document.getElementById('metric-returned-label').innerText = 'My Returned';
-            document.getElementById('logSectionTitle').innerText = `Personal Logs: ${userName}`;
+            document.getElementById('logSectionTitle').innerText = `Active Shoots: ${userName}`;
 
             switchTab('new-entry-tab');
         }
@@ -2401,7 +2401,7 @@
             log.status = 'RETURNED';
             log.actualReturnTimeStamp = timeStr;
             SafeStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
-            alert('All items returned! Shoot status updated to RETURNED.');
+            alert('All items returned! Shoot status updated to RETURNED and moved to history.');
             closeDashboardCheckinModal();
             renderDashboard();
         } else {
@@ -2841,12 +2841,17 @@
         let activeOut = 0;
         let totalReturned = 0;
 
-        const visibleLogs = (currentRole === 'admin') ? gearLogs : gearLogs.filter(log => log.createdBy === currentUserName);
-
-        tbody.innerHTML = visibleLogs.map(log => {
+        // Calculate metrics from all logs
+        const allUserLogs = (currentRole === 'admin') ? gearLogs : gearLogs.filter(log => log.createdBy === currentUserName);
+        allUserLogs.forEach(log => {
             if (log.status === 'OUT ON SHOOT') activeOut++;
             if (log.status === 'RETURNED') totalReturned++;
+        });
 
+        // Filter recent shoots table to show ONLY active "OUT ON SHOOT" entries
+        const visibleLogs = allUserLogs.filter(log => log.status === 'OUT ON SHOOT');
+
+        tbody.innerHTML = visibleLogs.map(log => {
             const timeOutDisplay = formatDateTime(log.timeOutDate, log.timeOutTime);
             const timeInDisplay = log.status === 'RETURNED' && log.actualReturnTimeStamp ? log.actualReturnTimeStamp : '-';
 
@@ -2938,7 +2943,7 @@
             `;
         }).join('');
 
-        document.getElementById('metric-total').innerText = visibleLogs.length;
+        document.getElementById('metric-total').innerText = allUserLogs.length;
         document.getElementById('metric-out').innerText = activeOut;
         document.getElementById('metric-returned').innerText = totalReturned;
     }
