@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Universal Equipment Management Dashboard v3.3 (Optimized Mobile App Layout)</title>
+    <title>Universal Equipment Management Dashboard v3.3 (With History Menu)</title>
     <!-- JsBarcode Library with local fallback safeguard -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.12.3/JsBarcode.all.min.js"></script>
     <style>
@@ -141,7 +141,7 @@
         .nav-menu { 
             display: flex; 
             flex-direction: column;
-            gap: 12px; 
+            gap: 10px; 
             width: 100%; 
         }
 
@@ -154,10 +154,10 @@
             cursor: pointer; 
             color: #94a3b8; 
             white-space: nowrap;
-            font-size: 0.875rem;
+            font-size: 0.85rem;
             flex: 1;
             text-align: left;
-            min-height: 46px;
+            min-height: 44px;
             transition: var(--transition);
             display: flex;
             align-items: center;
@@ -201,7 +201,7 @@
             align-items: center;
             justify-content: center;
             gap: 1px;
-            font-size: 0.52rem;
+            font-size: 0.48rem;
             font-weight: 700;
             flex: 1;
             padding: 3px 0;
@@ -209,11 +209,11 @@
             cursor: pointer;
             box-shadow: var(--neu-shadow-sm);
             transition: var(--transition);
-            max-width: 70px;
+            max-width: 58px;
             height: 42px;
         }
 
-        .bottom-nav-btn span.icon { font-size: 0.95rem; }
+        .bottom-nav-btn span.icon { font-size: 0.9rem; }
         .bottom-nav-btn.active { color: var(--primary); box-shadow: var(--neu-inset); background: var(--primary-light); }
 
         .user-profile-box {
@@ -768,7 +768,8 @@
             </div>
             
             <nav class="nav-menu" id="tabNavigation">
-                <button class="nav-btn active" id="tabOverviewBtn" onclick="switchTab('dashboard-tab')">📊 Overview Logs</button>
+                <button class="nav-btn active" id="tabOverviewBtn" onclick="switchTab('dashboard-tab')">📊 Active Shoots</button>
+                <button class="nav-btn" id="tabHistoryBtn" onclick="switchTab('history-tab')">📜 History Logs</button>
                 <button class="nav-btn" id="tabNewSheetBtn" onclick="switchTab('new-entry-tab')">📋 New Checkout Sheet</button>
                 <button class="nav-btn" id="tabEquipmentBtn" onclick="switchTab('equipment-tab')">🎥 Add Equipment</button>
                 <button class="nav-btn" id="tabUsersBtn" onclick="switchTab('users-tab')">👤 User Profiles</button>
@@ -804,7 +805,7 @@
             </div>
         </div>
 
-        <!-- TAB 1: OVERVIEW LOGS & DASHBOARD CHECK-IN -->
+        <!-- TAB 1: OVERVIEW LOGS & DASHBOARD CHECK-IN (ACTIVE OUT SHOOTS ONLY) -->
         <div id="dashboard-tab" class="tab-content active">
             
             <!-- LIVE EQUIPMENT AVAILABILITY PANEL -->
@@ -834,7 +835,7 @@
                 </div>
             </div>
 
-            <!-- DASHBOARD RECENT SHOOTS & GEAR LOGS (SHOWS ONLY OUT ON SHOOT ENTRIES) -->
+            <!-- DASHBOARD RECENT SHOOTS & GEAR LOGS -->
             <div class="content-card">
                 <div style="display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px;">
                     <h3 id="logSectionTitle" style="font-size: 0.85rem;">Active Shoots (Out On Shoot)</h3>
@@ -854,7 +855,35 @@
                             </tr>
                         </thead>
                         <tbody id="logsTableBody">
-                            <!-- Dynamic Logs -->
+                            <!-- Dynamic Active Logs -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 1.5: HISTORY LOGS (RETURNED PREVIOUS ENTRIES) -->
+        <div id="history-tab" class="tab-content">
+            <div class="content-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">
+                    <h3 style="font-size: 0.85rem;">📜 Returned Previous Entries History</h3>
+                    <input type="text" id="historySearchInput" onkeyup="filterHistoryLogs()" placeholder="Search history..." style="padding: 5px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.75rem; width: 100%; max-width: 160px; min-height: 32px; box-shadow: var(--neu-inset); background: var(--bg);">
+                </div>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Client / Event</th>
+                                <th>Incharge</th>
+                                <th>Time Out</th>
+                                <th>Time In (Returned)</th>
+                                <th>Status</th>
+                                <th style="min-width: 120px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody">
+                            <!-- Dynamic History Logs -->
                         </tbody>
                     </table>
                 </div>
@@ -1050,7 +1079,11 @@
 <nav class="bottom-nav">
     <button class="bottom-nav-btn active" id="mobTabOverviewBtn" onclick="switchTab('dashboard-tab')">
         <span class="icon">📊</span>
-        <span>Overview</span>
+        <span>Active</span>
+    </button>
+    <button class="bottom-nav-btn" id="mobTabHistoryBtn" onclick="switchTab('history-tab')">
+        <span class="icon">📜</span>
+        <span>History</span>
     </button>
     <button class="bottom-nav-btn" id="mobTabNewSheetBtn" onclick="switchTab('new-entry-tab')">
         <span class="icon">📋</span>
@@ -1059,10 +1092,6 @@
     <button class="bottom-nav-btn" id="mobTabEquipmentBtn" onclick="switchTab('equipment-tab')">
         <span class="icon">🎥</span>
         <span>Inventory</span>
-    </button>
-    <button class="bottom-nav-btn" id="mobTabUsersBtn" onclick="switchTab('users-tab')">
-        <span class="icon">👤</span>
-        <span>Users</span>
     </button>
     <button class="bottom-nav-btn" id="mobTabAdminControlsBtn" onclick="switchTab('admin-controls-tab')">
         <span class="icon">⚙️</span>
@@ -1823,15 +1852,16 @@
         const hasFullAccess = role === 'admin' || (currentProfileObj && currentProfileObj.permissions === 'full');
 
         const tabOverview = document.getElementById('tabOverviewBtn');
+        const tabHistory = document.getElementById('tabHistoryBtn');
         const tabNewSheet = document.getElementById('tabNewSheetBtn');
         const tabEquipment = document.getElementById('tabEquipmentBtn');
         const tabUsers = document.getElementById('tabUsersBtn');
         const tabAdminControls = document.getElementById('tabAdminControlsBtn');
 
         const mobTabOverview = document.getElementById('mobTabOverviewBtn');
+        const mobTabHistory = document.getElementById('mobTabHistoryBtn');
         const mobTabNewSheet = document.getElementById('mobTabNewSheetBtn');
         const mobTabEquipment = document.getElementById('mobTabEquipmentBtn');
-        const mobTabUsers = document.getElementById('mobTabUsersBtn');
         const mobTabAdminControls = document.getElementById('mobTabAdminControlsBtn');
 
         if (role === 'admin') {
@@ -1844,17 +1874,18 @@
             document.getElementById('adminMetricsGrid').style.display = 'grid';
             
             tabOverview.style.display = 'flex';
-            tabOverview.innerText = '📊 Overview Logs';
+            tabOverview.innerText = '📊 Active Shoots';
+            if(tabHistory) tabHistory.style.display = 'flex';
             tabNewSheet.style.display = 'flex';
             tabEquipment.style.display = 'flex';
             tabUsers.style.display = 'flex';
             tabAdminControls.style.display = 'flex';
 
-            mobTabOverview.style.display = 'flex';
-            mobTabNewSheet.style.display = 'flex';
-            mobTabEquipment.style.display = 'flex';
-            mobTabUsers.style.display = 'flex';
-            mobTabAdminControls.style.display = 'flex';
+            if(mobTabOverview) mobTabOverview.style.display = 'flex';
+            if(mobTabHistory) mobTabHistory.style.display = 'flex';
+            if(mobTabNewSheet) mobTabNewSheet.style.display = 'flex';
+            if(mobTabEquipment) mobTabEquipment.style.display = 'flex';
+            if(mobTabAdminControls) mobTabAdminControls.style.display = 'flex';
             
             document.getElementById('metric-total-label').innerText = 'Total Outings';
             document.getElementById('metric-out-label').innerText = 'Out On Shoot';
@@ -1876,17 +1907,18 @@
             document.getElementById('adminMetricsGrid').style.display = 'grid';
             
             tabOverview.style.display = 'flex';
-            tabOverview.innerText = '📊 My Outing Logs';
+            tabOverview.innerText = '📊 My Active Shoots';
+            if(tabHistory) tabHistory.style.display = 'flex';
             tabNewSheet.style.display = 'flex';
             tabEquipment.style.display = hasFullAccess ? 'flex' : 'none';
             tabUsers.style.display = hasFullAccess ? 'flex' : 'none';
             tabAdminControls.style.display = 'none';
 
-            mobTabOverview.style.display = 'flex';
-            mobTabNewSheet.style.display = 'flex';
-            mobTabEquipment.style.display = hasFullAccess ? 'flex' : 'none';
-            mobTabUsers.style.display = hasFullAccess ? 'flex' : 'none';
-            mobTabAdminControls.style.display = 'none';
+            if(mobTabOverview) mobTabOverview.style.display = 'flex';
+            if(mobTabHistory) mobTabHistory.style.display = 'flex';
+            if(mobTabNewSheet) mobTabNewSheet.style.display = 'flex';
+            if(mobTabEquipment) mobTabEquipment.style.display = hasFullAccess ? 'flex' : 'none';
+            if(mobTabAdminControls) mobTabAdminControls.style.display = 'none';
 
             document.getElementById('metric-total-label').innerText = 'My Total Outings';
             document.getElementById('metric-out-label').innerText = 'My Gear Out On Shoot';
@@ -2838,17 +2870,17 @@
         
         const currentUserName = currentUserNameSession || SafeStorage.getItem('appUserName') || '';
         const tbody = document.getElementById('logsTableBody');
+        const historyTbody = document.getElementById('historyTableBody');
         let activeOut = 0;
         let totalReturned = 0;
 
-        // Calculate metrics from all logs
         const allUserLogs = (currentRole === 'admin') ? gearLogs : gearLogs.filter(log => log.createdBy === currentUserName);
         allUserLogs.forEach(log => {
             if (log.status === 'OUT ON SHOOT') activeOut++;
             if (log.status === 'RETURNED') totalReturned++;
         });
 
-        // Filter recent shoots table to show ONLY active "OUT ON SHOOT" entries
+        // 1. ACTIVE SHOOTS TABLE (Only OUT ON SHOOT)
         const visibleLogs = allUserLogs.filter(log => log.status === 'OUT ON SHOOT');
 
         tbody.innerHTML = visibleLogs.map(log => {
@@ -2934,18 +2966,61 @@
                     <td>${timeOutDisplay}</td>
                     <td><strong>${timeInDisplay}</strong></td>
                     <td>
-                        <span class="status-tag ${log.status === 'RETURNED' ? 'status-returned' : 'status-out'}">
-                            ${log.status === 'RETURNED' ? 'Returned' : 'Out'}
-                        </span>
+                        <span class="status-tag status-out">Out</span>
                     </td>
                     ${actionsCell}
                 </tr>
             `;
         }).join('');
 
+        // 2. HISTORY LOGS TABLE (Only RETURNED entries)
+        if (historyTbody) {
+            const historyLogs = allUserLogs.filter(log => log.status === 'RETURNED');
+            if (historyLogs.length === 0) {
+                historyTbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 16px;">No previous history entries found.</td></tr>`;
+            } else {
+                historyTbody.innerHTML = historyLogs.map(log => {
+                    const timeOutDisplay = formatDateTime(log.timeOutDate, log.timeOutTime);
+                    const timeInDisplay = log.actualReturnTimeStamp || '-';
+                    const whatsappBtn = `<button class="btn btn-sm" style="background: #25d366; color: white;" onclick="shareLogOnWhatsApp(${log.id})">💬 WhatsApp</button>`;
+                    const detailBtn = `<button class="btn btn-sm btn-secondary" onclick="openDetailModal(${log.id})">ℹ️ Details</button>`;
+                    const deleteBtn = currentRole === 'admin' ? `<button class="btn btn-sm btn-danger" onclick="deleteRecord(${log.id})">🗑️ Delete</button>` : '';
+
+                    return `
+                        <tr>
+                            <td>
+                                <strong>${log.clientName}</strong>
+                                <span class="time-text">${log.event || '-'} (${log.place || '-'})</span>
+                            </td>
+                            <td><span class="time-text">${log.shootIncharge || '-'}</span></td>
+                            <td>${timeOutDisplay}</td>
+                            <td><strong>${timeInDisplay}</strong></td>
+                            <td><span class="status-tag status-returned">Returned</span></td>
+                            <td>
+                                <div class="table-action-cell">
+                                    ${whatsappBtn}
+                                    ${detailBtn}
+                                    ${deleteBtn}
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+        }
+
         document.getElementById('metric-total').innerText = allUserLogs.length;
         document.getElementById('metric-out').innerText = activeOut;
         document.getElementById('metric-returned').innerText = totalReturned;
+    }
+
+    function filterHistoryLogs() {
+        const query = document.getElementById('historySearchInput').value.toLowerCase();
+        const rows = document.querySelectorAll('#historyTableBody tr');
+        rows.forEach(row => {
+            const text = row.innerText.toLowerCase();
+            row.style.display = text.includes(query) ? '' : 'none';
+        });
     }
 
     function openDetailModal(id) {
@@ -3075,6 +3150,12 @@
             document.getElementById('tabOverviewBtn').classList.add('active');
             document.getElementById('mobTabOverviewBtn').classList.add('active');
         }
+        if(tabId === 'history-tab') {
+            const dt = document.getElementById('tabHistoryBtn');
+            const md = document.getElementById('mobTabHistoryBtn');
+            if(dt) dt.classList.add('active');
+            if(md) md.classList.add('active');
+        }
         if(tabId === 'new-entry-tab') {
             document.getElementById('tabNewSheetBtn').classList.add('active');
             document.getElementById('mobTabNewSheetBtn').classList.add('active');
@@ -3085,7 +3166,6 @@
         }
         if(tabId === 'users-tab') {
             document.getElementById('tabUsersBtn').classList.add('active');
-            document.getElementById('mobTabUsersBtn').classList.add('active');
         }
         if(tabId === 'admin-controls-tab') {
             document.getElementById('tabAdminControlsBtn').classList.add('active');
