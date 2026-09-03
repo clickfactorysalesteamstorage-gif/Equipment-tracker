@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Universal Equipment Management Dashboard v3.3 (Manual & Scanner Equipment Add)</title>
+    <title>Universal Equipment Management Dashboard v3.3 (Scanner Option in Edit Menu)</title>
     <!-- JsBarcode Library with local fallback safeguard -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.12.3/JsBarcode.all.min.js"></script>
     <style>
@@ -1767,7 +1767,6 @@
         if (!scannedValue || !scannedValue.trim()) return;
         const query = scannedValue.trim().toUpperCase();
 
-        // Check if item already exists by barcode or exact name
         let existingItem = masterEquipment.find(item => item.barcode.toUpperCase() === query || item.name.toUpperCase() === query);
 
         if (existingItem) {
@@ -1777,7 +1776,6 @@
             renderDashboard();
             logEqTerminal(`<span style="color: #34d399;">✓ STOCK UPDATED: "${existingItem.name}" [${existingItem.barcode}] stock increased to ${existingItem.stock}.</span>`);
         } else {
-            // New item registered via scanner
             const barcode = query.startsWith('EQP-') ? query : generateUniqueBarcodeId(masterEquipment);
             const name = query.startsWith('EQP-') ? `SCANNED GEAR ${barcode}` : query;
             const stock = 5;
@@ -1795,6 +1793,48 @@
     function logEqTerminal(msg) {
         const terminal = document.getElementById('eqScannerTerminalLog');
         if (terminal) terminal.innerHTML = `${msg}<br>${terminal.innerHTML}`;
+    }
+
+    // EDIT LOG RECORD GEAR SCANNER & SELECT ADDER
+    function handleLogEditBarcodeScan(e, logId) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const scanInput = document.getElementById(`add-gear-scan-${logId}`);
+            if (!scanInput || !scanInput.value.trim()) return;
+            const query = scanInput.value.trim().toLowerCase();
+            scanInput.value = '';
+
+            const masterMatch = masterEquipment.find(m => 
+                m.barcode.toLowerCase() === query || 
+                m.name.toLowerCase() === query ||
+                m.name.toLowerCase().includes(query)
+            );
+
+            if (masterMatch) {
+                const selectedName = masterMatch.name;
+                const totalStock = masterMatch.stock || 5;
+                const dispatchedMap = getCurrentlyDispatchedMap(editingLogId);
+                const otherOut = dispatchedMap[selectedName.toUpperCase()] || 0;
+                const maxAllowed = Math.max(0, totalStock - otherOut);
+
+                const existing = activeTempGearList.find(g => g.name.toUpperCase() === selectedName.toUpperCase());
+                const currentQtyInEdit = existing ? parseInt(existing.qty, 10) : 0;
+
+                if (currentQtyInEdit + 1 > maxAllowed) {
+                    alert(`Cannot add more ${selectedName}! Maximum available stock limit is ${maxAllowed}.`);
+                    return;
+                }
+
+                if (existing) {
+                    existing.qty = (currentQtyInEdit + 1).toString();
+                } else {
+                    activeTempGearList.push({ name: selectedName, qty: "1" });
+                }
+                renderLogGearEditRows();
+            } else {
+                alert(`Scanned barcode/item "${query}" not found in inventory.`);
+            }
+        }
     }
 
     // WHATSAPP SHARE WITH RETURNED ITEM HISTORY
@@ -2978,7 +3018,7 @@
 
                 return `
                     <tr class="editing-row">
-                        <td style="min-width: 150px;">
+                        <td style="min-width: 170px;">
                             <label style="font-size: 0.58rem; font-weight: bold; color: var(--text-muted);">CLIENT & ID</label>
                             <input type="text" id="log-edit-client-${log.id}" class="inline-edit-input" placeholder="Client Name" value="${log.clientName}">
                             <input type="text" id="log-edit-clientid-${log.id}" class="inline-edit-input" placeholder="Client ID" value="${log.clientId || ''}">
@@ -2989,14 +3029,15 @@
                                 <input type="text" id="log-edit-place-${log.id}" class="inline-edit-input" placeholder="Place" value="${log.place || ''}">
                             </div>
 
-                            <label style="font-size: 0.58rem; font-weight: bold; color: var(--primary); margin-top:3px; display:block;">📦 GEAR</label>
+                            <label style="font-size: 0.58rem; font-weight: bold; color: var(--primary); margin-top:3px; display:block;">📦 EDIT DISPATCHED GEAR</label>
                             <div class="gear-edit-box" id="log-edit-gear-container"></div>
 
-                            <div style="margin-top: 3px;">
-                                <select id="add-gear-select-${log.id}" class="inline-edit-input" onchange="addTempGearItemFromSelect(${log.id})">
-                                    <option value="">+ Add...</option>
+                            <div style="margin-top: 3px; display: flex; flex-direction: column; gap: 4px;">
+                                <select id="add-gear-select-${log.id}" class="inline-edit-input" style="margin:0;" onchange="addTempGearItemFromSelect(${log.id})">
+                                    <option value="">+ Select Item from list...</option>
                                     ${gearOptions}
                                 </select>
+                                <input type="text" id="add-gear-scan-${log.id}" class="inline-edit-input" style="margin:0; font-family: monospace;" placeholder="🔌 Scan barcode to add..." onkeypress="handleLogEditBarcodeScan(event, ${log.id})">
                             </div>
                         </td>
                         <td>
