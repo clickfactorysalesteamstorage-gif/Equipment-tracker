@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Universal Equipment Management Dashboard v3.3 (Clean Equipment Add Menu)</title>
+    <title>Universal Equipment Management Dashboard v3.3 (Manual Equipment Add)</title>
     <!-- JsBarcode Library with local fallback safeguard -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.12.3/JsBarcode.all.min.js"></script>
     <style>
@@ -940,32 +940,17 @@
             </div>
         </div>
 
-        <!-- TAB 3: ADD UPCOMING EQUIPMENT MASTER (NO BARCODE COLUMN) -->
+        <!-- TAB 3: ADD UPCOMING EQUIPMENT MASTER (NO BARCODE COLUMN & NO SCANNER ON THIS MENU) -->
         <div id="equipment-tab" class="tab-content">
             <div class="content-card">
                 <h3 style="font-size: 0.85rem;">Add New Upcoming Equipment</h3>
-                <p style="color: var(--text-muted); font-size: 0.68rem; margin-bottom: 8px;">Register gear using Manual form or Barcode Scanner.</p>
+                <p style="color: var(--text-muted); font-size: 0.68rem; margin-bottom: 12px;">Register upcoming equipment inventory with name and default stock.</p>
 
-                <!-- EQUIPMENT ADD METHOD TOGGLE -->
-                <div class="admin-method-toggle">
-                    <button type="button" id="eqScannerModeBtn" class="method-btn active" onclick="setEquipmentAddMethod('scanner')">🔌 Barcode Scanner</button>
-                    <button type="button" id="eqManualModeBtn" class="method-btn" onclick="setEquipmentAddMethod('manual')">✏️ Manual Input</button>
-                </div>
-
-                <!-- SCANNER MODE CONTAINER -->
-                <div id="eqScannerModeContainer" style="margin-bottom: 12px; background: #0f172a; padding: 14px; border-radius: var(--radius-sm); border: 1px solid #334155;">
-                    <label style="font-size: 0.75rem; color: #94a3b8; font-weight: bold; text-transform: uppercase; display: block; margin-bottom: 6px;">Scan Barcode to Add or Increment Stock</label>
-                    <input type="text" id="eqBarcodeScannerInput" placeholder="Scan barcode or type name..." style="width: 100%; padding: 10px; border-radius: 6px; border: 2px solid var(--primary); background: #1e293b; color: #60a5fa; font-size: 0.9rem; font-weight: bold;" onkeypress="handleEquipmentBarcodeScanner(event)">
-                    <div class="scan-terminal" id="eqScannerTerminalLog" style="margin-top: 10px;">> Ready to scan new equipment or scan existing to add +1 stock...</div>
-                </div>
-
-                <!-- MANUAL MODE CONTAINER -->
-                <div id="eqManualModeContainer" style="display: none; margin-bottom: 12px;">
-                    <div style="display: flex; gap: 4px; margin-bottom: 8px; flex-wrap: wrap;">
-                        <input type="text" id="newEquipmentName" placeholder="Equipment name..." style="flex: 2; padding: 6px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); min-width: 120px; min-height: 36px; box-shadow: var(--neu-inset); background: var(--bg); font-size: 0.75rem;">
-                        <input type="number" id="newEquipmentStock" placeholder="Stock (Def: 5)" min="1" style="flex: 1; padding: 6px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); min-width: 70px; min-height: 36px; box-shadow: var(--neu-inset); background: var(--bg); font-size: 0.75rem;">
-                        <button class="btn btn-primary" style="width: 100%; min-height: 36px; font-size: 0.75rem;" onclick="addNewEquipmentItem()">+ Add Equipment</button>
-                    </div>
+                <!-- MANUAL INPUT FORM ONLY (BARCODE SCANNER REMOVED) -->
+                <div style="display: flex; gap: 4px; margin-bottom: 14px; flex-wrap: wrap;">
+                    <input type="text" id="newEquipmentName" placeholder="Equipment name..." style="flex: 2; padding: 6px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); min-width: 140px; min-height: 38px; box-shadow: var(--neu-inset); background: var(--bg); font-size: 0.8rem;">
+                    <input type="number" id="newEquipmentStock" placeholder="Stock (Def: 5)" min="1" style="flex: 1; padding: 6px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); min-width: 90px; min-height: 38px; box-shadow: var(--neu-inset); background: var(--bg); font-size: 0.8rem;">
+                    <button class="btn btn-primary" style="width: 100%; min-height: 38px; font-size: 0.8rem;" onclick="addNewEquipmentItem()">+ Add Equipment</button>
                 </div>
 
                 <h4 style="font-size: 0.75rem; margin-bottom: 4px;">Current Registered Inventory (<span id="totalEquipmentCount">0</span> Items)</h4>
@@ -1532,7 +1517,6 @@
     let currentBarcodePrintMeta = { barcode: '', name: '' };
     let pendingStaffLoginProfile = null;
     let activeDetailModalLogId = null;
-    let equipmentAddMethod = 'scanner'; // default scanner mode for adding equipment
 
     function showConfirmationModal({ title, message, icon = '⚠️', confirmBtnText = 'Confirm', confirmBtnClass = 'btn-primary', onConfirm }) {
         document.getElementById('confirmTitle').innerText = title;
@@ -1743,69 +1727,9 @@
         renderDashboard();
     });
 
-    // EQUIPMENT ADD METHOD TOGGLE (SCANNER VS MANUAL)
+    // EQUIPMENT ADD METHOD TOGGLE REMOVED (DIRECT MANUAL FORM ONLY)
     function setEquipmentAddMethod(method) {
-        equipmentAddMethod = method;
-        const scanBtn = document.getElementById('eqScannerModeBtn');
-        const manualBtn = document.getElementById('eqManualModeBtn');
-        const scanContainer = document.getElementById('eqScannerModeContainer');
-        const manualContainer = document.getElementById('eqManualModeContainer');
-
-        if (method === 'scanner') {
-            if (scanBtn) scanBtn.className = 'method-btn active';
-            if (manualBtn) manualBtn.className = 'method-btn';
-            if (scanContainer) scanContainer.style.display = 'block';
-            if (manualContainer) manualContainer.style.display = 'none';
-            setTimeout(() => {
-                const scanInput = document.getElementById('eqBarcodeScannerInput');
-                if (scanInput) scanInput.focus();
-            }, 100);
-        } else {
-            if (scanBtn) scanBtn.className = 'method-btn';
-            if (manualBtn) manualBtn.className = 'method-btn active';
-            if (scanContainer) scanContainer.style.display = 'none';
-            if (manualContainer) manualContainer.style.display = 'block';
-        }
-    }
-
-    function handleEquipmentBarcodeScanner(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            executeEquipmentScanAdd(e.target.value);
-            e.target.value = '';
-        }
-    }
-
-    function executeEquipmentScanAdd(scannedValue) {
-        if (!scannedValue || !scannedValue.trim()) return;
-        const query = scannedValue.trim().toUpperCase();
-
-        let existingItem = masterEquipment.find(item => item.barcode.toUpperCase() === query || item.name.toUpperCase() === query);
-
-        if (existingItem) {
-            existingItem.stock = (parseInt(existingItem.stock, 10) || 5) + 1;
-            SafeStorage.setItem('gearMasterEquipmentObj', JSON.stringify(masterEquipment));
-            renderMasterEquipmentTable();
-            renderDashboard();
-            logEqTerminal(`<span style="color: #34d399;">✓ STOCK UPDATED: "${existingItem.name}" stock increased to ${existingItem.stock}.</span>`);
-        } else {
-            const barcode = query.startsWith('EQP-') ? query : generateUniqueBarcodeId(masterEquipment);
-            const name = query.startsWith('EQP-') ? `SCANNED GEAR ${barcode}` : query;
-            const stock = 5;
-
-            masterEquipment.push({ barcode, name, stock });
-            SafeStorage.setItem('gearMasterEquipmentObj', JSON.stringify(masterEquipment));
-            itemsList = masterEquipment.map(item => item.name);
-
-            renderMasterEquipmentTable();
-            renderDashboard();
-            logEqTerminal(`<span style="color: #60a5fa;">✓ NEW ITEM REGISTERED: "${name}" with default stock 5.</span>`);
-        }
-    }
-
-    function logEqTerminal(msg) {
-        const terminal = document.getElementById('eqScannerTerminalLog');
-        if (terminal) terminal.innerHTML = `${msg}<br>${terminal.innerHTML}`;
+        // Disabled since barcode scanner was removed from the "Add New Upcoming Equipment" menu
     }
 
     // EDIT LOG RECORD GEAR SCANNER & SELECT ADDER
