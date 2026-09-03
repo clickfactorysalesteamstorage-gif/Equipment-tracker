@@ -524,20 +524,21 @@
         .status-returned { background: var(--success-light); color: #065f46; border: 1px solid rgba(16, 185, 129, 0.3); }
 
         /* ==========================================
-           UNIFORM CLEAN BUTTON STYLES FOR ALL DEVICES
+           UNIFORM BUTTON SIZE STYLES FOR ALL DEVICES
            ========================================== */
         .btn { 
             padding: 6px 12px; 
             border: none; 
-            border-radius: 16px; 
+            border-radius: 14px; 
             font-weight: 600; 
             cursor: pointer; 
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 4px;
-            min-height: 30px;
+            min-height: 32px;
+            min-width: 80px;
             white-space: nowrap;
             background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
             color: var(--text-dark);
@@ -593,12 +594,13 @@
         .btn-sm { 
             padding: 4px 8px; 
             font-size: 0.68rem; 
-            min-height: 26px; 
-            border-radius: 12px;
+            min-height: 28px; 
+            min-width: 60px;
+            border-radius: 10px;
         }
 
         /* ==========================================
-           CONSISTENT TABLE ACTIONS FOR MOBILE (< 900px)
+           UNIFORM MOBILE ACTION BUTTONS (< 900px)
            ========================================== */
         @media (max-width: 899px) {
             .table-action-cell {
@@ -612,11 +614,11 @@
             .table-action-cell .btn, 
             .table-action-cell .btn-sm {
                 padding: 4px 8px !important;
-                font-size: 0.68rem !important;
-                min-height: 26px !important;
-                min-width: unset !important;
-                border-radius: 12px !important;
-                gap: 3px !important;
+                font-size: 0.65rem !important;
+                min-height: 28px !important;
+                min-width: 65px !important;
+                border-radius: 10px !important;
+                text-align: center !important;
             }
         }
 
@@ -642,7 +644,7 @@
 
             .table-action-cell .btn {
                 min-height: 32px;
-                padding: 6px 10px;
+                padding: 5px 10px;
                 font-size: 0.75rem;
             }
         }
@@ -1124,8 +1126,8 @@
             <input type="password" id="adminPasswordInput" placeholder="Enter admin password..." style="width: 100%; padding: 7px 9px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.8rem; background: var(--bg); box-shadow: var(--neu-inset);" onkeypress="handleAdminLoginKey(event)">
             
             <div style="display: flex; gap: 6px; margin-top: 6px;">
-                <button class="btn btn-primary btn-sm" style="flex: 2;" onclick="validateAdminPassword()">Sign In</button>
-                <button class="btn btn-secondary btn-sm" style="flex: 1;" onclick="cancelAdminPasswordPrompt()">Cancel</button>
+                <button class="btn btn-primary btn-sm" style="flex: 2; padding: 4px;" onclick="validateAdminPassword()">Sign In</button>
+                <button class="btn btn-secondary btn-sm" style="flex: 1; padding: 4px;" onclick="cancelAdminPasswordPrompt()">Cancel</button>
             </div>
 
             <div style="text-align: right; margin-top: 4px;">
@@ -1140,8 +1142,8 @@
             <input type="password" id="staffPasswordInput" placeholder="Enter your staff password..." style="width: 100%; padding: 7px 9px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.8rem; background: var(--bg); box-shadow: var(--neu-inset);" onkeypress="handleStaffLoginKey(event)">
             
             <div style="display: flex; gap: 6px; margin-top: 6px;">
-                <button class="btn btn-primary btn-sm" style="flex: 2;" onclick="validateStaffPassword()">Verify & Login</button>
-                <button class="btn btn-secondary btn-sm" style="flex: 1;" onclick="cancelStaffPasswordPrompt()">Cancel</button>
+                <button class="btn btn-primary btn-sm" style="flex: 2; padding: 4px;" onclick="validateStaffPassword()">Verify & Login</button>
+                <button class="btn btn-secondary btn-sm" style="flex: 1; padding: 4px;" onclick="cancelStaffPasswordPrompt()">Cancel</button>
             </div>
             <div id="staffLoginError" style="color: var(--danger); font-size: 0.65rem; margin-top: 3px; font-weight: bold;"></div>
         </div>
