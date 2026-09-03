@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Universal Equipment Management Dashboard v3.3 (Empty State Message Added)</title>
+    <title>Universal Equipment Management Dashboard v3.3 (Reduced Glow Overlay)</title>
     <!-- JsBarcode Library with local fallback safeguard -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.12.3/JsBarcode.all.min.js"></script>
     <style>
@@ -238,15 +238,15 @@
 
         @media (min-width: 900px) { .main-content { padding: 32px; } }
 
-        /* CENTERED POPUPS AND OVERLAYS */
+        /* CENTERED POPUPS AND OVERLAYS WITH REDUCED WHITE GLOW/BLUR */
         .overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(15, 23, 42, 0.55); 
-            backdrop-filter: blur(8px);
+            background: rgba(15, 23, 42, 0.35); /* Darker, less blinding backdrop */
+            backdrop-filter: blur(2px); /* Subtler blur */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -262,7 +262,7 @@
             width: 100%; 
             max-width: 520px; 
             text-align: left; 
-            box-shadow: var(--neu-shadow);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1); /* Clean shadow without excessive white glow */
             max-height: 85vh; 
             overflow-y: auto;
             border: 1px solid var(--border);
