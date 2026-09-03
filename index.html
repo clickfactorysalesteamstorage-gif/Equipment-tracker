@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Universal Equipment Management Dashboard v3.3 (WhatsApp Fixed)</title>
+    <title>Universal Equipment Management Dashboard v3.3 (WhatsApp Direct Anchor Fix)</title>
     <!-- JsBarcode Library with local fallback safeguard -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.12.3/JsBarcode.all.min.js"></script>
     <style>
@@ -547,6 +547,7 @@
             color: var(--text-dark);
             box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
             transition: var(--transition);
+            text-decoration: none;
         }
 
         .btn:hover { 
@@ -1338,9 +1339,9 @@
             </table>
         </div>
 
-        <div class="actions-bar no-print" style="display: flex; gap: 8px; justify-content: stretch;">
-            <button class="btn" style="background: #25d366; color: white; flex: 1; width: auto;" onclick="shareActiveModalOnWhatsApp()">💬 WhatsApp</button>
-            <button class="btn btn-primary" style="flex: 1; width: auto;" onclick="window.print()">🖨️ Print</button>
+        <div class="actions-bar no-print">
+            <button class="btn" style="background: #25d366; color: white; padding: 6px 12px; font-size: 0.72rem;" onclick="shareActiveModalOnWhatsApp()">💬 Share on WhatsApp</button>
+            <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.72rem;" onclick="window.print()">🖨️ Print Sheet</button>
         </div>
     </div>
 </div>
@@ -1355,10 +1356,10 @@
             <svg id="barcodePrintSvg"></svg>
         </div>
 
-        <div class="actions-bar no-print" style="display: flex; gap: 6px; justify-content: center;">
-            <button class="btn btn-primary btn-sm" style="flex: 1; width: auto;" onclick="downloadBarcodeAsPNG()">💾 PNG</button>
-            <button class="btn btn-secondary btn-sm" style="flex: 1; width: auto;" onclick="window.print()">🖨️ Print</button>
-            <button class="btn btn-secondary btn-sm" style="flex: 1; width: auto;" onclick="closeBarcodePrintModal()">✕ Close</button>
+        <div class="actions-bar no-print" style="justify-content: center; gap: 4px;">
+            <button class="btn btn-primary btn-sm" onclick="downloadBarcodeAsPNG()">💾 PNG</button>
+            <button class="btn btn-secondary btn-sm" onclick="window.print()">🖨️ Print</button>
+            <button class="btn btn-secondary btn-sm" onclick="closeBarcodePrintModal()">✕ Close</button>
         </div>
     </div>
 </div>
@@ -1797,7 +1798,7 @@
         const encodedMessage = encodeURIComponent(message);
         const whatsappUrl = `https://api.whatsapp.com/send?text=${encodedMessage}`;
         
-        window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+        window.open(whatsappUrl, '_blank');
     }
 
     function shareActiveModalOnWhatsApp() {
