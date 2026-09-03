@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Universal Equipment Management Dashboard v3.3 (With History Menu)</title>
+    <title>Universal Equipment Management Dashboard v3.3 (Manual & Scanner Equipment Add)</title>
     <!-- JsBarcode Library with local fallback safeguard -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.12.3/JsBarcode.all.min.js"></script>
     <style>
@@ -805,7 +805,7 @@
             </div>
         </div>
 
-        <!-- TAB 1: OVERVIEW LOGS & DASHBOARD CHECK-IN (ACTIVE OUT SHOOTS ONLY) -->
+        <!-- TAB 1: OVERVIEW LOGS & DASHBOARD CHECK-IN -->
         <div id="dashboard-tab" class="tab-content active">
             
             <!-- LIVE EQUIPMENT AVAILABILITY PANEL -->
@@ -941,16 +941,32 @@
             </div>
         </div>
 
-        <!-- TAB 3: ADD UPCOMING EQUIPMENT MASTER (ADMIN ONLY) -->
+        <!-- TAB 3: ADD UPCOMING EQUIPMENT MASTER (ADMIN ONLY WITH MANUAL & SCANNER MODES) -->
         <div id="equipment-tab" class="tab-content">
             <div class="content-card">
                 <h3 style="font-size: 0.85rem;">Add New Upcoming Equipment</h3>
-                <p style="color: var(--text-muted); font-size: 0.68rem; margin-bottom: 8px;">Register gear with auto-generated barcode tags.</p>
+                <p style="color: var(--text-muted); font-size: 0.68rem; margin-bottom: 8px;">Register gear using Manual form or Barcode Scanner.</p>
 
-                <div style="display: flex; gap: 4px; margin-bottom: 10px; flex-wrap: wrap;">
-                    <input type="text" id="newEquipmentName" placeholder="Equipment name..." style="flex: 2; padding: 6px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); min-width: 120px; min-height: 36px; box-shadow: var(--neu-inset); background: var(--bg); font-size: 0.75rem;">
-                    <input type="number" id="newEquipmentStock" placeholder="Stock (Def: 5)" min="1" style="flex: 1; padding: 6px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); min-width: 70px; min-height: 36px; box-shadow: var(--neu-inset); background: var(--bg); font-size: 0.75rem;">
-                    <button class="btn btn-primary" style="width: 100%; min-height: 36px; font-size: 0.75rem;" onclick="addNewEquipmentItem()">+ Add Equipment</button>
+                <!-- EQUIPMENT ADD METHOD TOGGLE -->
+                <div class="admin-method-toggle">
+                    <button type="button" id="eqScannerModeBtn" class="method-btn active" onclick="setEquipmentAddMethod('scanner')">🔌 Barcode Scanner</button>
+                    <button type="button" id="eqManualModeBtn" class="method-btn" onclick="setEquipmentAddMethod('manual')">✏️ Manual Input</button>
+                </div>
+
+                <!-- SCANNER MODE CONTAINER -->
+                <div id="eqScannerModeContainer" style="margin-bottom: 12px; background: #0f172a; padding: 14px; border-radius: var(--radius-sm); border: 1px solid #334155;">
+                    <label style="font-size: 0.7rem; color: #94a3b8; font-weight: bold; text-transform: uppercase; display: block; margin-bottom: 6px;">Scan Barcode to Add or Increment Stock</label>
+                    <input type="text" id="eqBarcodeScannerInput" placeholder="Scan barcode or type name..." style="width: 100%; padding: 10px; border-radius: 6px; border: 2px solid var(--primary); background: #1e293b; color: #60a5fa; font-size: 0.9rem; font-weight: bold;" onkeypress="handleEquipmentBarcodeScanner(event)">
+                    <div class="scan-terminal" id="eqScannerTerminalLog" style="margin-top: 10px;">> Ready to scan new equipment or scan existing to add +1 stock...</div>
+                </div>
+
+                <!-- MANUAL MODE CONTAINER -->
+                <div id="eqManualModeContainer" style="display: none; margin-bottom: 12px;">
+                    <div style="display: flex; gap: 4px; margin-bottom: 8px; flex-wrap: wrap;">
+                        <input type="text" id="newEquipmentName" placeholder="Equipment name..." style="flex: 2; padding: 6px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); min-width: 120px; min-height: 36px; box-shadow: var(--neu-inset); background: var(--bg); font-size: 0.75rem;">
+                        <input type="number" id="newEquipmentStock" placeholder="Stock (Def: 5)" min="1" style="flex: 1; padding: 6px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); min-width: 70px; min-height: 36px; box-shadow: var(--neu-inset); background: var(--bg); font-size: 0.75rem;">
+                        <button class="btn btn-primary" style="width: 100%; min-height: 36px; font-size: 0.75rem;" onclick="addNewEquipmentItem()">+ Add Equipment</button>
+                    </div>
                 </div>
 
                 <h4 style="font-size: 0.75rem; margin-bottom: 4px;">Current Registered Inventory (<span id="totalEquipmentCount">0</span> Items)</h4>
@@ -1167,8 +1183,8 @@
             <input type="password" id="adminPasswordInput" placeholder="Enter admin password..." style="width: 100%; padding: 7px 9px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.8rem; background: var(--bg); box-shadow: var(--neu-inset);" onkeypress="handleAdminLoginKey(event)">
             
             <div style="display: flex; gap: 6px; margin-top: 6px;">
-                <button class="btn btn-primary btn-sm" style="flex: 2; padding: 4px;" onclick="validateAdminPassword()">Sign In</button>
-                <button class="btn btn-secondary btn-sm" style="flex: 1; padding: 4px;" onclick="cancelAdminPasswordPrompt()">Cancel</button>
+                <button class="btn btn-sm btn-primary" style="flex: 2; width: auto; min-width: unset;" onclick="validateAdminPassword()">Sign In</button>
+                <button class="btn btn-sm btn-secondary" style="flex: 1; width: auto; min-width: unset;" onclick="cancelAdminPasswordPrompt()">Cancel</button>
             </div>
 
             <div style="text-align: right; margin-top: 4px;">
@@ -1183,8 +1199,8 @@
             <input type="password" id="staffPasswordInput" placeholder="Enter your staff password..." style="width: 100%; padding: 7px 9px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.8rem; background: var(--bg); box-shadow: var(--neu-inset);" onkeypress="handleStaffLoginKey(event)">
             
             <div style="display: flex; gap: 6px; margin-top: 6px;">
-                <button class="btn btn-primary btn-sm" style="flex: 2; padding: 4px;" onclick="validateStaffPassword()">Verify & Login</button>
-                <button class="btn btn-secondary btn-sm" style="flex: 1; padding: 4px;" onclick="cancelStaffPasswordPrompt()">Cancel</button>
+                <button class="btn btn-sm btn-primary" style="flex: 2; width: auto; min-width: unset;" onclick="validateStaffPassword()">Verify & Login</button>
+                <button class="btn btn-sm btn-secondary" style="flex: 1; width: auto; min-width: unset;" onclick="cancelStaffPasswordPrompt()">Cancel</button>
             </div>
             <div id="staffLoginError" style="color: var(--danger); font-size: 0.65rem; margin-top: 3px; font-weight: bold;"></div>
         </div>
@@ -1205,7 +1221,7 @@
     <div class="dialog-card" style="max-width: 360px; border-radius: 14px;">
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 6px; margin-bottom: 10px;">
             <h3 style="font-size: 0.9rem; font-weight: 800;">Reset Admin Password</h3>
-            <button class="btn btn-secondary btn-sm" onclick="closeForgotPasswordModal()" style="min-height: 24px; padding: 2px 5px;">✕</button>
+            <button class="btn btn-sm btn-secondary" onclick="closeForgotPasswordModal()" style="min-height: 24px; padding: 2px 5px; width: auto; min-width: unset;">✕</button>
         </div>
         <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 10px; line-height: 1.35;">Enter your secure master recovery key generated from the admin dashboard to reset credentials.</p>
         
@@ -1232,7 +1248,7 @@
                 <h3 style="font-size: 0.85rem; color: white;">📤 Check-Out Scanner</h3>
                 <span style="font-size: 0.65rem; color: #94a3b8;">Trigger gun scanner to add items</span>
             </div>
-            <button class="btn btn-danger btn-sm" onclick="closeCheckoutScannerModal()">✕ Close</button>
+            <button class="btn btn-sm btn-danger" onclick="closeCheckoutScannerModal()" style="width: auto; min-width: unset;">✕ Close</button>
         </div>
 
         <div style="margin: 8px 0;">
@@ -1253,7 +1269,7 @@
                 <h3 style="font-size: 0.85rem; color: #10b981;">↩ Direct Check-In Terminal</h3>
                 <span style="font-size: 0.65rem; color: #94a3b8;">Client: <strong id="dashCheckinClientName" style="color: white;">-</strong></span>
             </div>
-            <button class="btn btn-danger btn-sm" onclick="closeDashboardCheckinModal()">✕ Close</button>
+            <button class="btn btn-sm btn-danger" onclick="closeDashboardCheckinModal()" style="width: auto; min-width: unset;">✕ Close</button>
         </div>
 
         <div style="margin: 8px 0;">
@@ -1293,7 +1309,7 @@
                 <h3 id="detailClientName" style="font-size: 0.95rem;">Client Name</h3>
                 <span id="detailStatusTag" class="status-tag status-out">OUT ON SHOOT</span>
             </div>
-            <button class="btn btn-secondary btn-sm no-print" onclick="closeDetailModal()">✕ Close</button>
+            <button class="btn btn-sm btn-secondary no-print" onclick="closeDetailModal()" style="width: auto; min-width: unset;">✕ Close</button>
         </div>
 
         <div class="detail-grid">
@@ -1341,8 +1357,8 @@
         </div>
 
         <div class="actions-bar no-print">
-            <button class="btn" style="background: #25d366; color: white; padding: 6px 12px; font-size: 0.72rem;" onclick="shareActiveModalOnWhatsApp()">💬 Share on WhatsApp</button>
-            <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.72rem;" onclick="window.print()">🖨️ Print Sheet</button>
+            <button class="btn" style="background: #25d366; color: white; padding: 6px 12px; font-size: 0.72rem; width: auto;" onclick="shareActiveModalOnWhatsApp()">💬 WhatsApp</button>
+            <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.72rem; width: auto;" onclick="window.print()">🖨️ Print</button>
         </div>
     </div>
 </div>
@@ -1358,9 +1374,9 @@
         </div>
 
         <div class="actions-bar no-print" style="justify-content: center; gap: 4px;">
-            <button class="btn btn-primary btn-sm" onclick="downloadBarcodeAsPNG()">💾 PNG</button>
-            <button class="btn btn-secondary btn-sm" onclick="window.print()">🖨️ Print</button>
-            <button class="btn btn-secondary btn-sm" onclick="closeBarcodePrintModal()">✕ Close</button>
+            <button class="btn btn-primary btn-sm" style="width: auto; min-width: unset;" onclick="downloadBarcodeAsPNG()">💾 PNG</button>
+            <button class="btn btn-secondary btn-sm" style="width: auto; min-width: unset;" onclick="window.print()">🖨️ Print</button>
+            <button class="btn btn-secondary btn-sm" style="width: auto; min-width: unset;" onclick="closeBarcodePrintModal()">✕ Close</button>
         </div>
     </div>
 </div>
@@ -1511,6 +1527,7 @@
     let currentBarcodePrintMeta = { barcode: '', name: '' };
     let pendingStaffLoginProfile = null;
     let activeDetailModalLogId = null;
+    let equipmentAddMethod = 'scanner'; // default scanner mode for adding equipment
 
     function showConfirmationModal({ title, message, icon = '⚠️', confirmBtnText = 'Confirm', confirmBtnClass = 'btn-primary', onConfirm }) {
         document.getElementById('confirmTitle').innerText = title;
@@ -1712,6 +1729,73 @@
         renderMasterEquipmentTable();
         renderDashboard();
     });
+
+    // EQUIPMENT ADD METHOD TOGGLE (SCANNER VS MANUAL)
+    function setEquipmentAddMethod(method) {
+        equipmentAddMethod = method;
+        const scanBtn = document.getElementById('eqScannerModeBtn');
+        const manualBtn = document.getElementById('eqManualModeBtn');
+        const scanContainer = document.getElementById('eqScannerModeContainer');
+        const manualContainer = document.getElementById('eqManualModeContainer');
+
+        if (method === 'scanner') {
+            if (scanBtn) scanBtn.className = 'method-btn active';
+            if (manualBtn) manualBtn.className = 'method-btn';
+            if (scanContainer) scanContainer.style.display = 'block';
+            if (manualContainer) manualContainer.style.display = 'none';
+            setTimeout(() => {
+                const scanInput = document.getElementById('eqBarcodeScannerInput');
+                if (scanInput) scanInput.focus();
+            }, 100);
+        } else {
+            if (scanBtn) scanBtn.className = 'method-btn';
+            if (manualBtn) manualBtn.className = 'method-btn active';
+            if (scanContainer) scanContainer.style.display = 'none';
+            if (manualContainer) manualContainer.style.display = 'block';
+        }
+    }
+
+    function handleEquipmentBarcodeScanner(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            executeEquipmentScanAdd(e.target.value);
+            e.target.value = '';
+        }
+    }
+
+    function executeEquipmentScanAdd(scannedValue) {
+        if (!scannedValue || !scannedValue.trim()) return;
+        const query = scannedValue.trim().toUpperCase();
+
+        // Check if item already exists by barcode or exact name
+        let existingItem = masterEquipment.find(item => item.barcode.toUpperCase() === query || item.name.toUpperCase() === query);
+
+        if (existingItem) {
+            existingItem.stock = (parseInt(existingItem.stock, 10) || 5) + 1;
+            SafeStorage.setItem('gearMasterEquipmentObj', JSON.stringify(masterEquipment));
+            renderMasterEquipmentTable();
+            renderDashboard();
+            logEqTerminal(`<span style="color: #34d399;">✓ STOCK UPDATED: "${existingItem.name}" [${existingItem.barcode}] stock increased to ${existingItem.stock}.</span>`);
+        } else {
+            // New item registered via scanner
+            const barcode = query.startsWith('EQP-') ? query : generateUniqueBarcodeId(masterEquipment);
+            const name = query.startsWith('EQP-') ? `SCANNED GEAR ${barcode}` : query;
+            const stock = 5;
+
+            masterEquipment.push({ barcode, name, stock });
+            SafeStorage.setItem('gearMasterEquipmentObj', JSON.stringify(masterEquipment));
+            itemsList = masterEquipment.map(item => item.name);
+
+            renderMasterEquipmentTable();
+            renderDashboard();
+            logEqTerminal(`<span style="color: #60a5fa;">✓ NEW ITEM REGISTERED: "${name}" [${barcode}] with default stock 5.</span>`);
+        }
+    }
+
+    function logEqTerminal(msg) {
+        const terminal = document.getElementById('eqScannerTerminalLog');
+        if (terminal) terminal.innerHTML = `${msg}<br>${terminal.innerHTML}`;
+    }
 
     // WHATSAPP SHARE WITH RETURNED ITEM HISTORY
     function shareLogOnWhatsApp(id) {
