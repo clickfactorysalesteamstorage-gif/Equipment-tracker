@@ -1762,7 +1762,7 @@
         }
     }
 
-    // WHATSAPP SHARE WITH RETURNED ITEM HISTORY
+    // WHATSAPP SHARE OPENING IN SAME TAB
     function shareLogOnWhatsApp(id) {
         const record = gearLogs.find(log => log.id === id);
         if (!record) return;
@@ -1791,10 +1791,8 @@
         const encodedMessage = encodeURIComponent(message);
         const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
         
-        const win = window.open(whatsappUrl, '_blank');
-        if (!win || win.closed || typeof win.closed === 'undefined') {
-            window.location.href = whatsappUrl;
-        }
+        // Opens WhatsApp directly in the same tab
+        window.location.href = whatsappUrl;
     }
 
     function shareActiveModalOnWhatsApp() {
