@@ -2382,6 +2382,10 @@
     }
 
     function openDashboardCheckinModal(logId) {
+        if (currentRole !== 'admin') {
+            alert('Manual return actions are restricted to Admin accounts only.');
+            return;
+        }
         activeDashboardCheckinLogId = logId;
         const log = gearLogs.find(l => l.id === logId);
         if (!log) return;
@@ -2755,6 +2759,10 @@
     }
 
     function editLogRecord(id) {
+        if (currentRole !== 'admin') {
+            alert('Editing records is restricted to Admin accounts only.');
+            return;
+        }
         editingLogId = id;
         const record = gearLogs.find(log => log.id === id);
         activeTempGearList = record && record.gear ? JSON.parse(JSON.stringify(record.gear)) : [];
@@ -2923,7 +2931,7 @@
                 const timeOutDisplay = formatDateTime(log.timeOutDate, log.timeOutTime);
                 const timeInDisplay = log.status === 'RETURNED' && log.actualReturnTimeStamp ? log.actualReturnTimeStamp : '-';
 
-                if (editingLogId === log.id) {
+                if (editingLogId === log.id && currentRole === 'admin') {
                     const gearOptions = masterEquipment.map(eq => `<option value="${eq.name}">${eq.name}</option>`).join('');
 
                     setTimeout(() => { renderLogGearEditRows(); }, 0);
@@ -2975,7 +2983,8 @@
                     `;
                 }
 
-                const checkinButton = log.status === 'OUT ON SHOOT' ? `<button class="btn btn-sm btn-success" onclick="openDashboardCheckinModal(${log.id})">↩ Return</button>` : '';
+                // Return/Check-in action is restricted strictly to Admin accounts
+                const checkinButton = (currentRole === 'admin' && log.status === 'OUT ON SHOOT') ? `<button class="btn btn-sm btn-success" onclick="openDashboardCheckinModal(${log.id})">↩ Return</button>` : '';
                 const whatsappBtn = `<button class="btn btn-sm" style="background: #25d366; color: white;" onclick="shareLogOnWhatsApp(${log.id})">💬 WhatsApp</button>`;
 
                 const actionsCell = currentRole === 'admin' ? `
@@ -2988,7 +2997,7 @@
                             <button class="btn btn-sm btn-danger" onclick="deleteRecord(${log.id})">🗑️ Delete</button>
                         </div>
                     </td>
-                ` : `<td><div class="table-action-cell">${checkinButton} ${whatsappBtn} <button class="btn btn-sm btn-secondary" onclick="openDetailModal(${log.id})">ℹ️ Details</button></div></td>`;
+                ` : `<td><div class="table-action-cell">${whatsappBtn} <button class="btn btn-sm btn-secondary" onclick="openDetailModal(${log.id})">ℹ️ Details</button></div></td>`;
 
                 return `
                     <tr>
