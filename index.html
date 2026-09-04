@@ -1237,19 +1237,19 @@
     </div>
 </div>
 
-<!-- DASHBOARD DIRECT CHECK-IN SCANNER MODAL -->
+<!-- DASHBOARD DIRECT CHECK-IN SCANNER MODAL (AVAILABLE TO USERS & ADMINS VIA DETAILS) -->
 <div id="dashboardCheckinModalOverlay" class="overlay" style="display: none;">
     <div class="scanner-card" style="max-width: 440px;">
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 6px;">
             <div>
-                <h3 style="font-size: 0.85rem; color: #10b981;">↩ Direct Check-In Terminal</h3>
+                <h3 style="font-size: 0.85rem; color: #10b981;">↩ Barcode Scan Return Terminal</h3>
                 <span style="font-size: 0.65rem; color: #94a3b8;">Client: <strong id="dashCheckinClientName" style="color: white;">-</strong></span>
             </div>
             <button class="btn btn-danger btn-sm" onclick="closeDashboardCheckinModal()">✕ Close</button>
         </div>
 
         <div style="margin: 8px 0;">
-            <input type="text" id="dashboardCheckinListener" placeholder="Scan item barcode..." style="width: 100%; padding: 8px; border-radius: var(--radius-sm); border: 2px solid var(--success); background: #1e293b; color: #34d399; font-size: 0.85rem; font-weight: bold;" onkeypress="handleDashboardCheckinScanner(event)" autofocus>
+            <input type="text" id="dashboardCheckinListener" placeholder="Scan item barcode to return..." style="width: 100%; padding: 8px; border-radius: var(--radius-sm); border: 2px solid var(--success); background: #1e293b; color: #34d399; font-size: 0.85rem; font-weight: bold;" onkeypress="handleDashboardCheckinScanner(event)" autofocus>
         </div>
 
         <h4 style="margin: 4px 0 2px 0; color: #94a3b8; font-size: 0.68rem;">Checked-Out Items Remaining:</h4>
@@ -1257,10 +1257,9 @@
             <table>
                 <thead>
                     <tr>
-                        <th>Barcode</th>
                         <th>Item Name</th>
                         <th style="width: 45px; text-align: center;">Qty</th>
-                        <th style="width: 70px; text-align: center;">Action</th>
+                        <th style="width: 70px; text-align: center;" id="manualReturnHeaderAction">Action</th>
                     </tr>
                 </thead>
                 <tbody id="dashboardCheckinItemsTableBody">
@@ -1269,10 +1268,10 @@
             </table>
         </div>
 
-        <div class="scan-terminal" id="dashboardCheckinTerminalLog">> Matching scanned gear against shoot items...</div>
+        <div class="scan-terminal" id="dashboardCheckinTerminalLog">> Scan item barcode or gun scanner to check in...</div>
         
-        <div class="actions-bar" style="margin-top: 8px;">
-            <button class="btn btn-success btn-sm" style="width: 100%; font-size: 0.75rem;" onclick="completeDashboardCheckinProcess()">✅ Return All Items to Inventory</button>
+        <div class="actions-bar" style="margin-top: 8px;" id="forceReturnBarContainer">
+            <!-- Force return all button appears here for admins only -->
         </div>
     </div>
 </div>
@@ -1333,6 +1332,7 @@
         </div>
 
         <div class="actions-bar no-print">
+            <button class="btn btn-success" id="modalScanReturnBtn" style="padding: 6px 12px; font-size: 0.72rem; display: none;" onclick="openScanReturnFromDetail()">🔌 Scan Barcode to Return</button>
             <button class="btn" style="background: #25d366; color: white; padding: 6px 12px; font-size: 0.72rem;" onclick="shareActiveModalOnWhatsApp()">💬 Share on WhatsApp</button>
             <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.72rem;" onclick="window.print()">🖨️ Print Sheet</button>
         </div>
@@ -2382,10 +2382,6 @@
     }
 
     function openDashboardCheckinModal(logId) {
-        if (currentRole !== 'admin') {
-            alert('Manual return actions are restricted to Admin accounts only.');
-            return;
-        }
         activeDashboardCheckinLogId = logId;
         const log = gearLogs.find(l => l.id === logId);
         if (!log) return;
@@ -2400,6 +2396,14 @@
         input.select();
     }
 
+    function openScanReturnFromDetail() {
+        if (activeDetailModalLogId !== null) {
+            const logId = activeDetailModalLogId;
+            closeDetailModal();
+            openDashboardCheckinModal(logId);
+        }
+    }
+
     function closeDashboardCheckinModal() {
         activeDashboardCheckinLogId = null;
         document.getElementById('dashboardCheckinModalOverlay').style.display = 'none';
@@ -2410,14 +2414,23 @@
         const log = gearLogs.find(l => l.id === activeDashboardCheckinLogId);
         if (!log || !tbody) return;
 
+        const isAdmin = currentRole === 'admin';
+        document.getElementById('manualReturnHeaderAction').style.display = isAdmin ? '' : 'none';
+        
+        const forceReturnContainer = document.getElementById('forceReturnBarContainer');
+        if (isAdmin) {
+            forceReturnContainer.innerHTML = `<button class="btn btn-success btn-sm" style="width: 100%; font-size: 0.75rem;" onclick="completeDashboardCheckinProcess()">✅ Return All Items to Inventory</button>`;
+        } else {
+            forceReturnContainer.innerHTML = `<span style="font-size: 0.7rem; color: #94a3b8; text-align: center; display: block; width: 100%;">💡 Scan item barcode to check in items automatically.</span>`;
+        }
+
         tbody.innerHTML = log.gear.map((item, idx) => {
+            const actionCell = isAdmin ? `<td style="text-align: center;"><button type="button" class="btn btn-sm btn-success" onclick="checkinSingleLogItem(${idx})">↩ Return</button></td>` : '';
             return `
                 <tr>
                     <td><strong>${item.name}</strong></td>
                     <td style="text-align: center; font-weight: bold; color: var(--warning);">${item.qty}</td>
-                    <td style="text-align: center;">
-                        <button type="button" class="btn btn-sm btn-success" onclick="checkinSingleLogItem(${idx})">↩ Return</button>
-                    </td>
+                    ${actionCell}
                 </tr>
             `;
         }).join('');
@@ -2438,7 +2451,9 @@
         if (!log) return;
 
         let matchedIndex = log.gear.findIndex(g => {
-            return g.name.toLowerCase() === query || query.includes(g.name.toLowerCase());
+            const masterMatch = masterEquipment.find(m => m.name.toUpperCase() === g.name.toUpperCase());
+            const barcodeStr = masterMatch ? masterMatch.barcode.toLowerCase() : '';
+            return g.name.toLowerCase() === query || barcodeStr === query || query.includes(g.name.toLowerCase());
         });
 
         if (matchedIndex !== -1) {
@@ -2484,6 +2499,7 @@
     }
 
     function completeDashboardCheckinProcess() {
+        if (currentRole !== 'admin') return;
         const log = gearLogs.find(l => l.id === activeDashboardCheckinLogId);
         if (!log) return;
 
@@ -2983,21 +2999,26 @@
                     `;
                 }
 
-                // Return/Check-in action is restricted strictly to Admin accounts
-                const checkinButton = (currentRole === 'admin' && log.status === 'OUT ON SHOOT') ? `<button class="btn btn-sm btn-success" onclick="openDashboardCheckinModal(${log.id})">↩ Return</button>` : '';
+                // Admins get manual return button; Users get barcode scan return button
+                const returnButton = log.status === 'OUT ON SHOOT' ? (
+                    currentRole === 'admin' 
+                        ? `<button class="btn btn-sm btn-success" onclick="openDashboardCheckinModal(${log.id})">↩ Return</button>`
+                        : `<button class="btn btn-sm btn-success" onclick="openDashboardCheckinModal(${log.id})">🔌 Scan Return</button>`
+                ) : '';
+                
                 const whatsappBtn = `<button class="btn btn-sm" style="background: #25d366; color: white;" onclick="shareLogOnWhatsApp(${log.id})">💬 WhatsApp</button>`;
 
                 const actionsCell = currentRole === 'admin' ? `
                     <td>
                         <div class="table-action-cell">
-                            ${checkinButton}
+                            ${returnButton}
                             ${whatsappBtn}
                             <button class="btn btn-sm btn-secondary" onclick="openDetailModal(${log.id})">ℹ️ Details</button>
                             <button class="btn btn-sm btn-warning" onclick="editLogRecord(${log.id})">✏️ Edit</button>
                             <button class="btn btn-sm btn-danger" onclick="deleteRecord(${log.id})">🗑️ Delete</button>
                         </div>
                     </td>
-                ` : `<td><div class="table-action-cell">${whatsappBtn} <button class="btn btn-sm btn-secondary" onclick="openDetailModal(${log.id})">ℹ️ Details</button></div></td>`;
+                ` : `<td><div class="table-action-cell">${returnButton} ${whatsappBtn} <button class="btn btn-sm btn-secondary" onclick="openDetailModal(${log.id})">ℹ️ Details</button></div></td>`;
 
                 return `
                     <tr>
@@ -3088,6 +3109,12 @@
         const statusTag = document.getElementById('detailStatusTag');
         statusTag.innerText = record.status;
         statusTag.className = `status-tag ${record.status === 'RETURNED' ? 'status-returned' : 'status-out'}`;
+
+        // Show scan return button in details modal for users when active
+        const scanReturnBtn = document.getElementById('modalScanReturnBtn');
+        if (scanReturnBtn) {
+            scanReturnBtn.style.display = (record.status === 'OUT ON SHOOT') ? 'inline-flex' : 'none';
+        }
 
         const tbody = document.getElementById('detailItemsTableBody');
         tbody.innerHTML = record.gear.map((item, index) => {
