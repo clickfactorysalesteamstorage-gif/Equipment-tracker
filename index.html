@@ -172,46 +172,39 @@
             box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
         }
 
-        /* Floating Action Button (FAB) - Icon Only on Mobile, Full on Desktop */
+        /* Floating Action Button (FAB) Optimized for Mobile View */
         .floating-checkout-btn {
             position: fixed;
             bottom: 60px;
             right: 12px;
             background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
             color: white;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            width: 48px;
-            height: 48px;
-            font-size: 1.4rem;
-            font-weight: 900;
-            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            border-radius: 50px;
+            padding: 10px 16px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.45);
             cursor: pointer;
-            z-index: 95;
+            z-index: 95; /* Sits below bottom navigation/modals */
             display: flex;
             align-items: center;
-            justify-content: center;
+            gap: 6px;
             transition: var(--transition);
         }
 
         .floating-checkout-btn:hover {
-            transform: translateY(-2px) scale(1.05);
-            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.7);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.6);
         }
 
         @media (min-width: 900px) {
             .floating-checkout-btn {
                 bottom: 30px;
                 right: 30px;
-                width: auto;
-                height: auto;
-                border-radius: 50px;
                 padding: 14px 22px;
                 font-size: 0.85rem;
                 z-index: 998;
-            }
-            .floating-checkout-btn::after {
-                content: " + New Checkout";
             }
         }
 
@@ -822,9 +815,9 @@
         </div>
     </aside>
 
-    <!-- FLOATING NEW CHECKOUT BUTTON ON RIGHT SIDE (ICON ONLY ON MOBILE) -->
-    <button class="floating-checkout-btn" id="tabNewSheetBtn" onclick="switchTab('new-entry-tab')" title="New Checkout">
-        +
+    <!-- FLOATING NEW CHECKOUT BUTTON ON RIGHT SIDE -->
+    <button class="floating-checkout-btn" id="tabNewSheetBtn" onclick="switchTab('new-entry-tab')">
+        New Checkout
     </button>
 
     <!-- MAIN CONTENT AREA -->
