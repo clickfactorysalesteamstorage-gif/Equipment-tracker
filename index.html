@@ -1464,8 +1464,11 @@
                 gearLogs = data.gearLogs;
                 const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
                 gearLogs = gearLogs.filter(log => {
-                    if (log.status === 'RETURNED' && log.id && log.id < thirtyDaysAgo) {
-                        return false;
+                    if (log.status === 'RETURNED') {
+                        const recordTime = log.id || thirtyDaysAgo;
+                        if (recordTime < thirtyDaysAgo) {
+                            return false;
+                        }
                     }
                     return true;
                 });
@@ -1706,10 +1709,14 @@
 
     let gearLogs = JSON.parse(SafeStorage.getItem('gearDashboardLogs')) || [];
     
+    // Automatically purge returned entries older than 30 days
     const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
     gearLogs = gearLogs.filter(log => {
-        if (log.status === 'RETURNED' && log.id && log.id < thirtyDaysAgo) {
-            return false;
+        if (log.status === 'RETURNED') {
+            const recordTime = log.id || thirtyDaysAgo;
+            if (recordTime < thirtyDaysAgo) {
+                return false;
+            }
         }
         return true;
     });
