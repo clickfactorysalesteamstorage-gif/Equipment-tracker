@@ -2522,9 +2522,13 @@
             log.status = 'RETURNED';
             log.actualReturnTimeStamp = timeStr;
             SafeStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
-            alert('All items returned! Shoot status updated to RETURNED and moved to history.');
+            
             closeDashboardCheckinModal();
             renderDashboard();
+
+            // Trigger WhatsApp share popup for return completion, then switch to Active Shoots
+            shareLogOnWhatsApp(log.id);
+            switchTab('dashboard-tab');
         } else {
             SafeStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
             renderDashboardCheckinItemsTable();
@@ -2559,6 +2563,10 @@
                 SafeStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
                 closeDashboardCheckinModal();
                 renderDashboard();
+
+                // Trigger WhatsApp share popup for force-return completion, then switch to Active Shoots
+                shareLogOnWhatsApp(log.id);
+                switchTab('dashboard-tab');
             }
         });
     }
@@ -3406,8 +3414,9 @@
         const autoDateStr = document.getElementById('date').value || now.toISOString().split('T')[0];
         const autoTimeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
+        const newRecordId = Date.now();
         const record = {
-            id: Date.now(),
+            id: newRecordId,
             clientName: clientName,
             clientId: document.getElementById('clientId').value,
             team: '',
@@ -3436,11 +3445,10 @@
         document.getElementById('date').value = today;
         
         renderDashboard();
-        if (currentRole === 'admin') {
-            switchTab('dashboard-tab');
-        } else {
-            alert('Checkout Sheet saved successfully!');
-        }
+
+        // Immediately trigger WhatsApp share popup for the new checkout, then switch to Active Shoots
+        shareLogOnWhatsApp(newRecordId);
+        switchTab('dashboard-tab');
     }
 
     function formatDateTime(dateStr, timeStr) {
