@@ -172,28 +172,37 @@
             box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
         }
 
-        /* Bubble-Type / Pill Badge Floating Button Styling */
-        .nav-btn-bubble {
-            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%) !important;
-            color: white !important;
-            border: 1px solid #a78bfa !important;
-            border-radius: 30px !important;
-            box-shadow: 0 6px 18px rgba(139, 92, 246, 0.45) !important;
-            margin-top: 10px;
-            margin-bottom: 10px;
-            padding: 12px 20px !important;
-            justify-content: center !important;
-            font-weight: 800 !important;
-            letter-spacing: 0.01em;
+        /* Floating Action Button (FAB) Styling on Right Side */
+        .floating-checkout-btn {
+            position: fixed;
+            bottom: 85px;
+            right: 20px;
+            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            border-radius: 50px;
+            padding: 14px 22px;
+            font-size: 0.85rem;
+            font-weight: 800;
+            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.5);
+            cursor: pointer;
+            z-index: 998;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
         }
-        .nav-btn-bubble:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 22px rgba(139, 92, 246, 0.6) !important;
-            opacity: 0.98;
+
+        .floating-checkout-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 14px 30px rgba(139, 92, 246, 0.7);
         }
-        .nav-btn-bubble.active {
-            background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%) !important;
-            box-shadow: inset 0 3px 6px rgba(0,0,0,0.3) !important;
+
+        @media (min-width: 900px) {
+            .floating-checkout-btn {
+                bottom: 30px;
+                right: 30px;
+            }
         }
 
         .bottom-nav {
@@ -788,10 +797,6 @@
             <nav class="nav-menu" id="tabNavigation">
                 <button class="nav-btn active" id="tabOverviewBtn" onclick="switchTab('dashboard-tab')">📊 Active Shoots</button>
                 <button class="nav-btn" id="tabHistoryBtn" onclick="switchTab('history-tab')">📜 History Logs</button>
-                
-                <!-- Bubble-Type New Checkout Sheet Button -->
-                <button class="nav-btn nav-btn-bubble" id="tabNewSheetBtn" onclick="switchTab('new-entry-tab')">📋 + New Checkout Sheet</button>
-                
                 <button class="nav-btn" id="tabEquipmentBtn" onclick="switchTab('equipment-tab')">🎥 Add Equipment</button>
                 <button class="nav-btn" id="tabUsersBtn" onclick="switchTab('users-tab')">👤 User Profiles</button>
                 <button class="nav-btn" id="tabAdminControlsBtn" onclick="switchTab('admin-controls-tab')">⚙️ Admin Controls</button>
@@ -806,6 +811,11 @@
             <button class="btn btn-sm btn-danger" style="width: 100%; margin-top: 2px;" onclick="logoutUser()">🚪 Logout</button>
         </div>
     </aside>
+
+    <!-- FLOATING NEW CHECKOUT SHEET BUTTON ON RIGHT SIDE -->
+    <button class="floating-checkout-btn" id="tabNewSheetBtn" onclick="switchTab('new-entry-tab')">
+        <span>📋</span> + New Checkout Sheet
+    </button>
 
     <!-- MAIN CONTENT AREA -->
     <main class="main-content">
@@ -3258,8 +3268,7 @@
             if(md) md.classList.add('active');
         }
         if(tabId === 'new-entry-tab') {
-            document.getElementById('tabNewSheetBtn').classList.add('active');
-            document.getElementById('mobTabNewSheetBtn').classList.add('active');
+            // Highlight mobile bottom nav if needed
         }
         if(tabId === 'equipment-tab') {
             document.getElementById('tabEquipmentBtn').classList.add('active');
