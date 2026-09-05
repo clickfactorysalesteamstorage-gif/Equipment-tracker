@@ -812,9 +812,9 @@
         </div>
     </aside>
 
-    <!-- FLOATING NEW CHECKOUT SHEET BUTTON ON RIGHT SIDE -->
+    <!-- FLOATING NEW CHECKOUT BUTTON ON RIGHT SIDE -->
     <button class="floating-checkout-btn" id="tabNewSheetBtn" onclick="switchTab('new-entry-tab')">
-        <span>📋</span> + New Checkout Sheet
+        <span>📋</span> + New Checkout
     </button>
 
     <!-- MAIN CONTENT AREA -->
@@ -1937,14 +1937,12 @@
 
         const tabOverview = document.getElementById('tabOverviewBtn');
         const tabHistory = document.getElementById('tabHistoryBtn');
-        const tabNewSheet = document.getElementById('tabNewSheetBtn');
         const tabEquipment = document.getElementById('tabEquipmentBtn');
         const tabUsers = document.getElementById('tabUsersBtn');
         const tabAdminControls = document.getElementById('tabAdminControlsBtn');
 
         const mobTabOverview = document.getElementById('mobTabOverviewBtn');
         const mobTabHistory = document.getElementById('mobTabHistoryBtn');
-        const mobTabNewSheet = document.getElementById('mobTabNewSheetBtn');
         const mobTabEquipment = document.getElementById('mobTabEquipmentBtn');
         const mobTabAdminControls = document.getElementById('mobTabAdminControlsBtn');
 
@@ -1960,14 +1958,12 @@
             tabOverview.style.display = 'flex';
             tabOverview.innerText = '📊 Active Shoots';
             if(tabHistory) tabHistory.style.display = 'flex';
-            tabNewSheet.style.display = 'flex';
             tabEquipment.style.display = 'flex';
             tabUsers.style.display = 'flex';
             tabAdminControls.style.display = 'flex';
 
             if(mobTabOverview) mobTabOverview.style.display = 'flex';
             if(mobTabHistory) mobTabHistory.style.display = 'flex';
-            if(mobTabNewSheet) mobTabNewSheet.style.display = 'flex';
             if(mobTabEquipment) mobTabEquipment.style.display = 'flex';
             if(mobTabAdminControls) mobTabAdminControls.style.display = 'flex';
             
@@ -1993,14 +1989,12 @@
             tabOverview.style.display = 'flex';
             tabOverview.innerText = '📊 My Active Shoots';
             if(tabHistory) tabHistory.style.display = 'flex';
-            tabNewSheet.style.display = 'flex';
             tabEquipment.style.display = hasFullAccess ? 'flex' : 'none';
             tabUsers.style.display = hasFullAccess ? 'flex' : 'none';
             tabAdminControls.style.display = 'none';
 
             if(mobTabOverview) mobTabOverview.style.display = 'flex';
             if(mobTabHistory) mobTabHistory.style.display = 'flex';
-            if(mobTabNewSheet) mobTabNewSheet.style.display = 'flex';
             if(mobTabEquipment) mobTabEquipment.style.display = hasFullAccess ? 'flex' : 'none';
             if(mobTabAdminControls) mobTabAdminControls.style.display = 'none';
 
@@ -3268,7 +3262,7 @@
             if(md) md.classList.add('active');
         }
         if(tabId === 'new-entry-tab') {
-            // Highlight mobile bottom nav if needed
+            // Floating button or mobile nav active
         }
         if(tabId === 'equipment-tab') {
             document.getElementById('tabEquipmentBtn').classList.add('active');
