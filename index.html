@@ -16,7 +16,7 @@
             --sidebar-hover: #1e293b;
             --card-bg: #eef2f6;
             --border: #cbd5e1;
-            --text-dark: #1e293b;     /* Main dark text color */
+            --text-dark: #1e293b;   /* Main dark text color */
             --text-muted: #475569;    /* Darker muted text for high visibility */
             --success: #10b981;
             --success-light: #d1fae5;
@@ -766,6 +766,245 @@
             .dialog-card { max-width: 100%; border: none; box-shadow: none; padding: 0; }
             .overlay { position: static; background: none; padding: 0; }
         }
+
+        /* --- STYLES FOR THE NEW LOGIN OVERLAY MATCHING REFERENCE IMAGE --- */
+        #loginOverlay {
+            background: rgba(15, 23, 42, 0.55);
+            backdrop-filter: blur(8px);
+        }
+
+        .login-card-container {
+            background: #ffffff;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 860px;
+            min-height: 480px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            display: flex;
+            flex-direction: column;
+        }
+
+        @media (min-width: 768px) {
+            .login-card-container {
+                flex-direction: row;
+            }
+        }
+
+        /* Left Side: Form Section */
+        .login-form-side {
+            flex: 1;
+            padding: 32px 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: #ffffff;
+            z-index: 2;
+        }
+
+        @media (min-width: 768px) {
+            .login-form-side {
+                padding: 48px;
+            }
+        }
+
+        .login-title-area {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .login-title-area h2 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.02em;
+        }
+
+        .login-title-area p {
+            color: #64748b;
+            font-size: 0.8rem;
+            margin-top: 4px;
+        }
+
+        /* Floating Input Fields matching reference mockup */
+        .login-input-wrap {
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        .login-input-wrap input {
+            width: 100%;
+            padding: 12px 16px 12px 44px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            color: #1e293b;
+            outline: none;
+            transition: all 0.2s;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .login-input-wrap input:focus {
+            border-color: #8b5cf6;
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+        }
+
+        .login-input-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #8b5cf6;
+            font-size: 1rem;
+        }
+
+        .login-input-eye {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .login-meta-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-bottom: 20px;
+            padding: 0 4px;
+        }
+
+        .login-meta-row label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+
+        .login-meta-row a {
+            color: #8b5cf6;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .login-meta-row a:hover { text-decoration: underline; }
+
+        .login-submit-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.35);
+            transition: all 0.2s;
+        }
+
+        .login-submit-btn:hover {
+            opacity: 0.95;
+            transform: translateY(-1px);
+        }
+
+        .login-bottom-switch {
+            text-align: center;
+            margin-top: 16px;
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+
+        .login-bottom-switch a {
+            color: #8b5cf6;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Right Side: Wavy Purple Gradient Banner */
+        .login-banner-side {
+            display: none;
+            flex: 1;
+            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+            position: relative;
+            overflow: hidden;
+            padding: 48px;
+            color: white;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        @media (min-width: 768px) {
+            .login-banner-side {
+                display: flex;
+            }
+        }
+
+        /* SVG Wavy Mask border divider effect matching visual layout */
+        .login-banner-side::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100px;
+            width: 150px;
+            height: 100%;
+            background: #ffffff;
+            border-radius: 0 100% 100% 0 / 0 50% 50% 0;
+            box-shadow: inset -10px 0 20px rgba(0,0,0,0.05);
+        }
+
+        .login-banner-content h3 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            letter-spacing: -0.02em;
+        }
+
+        .login-banner-content p {
+            font-size: 0.8rem;
+            line-height: 1.5;
+            color: rgba(255, 255, 255, 0.85);
+            max-width: 280px;
+        }
+
+        /* Staff list picker dropdown inside form */
+        .staff-quick-picker {
+            margin-top: 16px;
+            max-height: 120px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding-right: 4px;
+        }
+
+        .staff-picker-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .staff-picker-item:hover {
+            background: #ede9fe;
+            border-color: #8b5cf6;
+            color: #6d28d9;
+        }
     </style>
 </head>
 <body>
@@ -1170,65 +1409,62 @@
     </div>
 </div>
 
-<!-- REDESIGNED BEAUTIFUL LOGIN OVERLAY -->
-<div id="loginOverlay" class="overlay" style="display: flex; background: rgba(15, 23, 42, 0.55); backdrop-filter: blur(8px);">
-    <div class="dialog-card" style="max-width: 380px; border-radius: 16px; padding: 18px;">
+<!-- REDESIGNED LOGIN OVERLAY MATCHING REFERENCE IMAGE -->
+<div id="loginOverlay" class="overlay" style="display: flex;">
+    <div class="login-card-container">
         
-        <!-- Header Branding -->
-        <div style="text-align: center; margin-bottom: 14px;">
-            <div style="font-size: 2rem; margin-bottom: 4px;">📦</div>
-            <h2 style="font-size: 1.1rem; font-weight: 800; color: #0f172a; letter-spacing: -0.02em;">Gear Control Portal</h2>
-            <p style="color: var(--text-muted); font-size: 0.75rem; margin-top: 2px;">Choose your profile to sign in</p>
-        </div>
+        <!-- Left Section: Interactive Form inputs -->
+        <div class="login-form-side">
+            <div class="login-title-area">
+                <h2 id="loginMainHeading">Hello!</h2>
+                <p id="loginSubHeading">Sign in to your account</p>
+            </div>
 
-        <!-- Admin Profile Button Option -->
-        <div class="role-option" onclick="showAdminPasswordInput()" style="display: flex; align-items: center; justify-content: space-between; background: var(--bg); border-left: 4px solid #8b5cf6; padding: 10px 12px; border-radius: 10px; cursor: pointer;">
-            <div style="display: flex; align-items: center; gap: 8px;">
-                <span style="font-size: 0.95rem;">👑</span>
-                <div>
-                    <strong style="display: block; font-size: 0.8rem; color: #0f172a;">Administrator Profile</strong>
-                    <span style="font-size: 0.6rem; color: var(--text-muted);">Full system & security controls</span>
+            <!-- Primary Unified Login Form (Works for Admin & Staff via credentials or quick pick) -->
+            <div id="unifiedLoginForm">
+                <div class="login-input-wrap">
+                    <span class="login-input-icon">✉️</span>
+                    <input type="text" id="loginUserInput" placeholder="Username, Staff ID, or E-mail" value="Administrator" onkeypress="handleLoginEnterKey(event)">
+                </div>
+
+                <div class="login-input-wrap">
+                    <span class="login-input-icon">🔒</span>
+                    <input type="password" id="loginPasswordInput" placeholder="Password" value="admin123" onkeypress="handleLoginEnterKey(event)">
+                    <span class="login-input-eye" onclick="togglePasswordVisibility()">👁️</span>
+                </div>
+
+                <div class="login-meta-row">
+                    <label>
+                        <input type="checkbox" id="rememberMeCheck" style="accent-color: #8b5cf6;"> Remember me
+                    </label>
+                    <a href="#" onclick="openForgotPasswordModal(); return false;">Forgot password?</a>
+                </div>
+
+                <button type="button" class="login-submit-btn" onclick="executeCustomLogin()">SIGN IN</button>
+                <div id="customLoginError" style="color: var(--danger); font-size: 0.7rem; margin-top: 6px; font-weight: bold; text-align: center;"></div>
+
+                <div class="login-bottom-switch">
+                    Don't have an account? <a href="#" onclick="switchTab('users-tab'); closeLoginModal(); return false;">Create</a>
+                </div>
+
+                <!-- Quick Profile Select List -->
+                <div style="margin-top: 14px; border-top: 1px solid #e2e8f0; padding-top: 10px;">
+                    <div style="font-size: 0.65rem; color: #64748b; font-weight: 700; text-transform: uppercase; margin-bottom: 6px;">Quick Staff Operators:</div>
+                    <div class="staff-quick-picker" id="loginUserList">
+                        <!-- Populated dynamically -->
+                    </div>
                 </div>
             </div>
-            <span class="role-pill role-admin" style="font-size: 0.55rem;">Secure</span>
         </div>
 
-        <!-- Admin Password Box (Hidden by default) -->
-        <div id="adminPassBox" style="display: none; margin-top: 10px; padding: 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; text-align: left; box-shadow: var(--neu-inset);">
-            <label style="font-size: 0.65rem; font-weight: 700; color: var(--text-dark); text-transform: uppercase; display: block; margin-bottom: 3px;">Admin Passcode</label>
-            <input type="password" id="adminPasswordInput" placeholder="Enter admin password..." style="width: 100%; padding: 7px 9px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.8rem; background: var(--bg); color: var(--text-dark); box-shadow: var(--neu-inset);" onkeypress="handleAdminLoginKey(event)">
-            
-            <div style="display: flex; gap: 6px; margin-top: 6px;">
-                <button class="btn btn-sm btn-primary" style="flex: 2;" onclick="validateAdminPassword()">Sign In</button>
-                <button class="btn btn-sm btn-secondary" style="flex: 1;" onclick="cancelAdminPasswordPrompt()">Cancel</button>
+        <!-- Right Section: Wavy Gradient Decorative Banner -->
+        <div class="login-banner-side">
+            <div class="login-banner-content">
+                <h3>Welcome Back!</h3>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pharetra magna nisl, at posuere sem dapibus sed.</p>
             </div>
-
-            <div style="text-align: right; margin-top: 4px;">
-                <a href="#" onclick="openForgotPasswordModal(); return false;" style="font-size: 0.65rem; color: var(--primary); text-decoration: underline; font-weight: 600;">Forgot Password?</a>
-            </div>
-            <div id="loginError" style="color: var(--danger); font-size: 0.65rem; margin-top: 3px; font-weight: bold;"></div>
         </div>
 
-        <!-- Staff Password Box (Hidden by default) -->
-        <div id="staffPassBox" style="display: none; margin-top: 10px; padding: 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; text-align: left; box-shadow: var(--neu-inset);">
-            <label style="font-size: 0.65rem; font-weight: 700; color: var(--primary); text-transform: uppercase; display: block; margin-bottom: 3px;" id="staffPromptLabel">Staff Password</label>
-            <input type="password" id="staffPasswordInput" placeholder="Enter your staff password..." style="width: 100%; padding: 7px 9px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.8rem; background: var(--bg); color: var(--text-dark); box-shadow: var(--neu-inset);" onkeypress="handleStaffLoginKey(event)">
-            
-            <div style="display: flex; gap: 6px; margin-top: 6px;">
-                <button class="btn btn-sm btn-primary" style="flex: 2;" onclick="validateStaffPassword()">Verify & Login</button>
-                <button class="btn btn-sm btn-secondary" style="flex: 1;" onclick="cancelStaffPasswordPrompt()">Cancel</button>
-            </div>
-            <div id="staffLoginError" style="color: var(--danger); font-size: 0.65rem; margin-top: 3px; font-weight: bold;"></div>
-        </div>
-
-        <!-- Staff Profiles Section Header -->
-        <div style="margin: 12px 0 6px 0; font-size: 0.65rem; color: var(--text-dark); font-weight: 800; text-align: left; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 6px;">
-            <span>Staff Operators</span>
-            <div style="flex: 1; height: 1px; background: var(--border);"></div>
-        </div>
-
-        <!-- Beautiful Grid Container for Staff Profiles -->
-        <div id="loginUserList" style="max-height: 160px; overflow-y: auto; padding-right: 4px; display: flex; flex-direction: column; gap: 6px;"></div>
     </div>
 </div>
 
@@ -1551,7 +1787,6 @@
     let pendingConfirmCallback = null;
     let allowManualCheckout = SafeStorage.getItem('appAllowManualCheckout') === 'true';
     let currentBarcodePrintMeta = { barcode: '', name: '' };
-    let pendingStaffLoginProfile = null;
     let activeDetailModalLogId = null;
 
     function showConfirmationModal({ title, message, icon = '⚠️', confirmBtnText = 'Confirm', confirmBtnClass = 'btn-primary', onConfirm }) {
@@ -1709,7 +1944,6 @@
 
     let gearLogs = JSON.parse(SafeStorage.getItem('gearDashboardLogs')) || [];
     
-    // Automatically purge returned entries older than 30 days
     const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
     gearLogs = gearLogs.filter(log => {
         if (log.status === 'RETURNED') {
@@ -1838,7 +2072,6 @@
         const encodedMessage = encodeURIComponent(message);
         const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
         
-        // Opens WhatsApp in a new browser tab
         window.open(whatsappUrl, '_blank');
     }
 
@@ -1861,65 +2094,72 @@
         if (!container) return;
         
         container.innerHTML = userProfiles.map(u => `
-            <div class="role-option" onclick="promptStaffPassword('${u.name}', '${u.mobile || ''}')" style="display: flex; align-items: center; justify-content: space-between; background: var(--bg); border: 1px solid var(--border); padding: 10px 14px; border-radius: 10px; margin-bottom: 6px; cursor: pointer; box-shadow: var(--neu-shadow-sm);">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <span style="font-size: 1rem;">👤</span>
-                    <div>
-                        <strong style="display: block; font-size: 0.8rem; color: #0f172a;">${u.name}</strong>
-                        <span style="font-size: 0.65rem; color: var(--text-muted);">ID: ${u.id}</span>
-                    </div>
+            <div class="staff-picker-item" onclick="selectStaffQuickLogin('${u.name}', '${u.password || 'password123'}', '${u.mobile || ''}')">
+                <div>
+                    <strong>${u.name}</strong> <span style="color:#64748b;">(ID: ${u.id})</span>
                 </div>
-                <span class="role-pill role-user" style="font-size: 0.6rem;">Staff</span>
+                <span class="role-pill role-user" style="font-size: 0.55rem;">Select</span>
             </div>
         `).join('');
     }
 
-    function promptStaffPassword(name, mobile) {
-        pendingStaffLoginProfile = { name, mobile };
-        document.getElementById('adminPassBox').style.display = 'none';
-        document.getElementById('staffPromptLabel').innerText = `PASSWORD FOR ${name.toUpperCase()}`;
-        document.getElementById('staffPasswordInput').value = '';
-        document.getElementById('staffLoginError').innerText = '';
-        document.getElementById('staffPassBox').style.display = 'block';
-        document.getElementById('staffPasswordInput').focus();
+    function selectStaffQuickLogin(name, pass, mobile) {
+        document.getElementById('loginUserInput').value = name;
+        document.getElementById('loginPasswordInput').value = pass;
+        executeCustomLogin();
     }
 
-    function cancelStaffPasswordPrompt() {
-        pendingStaffLoginProfile = null;
-        document.getElementById('staffPassBox').style.display = 'none';
-        document.getElementById('staffPasswordInput').value = '';
+    function togglePasswordVisibility() {
+        const passInput = document.getElementById('loginPasswordInput');
+        passInput.type = passInput.type === 'password' ? 'text' : 'password';
     }
 
-    function validateStaffPassword() {
-        if (!pendingStaffLoginProfile) return;
-        const enteredPass = document.getElementById('staffPasswordInput').value;
-        const profile = userProfiles.find(u => u.name === pendingStaffLoginProfile.name);
-        
-        const requiredPass = profile && profile.password ? profile.password : 'password123';
-
-        if (enteredPass === requiredPass) {
-            document.getElementById('staffLoginError').innerText = '';
-            document.getElementById('staffPasswordInput').value = '';
-            document.getElementById('staffPassBox').style.display = 'none';
-            const tempProfile = pendingStaffLoginProfile;
-            pendingStaffLoginProfile = null;
-            selectProfile('user', tempProfile.name, tempProfile.mobile);
-        } else {
-            document.getElementById('staffLoginError').innerText = 'Incorrect Password!';
-        }
-    }
-
-    function handleStaffLoginKey(e) {
+    function handleLoginEnterKey(e) {
         if (e.key === 'Enter') {
             e.preventDefault();
-            validateStaffPassword();
+            executeCustomLogin();
         }
     }
 
-    function cancelAdminPasswordPrompt() {
-        document.getElementById('adminPassBox').style.display = 'none';
-        document.getElementById('adminPasswordInput').value = '';
-        document.getElementById('loginError').innerText = '';
+    function executeCustomLogin() {
+        const inputVal = document.getElementById('loginUserInput').value.trim();
+        const passVal = document.getElementById('loginPasswordInput').value;
+        const errorDiv = document.getElementById('customLoginError');
+        errorDiv.innerText = '';
+
+        if (!inputVal) {
+            errorDiv.innerText = 'Please enter a username or email.';
+            return;
+        }
+
+        const adminName = SafeStorage.getItem('appAdminDisplayName') || 'Administrator';
+        const adminPass = SafeStorage.getItem('appAdminPassword') || 'admin123';
+
+        if (inputVal.toLowerCase() === 'admin' || inputVal.toLowerCase() === adminName.toLowerCase() || inputVal.toLowerCase().includes('admin')) {
+            if (passVal === adminPass) {
+                selectProfile('admin', adminName, '');
+            } else {
+                errorDiv.innerText = 'Incorrect administrator password!';
+            }
+            return;
+        }
+
+        // Search staff profiles by name or ID
+        const matchedStaff = userProfiles.find(u => 
+            u.name.toLowerCase() === inputVal.toLowerCase() || 
+            u.id.toLowerCase() === inputVal.toLowerCase()
+        );
+
+        if (matchedStaff) {
+            const staffPass = matchedStaff.password || 'password123';
+            if (passVal === staffPass) {
+                selectProfile('user', matchedStaff.name, matchedStaff.mobile || '');
+            } else {
+                errorDiv.innerText = 'Incorrect staff password!';
+            }
+        } else {
+            errorDiv.innerText = 'User account not found!';
+        }
     }
 
     function selectProfile(role, name, mobile) {
@@ -2533,7 +2773,6 @@
             closeDashboardCheckinModal();
             renderDashboard();
 
-            // Trigger WhatsApp share popup for return completion, then switch to Active Shoots
             shareLogOnWhatsApp(log.id);
             switchTab('dashboard-tab');
         } else {
@@ -2571,7 +2810,6 @@
                 closeDashboardCheckinModal();
                 renderDashboard();
 
-                // Trigger WhatsApp share popup for force-return completion, then switch to Active Shoots
                 shareLogOnWhatsApp(log.id);
                 switchTab('dashboard-tab');
             }
@@ -2986,7 +3224,6 @@
             if (log.status === 'RETURNED') totalReturned++;
         });
 
-        // 1. ACTIVE SHOOTS TABLE (Only OUT ON SHOOT)
         const visibleLogs = allUserLogs.filter(log => log.status === 'OUT ON SHOOT');
 
         if (visibleLogs.length === 0) {
@@ -3048,7 +3285,6 @@
                     `;
                 }
 
-                // Admins get manual return button; Users get barcode scan return button
                 const returnButton = log.status === 'OUT ON SHOOT' ? (
                     currentRole === 'admin' 
                         ? `<button class="btn btn-sm btn-success" onclick="openDashboardCheckinModal(${log.id})">↩ Return</button>`
@@ -3090,7 +3326,6 @@
             }).join('');
         }
 
-        // 2. HISTORY LOGS TABLE (Only RETURNED entries)
         if (historyTbody) {
             const historyLogs = allUserLogs.filter(log => log.status === 'RETURNED');
             if (historyLogs.length === 0) {
@@ -3159,7 +3394,6 @@
         statusTag.innerText = record.status;
         statusTag.className = `status-tag ${record.status === 'RETURNED' ? 'status-returned' : 'status-out'}`;
 
-        // Show scan return button in details modal for users when active
         const scanReturnBtn = document.getElementById('modalScanReturnBtn');
         if (scanReturnBtn) {
             scanReturnBtn.style.display = (record.status === 'OUT ON SHOOT') ? 'inline-flex' : 'none';
@@ -3201,26 +3435,6 @@
         document.getElementById('detailModal').style.display = 'none';
     }
 
-    function showAdminPasswordInput() {
-        document.getElementById('staffPassBox').style.display = 'none';
-        document.getElementById('adminPassBox').style.display = 'block';
-        document.getElementById('adminPasswordInput').focus();
-    }
-
-    function validateAdminPassword() {
-        const enteredPass = document.getElementById('adminPasswordInput').value;
-        const storedPass = SafeStorage.getItem('appAdminPassword') || 'admin123';
-        
-        if (enteredPass === storedPass) {
-            document.getElementById('loginError').innerText = '';
-            document.getElementById('adminPasswordInput').value = '';
-            document.getElementById('adminPassBox').style.display = 'none';
-            selectProfile('admin', 'Administrator', '');
-        } else {
-            document.getElementById('loginError').innerText = 'Incorrect Password!';
-        }
-    }
-
     function openForgotPasswordModal() {
         document.getElementById('recoveryCodeInput').value = '';
         document.getElementById('newResetPassInput').value = '';
@@ -3251,15 +3465,8 @@
         triggerGlobalPasswordResetLogout();
         alert('Admin password has been reset successfully! All active sessions across devices have been logged out.');
         closeForgotPasswordModal();
-        document.getElementById('adminPasswordInput').value = '';
-        document.getElementById('loginError').innerText = '';
-    }
-
-    function handleAdminLoginKey(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            validateAdminPassword();
-        }
+        document.getElementById('loginPasswordInput').value = '';
+        document.getElementById('customLoginError').innerText = '';
     }
 
     function switchTab(tabId) {
@@ -3453,7 +3660,6 @@
         
         renderDashboard();
 
-        // Immediately trigger WhatsApp share popup for the new checkout, then switch to Active Shoots
         shareLogOnWhatsApp(newRecordId);
         switchTab('dashboard-tab');
     }
@@ -3461,25 +3667,6 @@
     function formatDateTime(dateStr, timeStr) {
         if (!dateStr && !timeStr) return 'N/A';
         return `${dateStr || ''} ${timeStr || ''}`.trim();
-    }
-
-    function toggleStatus(id) {
-        if (currentRole !== 'admin') return;
-        gearLogs = gearLogs.map(log => {
-            if (log.id === id) {
-                if (log.status === 'OUT ON SHOOT') {
-                    log.status = 'RETURNED';
-                    const now = new Date();
-                    log.actualReturnTimeStamp = now.toLocaleDateString('en-GB') + ', ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                } else {
-                    log.status = 'OUT ON SHOOT';
-                    log.actualReturnTimeStamp = null;
-                }
-            }
-            return log;
-        });
-        SafeStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
-        renderDashboard();
     }
 
     function deleteRecord(id) {
