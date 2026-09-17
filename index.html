@@ -927,7 +927,7 @@
             <div class="content-card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">
                     <h3 style="font-size: 0.85rem;">📦 Live Gears Availability Status</h3>
-                    <input type="text" id="availabilitySearchInput" onkeyup="filterAvailability()" placeholder="Search gear..." style="padding: 5px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.75rem; width: 100%; max-width: 160px; min-height: 32px; box-shadow: var(--neu-inset); background: var(--bg); color: var(--text-dark);">
+                    <input type="text" id="availabilitySearchInput" autocomplete="off" onkeyup="filterAvailability()" placeholder="Search gear..." style="padding: 5px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.75rem; width: 100%; max-width: 160px; min-height: 32px; box-shadow: var(--neu-inset); background: var(--bg); color: var(--text-dark);">
                 </div>
 
                 <div class="table-responsive" style="max-height: 240px;">
@@ -953,7 +953,7 @@
             <div class="content-card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">
                     <h3 style="font-size: 0.85rem;">💾 Live Cards Availability Status</h3>
-                    <input type="text" id="cardAvailabilitySearchInput" onkeyup="filterCardAvailability()" placeholder="Search cards..." style="padding: 5px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.75rem; width: 100%; max-width: 160px; min-height: 32px; box-shadow: var(--neu-inset); background: var(--bg); color: var(--text-dark);">
+                    <input type="text" id="cardAvailabilitySearchInput" autocomplete="off" onkeyup="filterCardAvailability()" placeholder="Search cards..." style="padding: 5px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.75rem; width: 100%; max-width: 160px; min-height: 32px; box-shadow: var(--neu-inset); background: var(--bg); color: var(--text-dark);">
                 </div>
 
                 <div class="table-responsive" style="max-height: 240px;">
@@ -979,7 +979,7 @@
             <div class="content-card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">
                     <h3 style="font-size: 0.85rem;">🎥 Active Equipment Shoots</h3>
-                    <input type="text" id="searchGearInput" onkeyup="filterGearLogs()" placeholder="Search active shoots..." style="padding: 5px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); width: 100%; max-width: 180px; min-height: 32px; box-shadow: var(--neu-inset); background: var(--bg); color: var(--text-dark); font-size: 0.75rem;">
+                    <input type="text" id="searchGearInput" autocomplete="off" onkeyup="filterGearLogs()" placeholder="Search active shoots..." style="padding: 5px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); width: 100%; max-width: 180px; min-height: 32px; box-shadow: var(--neu-inset); background: var(--bg); color: var(--text-dark); font-size: 0.75rem;">
                 </div>
                 
                 <div class="table-responsive">
@@ -1005,7 +1005,7 @@
             <div class="content-card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">
                     <h3 style="font-size: 0.85rem;">💾 Active Memory Cards</h3>
-                    <input type="text" id="searchCardInput" onkeyup="filterCardLogs()" placeholder="Search card shoots..." style="padding: 5px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); width: 100%; max-width: 180px; min-height: 32px; box-shadow: var(--neu-inset); background: var(--bg); color: var(--text-dark); font-size: 0.75rem;">
+                    <input type="text" id="searchCardInput" autocomplete="off" onkeyup="filterCardLogs()" placeholder="Search card shoots..." style="padding: 5px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); width: 100%; max-width: 180px; min-height: 32px; box-shadow: var(--neu-inset); background: var(--bg); color: var(--text-dark); font-size: 0.75rem;">
                 </div>
                 
                 <div class="table-responsive">
@@ -1035,7 +1035,7 @@
             <div class="content-card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">
                     <h3 style="font-size: 0.85rem;">📜 Returned Equipment History</h3>
-                    <input type="text" id="gearHistorySearchInput" onkeyup="filterGearHistoryLogs()" placeholder="Search gear history..." style="padding: 5px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.75rem; width: 100%; max-width: 160px; min-height: 32px; box-shadow: var(--neu-inset); background: var(--bg); color: var(--text-dark);">
+                    <input type="text" id="gearHistorySearchInput" autocomplete="off" onkeyup="filterGearHistoryLogs()" placeholder="Search gear history..." style="padding: 5px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.75rem; width: 100%; max-width: 160px; min-height: 32px; box-shadow: var(--neu-inset); background: var(--bg); color: var(--text-dark);">
                 </div>
 
                 <div class="table-responsive">
@@ -1061,7 +1061,7 @@
             <div class="content-card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">
                     <h3 style="font-size: 0.85rem;">📜 Returned Memory Cards History</h3>
-                    <input type="text" id="cardHistorySearchInput" onkeyup="filterCardHistoryLogs()" placeholder="Search cards history..." style="padding: 5px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.75rem; width: 100%; max-width: 160px; min-height: 32px; box-shadow: var(--neu-inset); background: var(--bg); color: var(--text-dark);">
+                    <input type="text" id="cardHistorySearchInput" autocomplete="off" onkeyup="filterCardHistoryLogs()" placeholder="Search cards history..." style="padding: 5px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.75rem; width: 100%; max-width: 160px; min-height: 32px; box-shadow: var(--neu-inset); background: var(--bg); color: var(--text-dark);">
                 </div>
 
                 <div class="table-responsive">
@@ -1133,14 +1133,14 @@
                     <div class="form-grid">
                         <div class="input-group">
                             <label>Client ID (Auto-Fill)</label>
-                            <input type="text" id="cardClientId" placeholder="Type ID to auto-fill..." oninput="autoFillFromEquipmentBooking(this.value)">
+                            <input type="text" id="cardClientId" autocomplete="off" placeholder="Type ID to auto-fill..." oninput="autoFillFromEquipmentBooking(this.value)">
                         </div>
-                        <div class="input-group"><label>Client Name</label><input type="text" id="cardClientName" required></div>
-                        <div class="input-group"><label>Event Date</label><input type="date" id="cardDate"></div>
-                        <div class="input-group"><label>City/Village/Town</label><input type="text" id="cardPlace"></div>
-                        <div class="input-group"><label>Type Of Event</label><input type="text" id="cardEvent"></div>
-                        <div class="input-group"><label>Client Contact Number</label><input type="tel" id="cardMobileNumber" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></div>
-                        <div class="input-group"><label>Shoot Incharge Name</label><input type="text" id="cardShootIncharge"></div>
+                        <div class="input-group"><label>Client Name</label><input type="text" id="cardClientName" autocomplete="off" required></div>
+                        <div class="input-group"><label>Event Date</label><input type="date" id="cardDate" autocomplete="off"></div>
+                        <div class="input-group"><label>City/Village/Town</label><input type="text" id="cardPlace" autocomplete="off"></div>
+                        <div class="input-group"><label>Type Of Event</label><input type="text" id="cardEvent" autocomplete="off"></div>
+                        <div class="input-group"><label>Client Contact Number</label><input type="tel" id="cardMobileNumber" autocomplete="off" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></div>
+                        <div class="input-group"><label>Shoot Incharge Name</label><input type="text" id="cardShootIncharge" autocomplete="off"></div>
                     </div>
 
                     <div id="cardScannerConsoleTrigger" style="margin-bottom: 10px;">
@@ -1172,8 +1172,8 @@
                 <p style="color: var(--text-muted); font-size: 0.68rem; margin-bottom: 8px;">Register memory cards with auto-generated barcodes, track stock, and print labels.</p>
 
                 <div style="display: flex; gap: 4px; margin-bottom: 14px; flex-wrap: wrap;">
-                    <input type="text" id="newCardName" placeholder="Card name (e.g. SanDisk 128GB V90)..." style="flex: 2; padding: 6px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); min-width: 140px; min-height: 38px; box-shadow: var(--neu-inset); background: var(--bg); color: var(--text-dark); font-size: 0.8rem;">
-                    <input type="number" id="newCardStock" placeholder="Stock (Def: 5)" min="1" style="flex: 1; padding: 6px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); min-width: 90px; min-height: 38px; box-shadow: var(--neu-inset); background: var(--bg); color: var(--text-dark); font-size: 0.8rem;">
+                    <input type="text" id="newCardName" autocomplete="off" placeholder="Card name (e.g. SanDisk 128GB V90)..." style="flex: 2; padding: 6px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); min-width: 140px; min-height: 38px; box-shadow: var(--neu-inset); background: var(--bg); color: var(--text-dark); font-size: 0.8rem;">
+                    <input type="number" id="newCardStock" autocomplete="off" placeholder="Stock (Def: 5)" min="1" style="flex: 1; padding: 6px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); min-width: 90px; min-height: 38px; box-shadow: var(--neu-inset); background: var(--bg); color: var(--text-dark); font-size: 0.8rem;">
                     <button class="btn btn-primary" style="width: 100%; min-height: 38px; font-size: 0.8rem;" onclick="addNewMemoryCardItem()">+ Add Memory Card</button>
                 </div>
 
@@ -1215,13 +1215,13 @@
 
                 <form id="checklistForm">
                     <div class="form-grid">
-                        <div class="input-group"><label>Client Name</label><input type="text" id="clientName" required></div>
-                        <div class="input-group"><label>Client ID</label><input type="text" id="clientId"></div>
-                        <div class="input-group"><label>Event Date</label><input type="date" id="date"></div>
-                        <div class="input-group"><label>City/Village/Town</label><input type="text" id="place"></div>
-                        <div class="input-group"><label>Type Of Event</label><input type="text" id="event"></div>
-                        <div class="input-group"><label>Client Contact Number</label><input type="tel" id="mobileNumber" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></div>
-                        <div class="input-group"><label>Shoot Incharge Name</label><input type="text" id="shootIncharge"></div>
+                        <div class="input-group"><label>Client Name</label><input type="text" id="clientName" autocomplete="off" required></div>
+                        <div class="input-group"><label>Client ID</label><input type="text" id="clientId" autocomplete="off"></div>
+                        <div class="input-group"><label>Event Date</label><input type="date" id="date" autocomplete="off"></div>
+                        <div class="input-group"><label>City/Village/Town</label><input type="text" id="place" autocomplete="off"></div>
+                        <div class="input-group"><label>Type Of Event</label><input type="text" id="event" autocomplete="off"></div>
+                        <div class="input-group"><label>Client Contact Number</label><input type="tel" id="mobileNumber" autocomplete="off" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></div>
+                        <div class="input-group"><label>Shoot Incharge Name</label><input type="text" id="shootIncharge" autocomplete="off"></div>
                     </div>
 
                     <!-- TRIGGER BUTTON FOR NEW BOOKING CHECK-OUT SCANNER -->
@@ -1254,8 +1254,8 @@
                 <p style="color: var(--text-muted); font-size: 0.68rem; margin-bottom: 8px;">Register upcoming equipment inventory with name and default stock.</p>
 
                 <div style="display: flex; gap: 4px; margin-bottom: 14px; flex-wrap: wrap;">
-                    <input type="text" id="newEquipmentName" placeholder="Equipment name..." style="flex: 2; padding: 6px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); min-width: 140px; min-height: 38px; box-shadow: var(--neu-inset); background: var(--bg); color: var(--text-dark); font-size: 0.8rem;">
-                    <input type="number" id="newEquipmentStock" placeholder="Stock (Def: 5)" min="1" style="flex: 1; padding: 6px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); min-width: 90px; min-height: 38px; box-shadow: var(--neu-inset); background: var(--bg); color: var(--text-dark); font-size: 0.8rem;">
+                    <input type="text" id="newEquipmentName" autocomplete="off" placeholder="Equipment name..." style="flex: 2; padding: 6px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); min-width: 140px; min-height: 38px; box-shadow: var(--neu-inset); background: var(--bg); color: var(--text-dark); font-size: 0.8rem;">
+                    <input type="number" id="newEquipmentStock" autocomplete="off" placeholder="Stock (Def: 5)" min="1" style="flex: 1; padding: 6px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); min-width: 90px; min-height: 38px; box-shadow: var(--neu-inset); background: var(--bg); color: var(--text-dark); font-size: 0.8rem;">
                     <button class="btn btn-primary" style="width: 100%; min-height: 38px; font-size: 0.8rem;" onclick="addNewEquipmentItem()">+ Add Equipment</button>
                 </div>
 
@@ -1283,11 +1283,11 @@
             <div class="content-card">
                 <h3 style="font-size: 0.85rem;">Add New Staff Profile</h3>
                 <div class="form-grid" style="margin-top: 6px;">
-                    <div class="input-group"><label>Staff Full Name</label><input type="text" id="newStaffName"></div>
-                    <div class="input-group"><label>Mobile Number</label><input type="tel" id="newStaffMobile" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></div>
-                    <div class="input-group"><label>Staff ID</label><input type="text" id="newStaffId"></div>
-                    <div class="input-group"><label>Team</label><input type="text" id="newStaffTeam"></div>
-                    <div class="input-group"><label>Account Password</label><input type="password" id="newStaffPassword" placeholder="Set user password"></div>
+                    <div class="input-group"><label>Staff Full Name</label><input type="text" id="newStaffName" autocomplete="off"></div>
+                    <div class="input-group"><label>Mobile Number</label><input type="tel" id="newStaffMobile" autocomplete="off" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></div>
+                    <div class="input-group"><label>Staff ID</label><input type="text" id="newStaffId" autocomplete="off"></div>
+                    <div class="input-group"><label>Team</label><input type="text" id="newStaffTeam" autocomplete="off"></div>
+                    <div class="input-group"><label>Account Password</label><input type="password" id="newStaffPassword" autocomplete="off" placeholder="Set user password"></div>
                 </div>
                 <button class="btn btn-primary" style="width: 100%;" onclick="createNewUserProfile()">Create Profile</button>
             </div>
@@ -1322,10 +1322,10 @@
                 <p style="color: var(--text-muted); font-size: 0.65rem; margin-bottom: 8px;">Update display credentials and secure authorization password.</p>
 
                 <div class="form-grid">
-                    <div class="input-group"><label>Admin Display Name</label><input type="text" id="adminDisplayNameInput" placeholder="Administrator"></div>
-                    <div class="input-group"><label>Current Password</label><input type="password" id="adminCurrentPassInput" placeholder="Current pass"></div>
-                    <div class="input-group"><label>New Password</label><input type="password" id="adminNewPassInput" placeholder="New pass"></div>
-                    <div class="input-group"><label>Confirm Password</label><input type="password" id="adminConfirmPassInput" placeholder="Confirm pass"></div>
+                    <div class="input-group"><label>Admin Display Name</label><input type="text" id="adminDisplayNameInput" autocomplete="off" placeholder="Administrator"></div>
+                    <div class="input-group"><label>Current Password</label><input type="password" id="adminCurrentPassInput" autocomplete="off" placeholder="Current pass"></div>
+                    <div class="input-group"><label>New Password</label><input type="password" id="adminNewPassInput" autocomplete="off" placeholder="New pass"></div>
+                    <div class="input-group"><label>Confirm Password</label><input type="password" id="adminConfirmPassInput" autocomplete="off" placeholder="Confirm pass"></div>
                 </div>
                 <button class="btn btn-primary" style="width: 100%; padding: 6px;" onclick="updateAdminProfileCredentials()">💾 Save Admin Security Settings</button>
             </div>
@@ -1404,6 +1404,69 @@
     </button>
 </nav>
 
+<!-- EQUIPMENT DETAIL VIEW MODAL -->
+<div id="detailModal" class="overlay" style="display: none;">
+    <div class="dialog-card">
+        <div class="detail-header">
+            <div>
+                <h3 id="detailClientName" style="font-size: 0.95rem;">Client Name</h3>
+                <span id="detailStatusTag" class="status-tag status-out">OUT ON SHOOT</span>
+            </div>
+            <button class="btn btn-secondary btn-sm no-print" onclick="closeDetailModal()">✕ Close</button>
+        </div>
+
+        <div class="detail-grid">
+            <div class="detail-item"><span>Client ID</span><strong id="detailClientId">-</strong></div>
+            <div class="detail-item"><span>Event / Place</span><strong id="detailEventPlace">-</strong></div>
+            <div class="detail-item"><span>Shoot Incharge</span><strong id="detailIncharge">-</strong></div>
+            <div class="detail-item"><span>Contact</span><strong id="detailMobile">-</strong></div>
+            <div class="detail-item"><span>Time Out</span><strong id="detailTimeOut">-</strong></div>
+            <div class="detail-item"><span>Time In</span><strong id="detailTimeIn">-</strong></div>
+            <div class="detail-item"><span>Logged By</span><strong id="detailCreatedBy">-</strong></div>
+        </div>
+
+        <h4 style="margin-bottom: 4px; font-size: 0.75rem;">Dispatched Equipment List (Currently Out)</h4>
+        <div class="table-responsive" style="max-height: 110px; margin-bottom: 8px;">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 28px; text-align: center;">S.No</th>
+                        <th>Barcode</th>
+                        <th>Item Name</th>
+                        <th style="width: 50px; text-align: center;">Qty</th>
+                    </tr>
+                </thead>
+                <tbody id="detailItemsTableBody">
+                    <!-- Populated dynamically -->
+                </tbody>
+            </table>
+        </div>
+
+        <h4 style="margin-bottom: 4px; font-size: 0.75rem; color: var(--success);">↩ Returned Equipment History</h4>
+        <div class="table-responsive" style="max-height: 110px; margin-bottom: 10px;">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 28px; text-align: center;">S.No</th>
+                        <th>Item Name</th>
+                        <th style="width: 50px; text-align: center;">Qty</th>
+                        <th>Timestamp</th>
+                    </tr>
+                </thead>
+                <tbody id="detailReturnHistoryTableBody">
+                    <!-- Populated dynamically -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="actions-bar no-print">
+            <button class="btn btn-sm btn-success" id="modalScanReturnBtn" onclick="openScanReturnFromDetail()" style="display: none;">↩ Scan Return</button>
+            <button class="btn" style="background: #25d366; color: white; padding: 6px 12px; font-size: 0.72rem;" onclick="shareActiveModalOnWhatsApp()">💬 Share on WhatsApp</button>
+            <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.72rem;" onclick="window.print()">🖨️ Print Sheet</button>
+        </div>
+    </div>
+</div>
+
 <!-- CARD CHECKOUT BARCODE SCANNER MODAL -->
 <div id="cardCheckoutScannerModalOverlay" class="overlay" style="display: none;">
     <div class="scanner-card" style="max-width: 440px;">
@@ -1416,7 +1479,7 @@
         </div>
 
         <div style="margin: 8px 0;">
-            <input type="text" id="cardCheckoutBarcodeListener" placeholder="Scan memory card barcode..." style="width: 100%; padding: 8px; border-radius: var(--radius-sm); border: 2px solid var(--primary); background: #1e293b; color: #60a5fa; font-size: 0.85rem; font-weight: bold;" onkeypress="handleCardCheckoutBarcodeScanner(event)" autofocus>
+            <input type="text" id="cardCheckoutBarcodeListener" autocomplete="off" placeholder="Scan memory card barcode..." style="width: 100%; padding: 8px; border-radius: var(--radius-sm); border: 2px solid var(--primary); background: #1e293b; color: #60a5fa; font-size: 0.85rem; font-weight: bold;" onkeypress="handleCardCheckoutBarcodeScanner(event)" autofocus>
         </div>
 
         <div class="scan-terminal" id="cardCheckoutTerminalLog">> Scanner ready for card check-out...</div>
@@ -1437,7 +1500,7 @@
         </div>
 
         <div style="margin: 8px 0;">
-            <input type="text" id="cardCheckinListener" placeholder="Scan card barcode to return..." style="width: 100%; padding: 8px; border-radius: var(--radius-sm); border: 2px solid var(--success); background: #1e293b; color: #34d399; font-size: 0.85rem; font-weight: bold;" onkeypress="handleCardCheckinScanner(event)" autofocus>
+            <input type="text" id="cardCheckinListener" autocomplete="off" placeholder="Scan card barcode to return..." style="width: 100%; padding: 8px; border-radius: var(--radius-sm); border: 2px solid var(--success); background: #1e293b; color: #34d399; font-size: 0.85rem; font-weight: bold;" onkeypress="handleCardCheckinScanner(event)" autofocus>
         </div>
 
         <h4 style="margin: 4px 0 2px 0; color: #94a3b8; font-size: 0.68rem;">Cards Remaining Out:</h4>
@@ -1536,7 +1599,7 @@
         
         <div class="input-group" style="margin-bottom: 14px;">
             <label>Note / Details</label>
-            <input type="text" id="cardNoteInput" placeholder="e.g. footage is wedding" onkeypress="handleCardNoteKey(event)">
+            <input type="text" id="cardNoteInput" autocomplete="off" placeholder="e.g. footage is wedding" onkeypress="handleCardNoteKey(event)">
         </div>
         
         <div style="display: flex; gap: 6px; justify-content: center;">
@@ -1603,7 +1666,7 @@
         <!-- Admin Password Box (Hidden by default) -->
         <div id="adminPassBox" style="display: none; margin-top: 10px; padding: 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; text-align: left; box-shadow: var(--neu-inset);">
             <label style="font-size: 0.65rem; font-weight: 700; color: var(--text-dark); text-transform: uppercase; display: block; margin-bottom: 3px;">Admin Passcode</label>
-            <input type="password" id="adminPasswordInput" placeholder="Enter admin password..." style="width: 100%; padding: 7px 9px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.8rem; background: var(--bg); color: var(--text-dark); box-shadow: var(--neu-inset);" onkeypress="handleAdminLoginKey(event)">
+            <input type="password" id="adminPasswordInput" autocomplete="off" placeholder="Enter admin password..." style="width: 100%; padding: 7px 9px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.8rem; background: var(--bg); color: var(--text-dark); box-shadow: var(--neu-inset);" onkeypress="handleAdminLoginKey(event)">
             
             <div style="display: flex; gap: 6px; margin-top: 6px;">
                 <button class="btn btn-sm btn-primary" style="flex: 2;" onclick="validateAdminPassword()">Sign In</button>
@@ -1619,7 +1682,7 @@
         <!-- Staff Password Box (Hidden by default) -->
         <div id="staffPassBox" style="display: none; margin-top: 10px; padding: 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; text-align: left; box-shadow: var(--neu-inset);">
             <label style="font-size: 0.65rem; font-weight: 700; color: var(--primary); text-transform: uppercase; display: block; margin-bottom: 3px;" id="staffPromptLabel">Staff Password</label>
-            <input type="password" id="staffPasswordInput" placeholder="Enter your staff password..." style="width: 100%; padding: 7px 9px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.8rem; background: var(--bg); color: var(--text-dark); box-shadow: var(--neu-inset);" onkeypress="handleStaffLoginKey(event)">
+            <input type="password" id="staffPasswordInput" autocomplete="off" placeholder="Enter your staff password..." style="width: 100%; padding: 7px 9px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.8rem; background: var(--bg); color: var(--text-dark); box-shadow: var(--neu-inset);" onkeypress="handleStaffLoginKey(event)">
             
             <div style="display: flex; gap: 6px; margin-top: 6px;">
                 <button class="btn btn-sm btn-primary" style="flex: 2;" onclick="validateStaffPassword()">Verify & Login</button>
@@ -1650,12 +1713,12 @@
         
         <div class="input-group" style="margin-bottom: 8px;">
             <label>Recovery Passcode</label>
-            <input type="password" id="recoveryCodeInput" placeholder="Enter recovery key">
+            <input type="password" id="recoveryCodeInput" autocomplete="off" placeholder="Enter recovery key">
         </div>
 
         <div class="input-group" style="margin-bottom: 12px;">
             <label>New Admin Password</label>
-            <input type="password" id="newResetPassInput" placeholder="At least 4 characters">
+            <input type="password" id="newResetPassInput" autocomplete="off" placeholder="At least 4 characters">
         </div>
 
         <button class="btn btn-primary" style="width: 100%; padding: 6px;" onclick="executePasswordReset()">Reset Password</button>
@@ -1675,7 +1738,7 @@
         </div>
 
         <div style="margin: 8px 0;">
-            <input type="text" id="checkoutBarcodeListener" placeholder="Ready to scan barcodes..." style="width: 100%; padding: 8px; border-radius: var(--radius-sm); border: 2px solid var(--primary); background: #1e293b; color: #60a5fa; font-size: 0.85rem; font-weight: bold;" onkeypress="handleCheckoutBarcodeScanner(event)" autofocus>
+            <input type="text" id="checkoutBarcodeListener" autocomplete="off" placeholder="Ready to scan barcodes..." style="width: 100%; padding: 8px; border-radius: var(--radius-sm); border: 2px solid var(--primary); background: #1e293b; color: #60a5fa; font-size: 0.85rem; font-weight: bold;" onkeypress="handleCheckoutBarcodeScanner(event)" autofocus>
         </div>
 
         <div class="scan-terminal" id="checkoutTerminalLog">> Handheld scanner ready for booking check-out...</div>
@@ -1696,7 +1759,7 @@
         </div>
 
         <div style="margin: 8px 0;">
-            <input type="text" id="dashboardCheckinListener" placeholder="Scan item barcode to return..." style="width: 100%; padding: 8px; border-radius: var(--radius-sm); border: 2px solid var(--success); background: #1e293b; color: #34d399; font-size: 0.85rem; font-weight: bold;" onkeypress="handleDashboardCheckinScanner(event)" autofocus>
+            <input type="text" id="dashboardCheckinListener" autocomplete="off" placeholder="Scan item barcode to return..." style="width: 100%; padding: 8px; border-radius: var(--radius-sm); border: 2px solid var(--success); background: #1e293b; color: #34d399; font-size: 0.85rem; font-weight: bold;" onkeypress="handleDashboardCheckinScanner(event)" autofocus>
         </div>
 
         <h4 style="margin: 4px 0 2px 0; color: #94a3b8; font-size: 0.68rem;">Checked-Out Items Remaining:</h4>
@@ -1719,69 +1782,6 @@
         
         <div class="actions-bar" style="margin-top: 8px;" id="forceReturnBarContainer">
             <!-- Force return all button appears here for admins only -->
-        </div>
-    </div>
-</div>
-
-<!-- CARD DETAIL VIEW MODAL -->
-<div id="cardDetailModal" class="overlay" style="display: none;">
-    <div class="dialog-card">
-        <div class="detail-header">
-            <div>
-                <h3 id="cardDetailClientName" style="font-size: 0.95rem;">Client Name</h3>
-                <span id="cardDetailStatusTag" class="status-tag status-out">OUT ON SHOOT</span>
-            </div>
-            <button class="btn btn-secondary btn-sm no-print" onclick="closeCardDetailModal()">✕ Close</button>
-        </div>
-
-        <div class="detail-grid">
-            <div class="detail-item"><span>Client ID</span><strong id="cardDetailClientId">-</strong></div>
-            <div class="detail-item"><span>Event / Place</span><strong id="cardDetailEventPlace">-</strong></div>
-            <div class="detail-item"><span>Shoot Incharge</span><strong id="cardDetailIncharge">-</strong></div>
-            <div class="detail-item"><span>Contact</span><strong id="cardDetailMobile">-</strong></div>
-            <div class="detail-item"><span>Time Out</span><strong id="cardDetailTimeOut">-</strong></div>
-            <div class="detail-item"><span>Time In</span><strong id="cardDetailTimeIn">-</strong></div>
-            <div class="detail-item"><span>Logged By</span><strong id="cardDetailCreatedBy">-</strong></div>
-        </div>
-
-        <h4 style="margin-bottom: 4px; font-size: 0.75rem;">Dispatched Cards List (Currently Out)</h4>
-        <div class="table-responsive" style="max-height: 110px; margin-bottom: 8px;">
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 28px; text-align: center;">S.No</th>
-                        <th>Barcode</th>
-                        <th>Card Name</th>
-                        <th style="width: 50px; text-align: center;">Qty</th>
-                    </tr>
-                </thead>
-                <tbody id="cardDetailItemsTableBody">
-                    <!-- Populated dynamically -->
-                </tbody>
-            </table>
-        </div>
-
-        <h4 style="margin-bottom: 4px; font-size: 0.75rem; color: var(--success);">↩ Returned Card History</h4>
-        <div class="table-responsive" style="max-height: 110px; margin-bottom: 10px;">
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 28px; text-align: center;">S.No</th>
-                        <th>Card Name</th>
-                        <th style="width: 50px; text-align: center;">Qty</th>
-                        <th>Note / Footage</th>
-                        <th>Timestamp</th>
-                    </tr>
-                </thead>
-                <tbody id="cardDetailReturnHistoryTableBody">
-                    <!-- Populated dynamically -->
-                </tbody>
-            </table>
-        </div>
-
-        <div class="actions-bar no-print">
-            <button class="btn" style="background: #25d366; color: white; padding: 6px 12px; font-size: 0.72rem;" onclick="shareCardModalOnWhatsApp()">💬 Share on WhatsApp</button>
-            <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.72rem;" onclick="window.print()">🖨️ Print Sheet</button>
         </div>
     </div>
 </div>
@@ -2033,10 +2033,21 @@
     }
 
     function autoFillFromEquipmentBooking(clientIdQuery) {
-        if (!clientIdQuery || !clientIdQuery.trim()) return;
-        const query = clientIdQuery.trim().toLowerCase();
+        const query = clientIdQuery ? clientIdQuery.trim().toLowerCase() : '';
+        
+        // If cleared or empty, clear all auto-filled entry fields
+        if (!query) {
+            document.getElementById('cardClientName').value = '';
+            document.getElementById('cardDate').value = '';
+            document.getElementById('cardPlace').value = '';
+            document.getElementById('cardEvent').value = '';
+            document.getElementById('cardMobileNumber').value = '';
+            document.getElementById('cardShootIncharge').value = '';
+            return;
+        }
 
-        const match = gearLogs.find(log => log.clientId && log.clientId.toLowerCase().includes(query));
+        // Match only full Client ID
+        const match = gearLogs.find(log => log.clientId && log.clientId.toLowerCase() === query);
         if (match) {
             document.getElementById('cardClientName').value = match.clientName || '';
             document.getElementById('cardDate').value = match.date || '';
@@ -4168,7 +4179,7 @@
         }).join('');
     }
 
-    // --- REPLACED RENDER DASHBOARD & SEPARATE SECTIONS VIEW ---
+    // --- RENDER DASHBOARD & SEPARATE SECTIONS VIEW ---
     function renderDashboard() {
         renderEquipmentAvailability();
         renderCardAvailability();
