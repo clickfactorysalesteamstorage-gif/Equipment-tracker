@@ -920,7 +920,7 @@
             </div>
         </div>
 
-        <!-- TAB 1: UNIFIED DASHBOARD (SEPARATE SECTIONS FOR ACTIVE SHOOTS & ACTIVE CARDS) -->
+        <!-- TAB 1: UNIFIED DASHBOARD -->
         <div id="dashboard-tab" class="tab-content active">
             
             <!-- LIVE EQUIPMENT AVAILABILITY PANEL -->
@@ -1028,7 +1028,7 @@
             </div>
         </div>
 
-        <!-- TAB 1.5: HISTORY LOGS (SEPARATE SECTIONS FOR EQUIPMENT & CARDS HISTORY) -->
+        <!-- TAB 1.5: HISTORY LOGS -->
         <div id="history-tab" class="tab-content">
             
             <!-- SECTION 1: RETURNED EQUIPMENT HISTORY -->
@@ -1084,7 +1084,7 @@
             </div>
         </div>
 
-        <!-- TAB: RECYCLE BIN (ADMIN ONLY) -->
+        <!-- TAB: RECYCLE BIN -->
         <div id="recycle-bin-tab" class="tab-content">
             <div class="content-card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">
@@ -1123,7 +1123,6 @@
                     <span class="status-tag status-out" style="font-size: 0.6rem;">CARD CHECK-OUT</span>
                 </div>
 
-                <!-- CARD METHOD TOGGLE (ADMIN ONLY) -->
                 <div id="cardAdminMethodSelector" class="admin-method-toggle" style="display: none;">
                     <button type="button" id="cardScannerModeBtn" class="method-btn active" onclick="setCardEntryMethod('scanner')">🔌 Scanner Entry</button>
                     <button type="button" id="cardManualModeBtn" class="method-btn" onclick="setCardEntryMethod('manual')">✏️ Manual Entry</button>
@@ -1196,7 +1195,7 @@
             </div>
         </div>
 
-        <!-- TAB 2: NEW CHECKOUT ENTRY SHEET (CHECK-OUT ONLY) -->
+        <!-- TAB: NEW CHECKOUT ENTRY SHEET -->
         <div id="new-entry-tab" class="tab-content">
             <div class="content-card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 6px;">
@@ -1207,7 +1206,6 @@
                     <span class="status-tag status-out" style="font-size: 0.6rem;">CHECK-OUT</span>
                 </div>
                 
-                <!-- ADMIN ENTRY METHOD TOGGLE -->
                 <div id="adminMethodSelector" class="admin-method-toggle" style="display: none;">
                     <button type="button" id="adminScannerModeBtn" class="method-btn active" onclick="setAdminEntryMethod('scanner')">🔌 Scanner Entry</button>
                     <button type="button" id="adminManualModeBtn" class="method-btn" onclick="setAdminEntryMethod('manual')">✏️ Manual Entry</button>
@@ -1224,7 +1222,6 @@
                         <div class="input-group"><label>Shoot Incharge Name</label><input type="text" id="shootIncharge" autocomplete="off"></div>
                     </div>
 
-                    <!-- TRIGGER BUTTON FOR NEW BOOKING CHECK-OUT SCANNER -->
                     <div id="scannerConsoleTrigger" style="margin-bottom: 10px;">
                         <button type="button" class="btn btn-primary" style="width: 100%; padding: 8px; font-size: 0.8rem;" onclick="openCheckoutScannerModal()">🔌 Open Barcode Scanner Terminal</button>
                     </div>
@@ -1247,7 +1244,7 @@
             </div>
         </div>
 
-        <!-- TAB 3: ADD UPCOMING EQUIPMENT MASTER (NO BARCODE COLUMN) -->
+        <!-- TAB: ADD UPCOMING EQUIPMENT MASTER -->
         <div id="equipment-tab" class="tab-content">
             <div class="content-card">
                 <h3 style="font-size: 0.85rem;">Add New Upcoming Equipment</h3>
@@ -1278,7 +1275,7 @@
             </div>
         </div>
 
-        <!-- TAB 4: USER PROFILES -->
+        <!-- TAB: USER PROFILES -->
         <div id="users-tab" class="tab-content">
             <div class="content-card">
                 <h3 style="font-size: 0.85rem;">Add New Staff Profile</h3>
@@ -1293,10 +1290,9 @@
             </div>
         </div>
 
-        <!-- TAB 5: FINE-TUNED ADMIN CONTROLS & ACCESS SECURITY -->
+        <!-- TAB: ADMIN CONTROLS -->
         <div id="admin-controls-tab" class="tab-content">
             
-            <!-- PANEL 1: SYSTEM OPERATIONAL CONTROLS -->
             <div class="content-card">
                 <h3 style="margin-bottom: 8px; font-size: 0.85rem;">⚙️ System Operational Controls</h3>
                 
@@ -1316,7 +1312,6 @@
                 </div>
             </div>
 
-            <!-- PANEL 2: ADMIN CREDENTIALS SECURITY -->
             <div class="content-card">
                 <h3 style="margin-bottom: 4px; font-size: 0.85rem;">👑 Administrator Security</h3>
                 <p style="color: var(--text-muted); font-size: 0.65rem; margin-bottom: 8px;">Update display credentials and secure authorization password.</p>
@@ -1330,7 +1325,6 @@
                 <button class="btn btn-primary" style="width: 100%; padding: 6px;" onclick="updateAdminProfileCredentials()">💾 Save Admin Security Settings</button>
             </div>
 
-            <!-- PANEL 2.5: ADMIN RECOVERY KEY MANAGEMENT -->
             <div class="content-card">
                 <h3 style="margin-bottom: 4px; font-size: 0.85rem;">🔑 Admin Recovery Key Management</h3>
                 <p style="color: var(--text-muted); font-size: 0.65rem; margin-bottom: 8px;">Generate or update your account recovery passcode used for password resets.</p>
@@ -1341,7 +1335,6 @@
                 </div>
             </div>
 
-            <!-- PANEL 3: STAFF PERMISSIONS MATRIX -->
             <div class="content-card">
                 <h3 style="margin-bottom: 4px; font-size: 0.85rem;">🛡️ Staff Permissions Matrix</h3>
                 <p style="color: var(--text-muted); font-size: 0.65rem; margin-bottom: 8px;">Assign Full Access or Restricted permissions to active staff members.</p>
@@ -1363,7 +1356,6 @@
                 </div>
             </div>
 
-            <!-- PANEL 4: TECHNICAL SPECIFICATIONS -->
             <div class="content-card" style="background: var(--bg); box-shadow: var(--neu-inset);">
                 <strong style="font-size: 0.75rem;">💻 Technical Specs & Storage Metrics</strong>
                 <div style="margin-top: 4px; color: var(--text-dark); font-size: 0.65rem; line-height: 1.35;">
@@ -1403,6 +1395,23 @@
         <span>Admin</span>
     </button>
 </nav>
+
+<!-- BARCODE PRINT / LABEL PREVIEW MODAL (FIXED MISSING HTML ELEMENT) -->
+<div id="barcodePrintModal" class="overlay" style="display: none;">
+    <div class="dialog-card" style="max-width: 360px; text-align: center;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 6px; margin-bottom: 10px;">
+            <h3 id="printItemName" style="font-size: 0.9rem;">Item Name</h3>
+            <button class="btn btn-secondary btn-sm" onclick="closeBarcodePrintModal()">✕ Close</button>
+        </div>
+        <div style="background: white; padding: 16px; border-radius: var(--radius-sm); display: inline-block; margin-bottom: 12px; box-shadow: var(--neu-shadow-sm);">
+            <svg id="barcodePrintSvg"></svg>
+        </div>
+        <div class="actions-bar no-print" style="justify-content: center; gap: 6px;">
+            <button class="btn btn-secondary btn-sm" onclick="downloadBarcodeAsPNG()">📥 Download PNG</button>
+            <button class="btn btn-primary btn-sm" onclick="window.print()">🖨️ Print Label</button>
+        </div>
+    </div>
+</div>
 
 <!-- EQUIPMENT DETAIL VIEW MODAL -->
 <div id="detailModal" class="overlay" style="display: none;">
@@ -1640,18 +1649,16 @@
     </div>
 </div>
 
-<!-- REDESIGNED BEAUTIFUL LOGIN OVERLAY -->
+<!-- LOGIN OVERLAY -->
 <div id="loginOverlay" class="overlay" style="display: flex; background: rgba(15, 23, 42, 0.55); backdrop-filter: blur(8px);">
     <div class="dialog-card" style="max-width: 380px; border-radius: 16px; padding: 18px;">
         
-        <!-- Header Branding -->
         <div style="text-align: center; margin-bottom: 14px;">
             <div style="font-size: 2rem; margin-bottom: 4px;">📦</div>
             <h2 style="font-size: 1.1rem; font-weight: 800; color: #0f172a; letter-spacing: -0.02em;">Gear Control Portal</h2>
             <p style="color: var(--text-muted); font-size: 0.75rem; margin-top: 2px;">Choose your profile to sign in</p>
         </div>
 
-        <!-- Admin Profile Button Option -->
         <div class="role-option" onclick="showAdminPasswordInput()" style="display: flex; align-items: center; justify-content: space-between; background: var(--bg); border-left: 4px solid #8b5cf6; padding: 10px 12px; border-radius: 10px; cursor: pointer;">
             <div style="display: flex; align-items: center; gap: 8px;">
                 <span style="font-size: 0.95rem;">👑</span>
@@ -1663,7 +1670,6 @@
             <span class="role-pill role-admin" style="font-size: 0.55rem;">Secure</span>
         </div>
 
-        <!-- Admin Password Box (Hidden by default) -->
         <div id="adminPassBox" style="display: none; margin-top: 10px; padding: 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; text-align: left; box-shadow: var(--neu-inset);">
             <label style="font-size: 0.65rem; font-weight: 700; color: var(--text-dark); text-transform: uppercase; display: block; margin-bottom: 3px;">Admin Passcode</label>
             <input type="password" id="adminPasswordInput" autocomplete="off" placeholder="Enter admin password..." style="width: 100%; padding: 7px 9px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.8rem; background: var(--bg); color: var(--text-dark); box-shadow: var(--neu-inset);" onkeypress="handleAdminLoginKey(event)">
@@ -1679,7 +1685,6 @@
             <div id="loginError" style="color: var(--danger); font-size: 0.65rem; margin-top: 3px; font-weight: bold;"></div>
         </div>
 
-        <!-- Staff Password Box (Hidden by default) -->
         <div id="staffPassBox" style="display: none; margin-top: 10px; padding: 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; text-align: left; box-shadow: var(--neu-inset);">
             <label style="font-size: 0.65rem; font-weight: 700; color: var(--primary); text-transform: uppercase; display: block; margin-bottom: 3px;" id="staffPromptLabel">Staff Password</label>
             <input type="password" id="staffPasswordInput" autocomplete="off" placeholder="Enter your staff password..." style="width: 100%; padding: 7px 9px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.8rem; background: var(--bg); color: var(--text-dark); box-shadow: var(--neu-inset);" onkeypress="handleStaffLoginKey(event)">
@@ -1691,13 +1696,11 @@
             <div id="staffLoginError" style="color: var(--danger); font-size: 0.65rem; margin-top: 3px; font-weight: bold;"></div>
         </div>
 
-        <!-- Staff Profiles Section Header -->
         <div style="margin: 12px 0 6px 0; font-size: 0.65rem; color: var(--text-dark); font-weight: 800; text-align: left; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 6px;">
             <span>Staff Operators</span>
             <div style="flex: 1; height: 1px; background: var(--border);"></div>
         </div>
 
-        <!-- Beautiful Grid Container for Staff Profiles -->
         <div id="loginUserList" style="max-height: 160px; overflow-y: auto; padding-right: 4px; display: flex; flex-direction: column; gap: 6px;"></div>
     </div>
 </div>
@@ -2035,7 +2038,6 @@
     function autoFillFromEquipmentBooking(clientIdQuery) {
         const query = clientIdQuery ? clientIdQuery.trim().toLowerCase() : '';
         
-        // If cleared or empty, clear all auto-filled entry fields
         if (!query) {
             document.getElementById('cardClientName').value = '';
             document.getElementById('cardDate').value = '';
@@ -2046,7 +2048,6 @@
             return;
         }
 
-        // Match only full Client ID
         const match = gearLogs.find(log => log.clientId && log.clientId.toLowerCase() === query);
         if (match) {
             document.getElementById('cardClientName').value = match.clientName || '';
@@ -2189,7 +2190,6 @@
         }).join('');
     }
 
-    // --- CARDS CHECK-OUT & CHECK-IN WORKFLOW ---
     function getCurrentlyDispatchedCardsMap(excludingLogId = null) {
         let map = {};
         cardLogs.forEach(log => {
@@ -2599,7 +2599,7 @@
         let currentQty = parseInt(currentItem.qty, 10) || 1;
 
         const cardNote = await promptCardNote(currentItem.name);
-        if (cardNote === null) return; // Cancelled
+        if (cardNote === null) return;
 
         if (!log.returnHistory) log.returnHistory = [];
         const now = new Date();
@@ -2639,7 +2639,7 @@
         const cardsToProcess = [...log.cards];
         for (let c of cardsToProcess) {
             const cardNote = await promptCardNote(c.name);
-            if (cardNote === null) return; // Cancelled partway
+            if (cardNote === null) return;
             log.returnHistory.unshift({ name: c.name, qty: parseInt(c.qty, 10) || 1, note: cardNote.trim(), timestamp: timeStr });
         }
 
@@ -3809,7 +3809,7 @@
     function addNewEquipmentItem() {
         const nameInput = document.getElementById('newEquipmentName');
         const stockInput = document.getElementById('newEquipmentStock');
-        const name = nameInput.value.trim(); // Preserved case
+        const name = nameInput.value.trim();
         const stock = Math.max(1, parseInt(stockInput.value, 10) || 5);
 
         if (!name) {
@@ -3861,7 +3861,7 @@
 
         if (!nameInput || !stockInput) return;
 
-        const trimmedName = nameInput.value.trim(); // Preserved case
+        const trimmedName = nameInput.value.trim();
         const newStock = Math.max(1, parseInt(stockInput.value, 10) || 1);
 
         if (!trimmedName) {
@@ -3907,7 +3907,6 @@
         });
     }
 
-    // --- ADMIN DELETE FUNCTIONS & RECYCLE BIN ---
     function deleteActiveGearLog(id) {
         if (currentRole !== 'admin') {
             alert('Only administrators can delete active shoot records.');
@@ -4179,7 +4178,6 @@
         }).join('');
     }
 
-    // --- RENDER DASHBOARD & SEPARATE SECTIONS VIEW ---
     function renderDashboard() {
         renderEquipmentAvailability();
         renderCardAvailability();
@@ -4218,7 +4216,6 @@
         const currentUserName = currentUserNameSession || SafeStorage.getItem('appUserName') || '';
         const isAdmin = currentRole === 'admin';
 
-        // 1. Render Active Equipment Shoots
         const activeGear = (isAdmin ? gearLogs : gearLogs.filter(l => l.createdBy === currentUserName))
             .filter(l => l.status === 'OUT ON SHOOT');
 
@@ -4252,7 +4249,6 @@
             }).join('');
         }
 
-        // 2. Render Active Memory Cards
         const activeCards = (isAdmin ? cardLogs : cardLogs.filter(l => l.createdBy === currentUserName))
             .filter(l => l.status === 'OUT ON SHOOT');
 
@@ -4286,7 +4282,6 @@
             }).join('');
         }
 
-        // 3. Render Separate History Tables
         if (returnedGearTbody) {
             const histGear = (isAdmin ? gearLogs : gearLogs.filter(l => l.createdBy === currentUserName))
                 .filter(l => l.status === 'RETURNED');
