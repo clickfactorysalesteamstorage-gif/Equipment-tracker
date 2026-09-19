@@ -4279,7 +4279,7 @@
                             <div class="table-action-cell">
                                 <button class="btn btn-sm btn-success" onclick="openCardCheckinModal(${log.id})">↩ Return</button>
                                 <button class="btn btn-sm" style="background: #25d366; color: white;" onclick="shareCardLogOnWhatsApp(${log.id})">💬 WhatsApp</button>
-                                <button class="btn btn-sm btn-secondary" onclick="openCardDetailModal(${log.id})">ℹ️ Details</button>
+                                <button class="btn btn-sm btn-secondary" type="button" onclick="openCardDetailModal(${log.id}); return false;">ℹ️ Details</button>
                                 ${deleteBtnHtml}
                             </div>
                         </td>
