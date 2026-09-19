@@ -1708,7 +1708,7 @@
     let pendingCardNoteResolve = null;
 
     // --- RECYCLE BIN STORAGE ---
-    window.recycleBin = JSON.parse(SafeStorage.getItem('gearRecycleBinObj')) || [];
+    window.recycleBin = JSON.parseSafeStorage?.getItem?.('gearRecycleBinObj') || JSON.parse(SafeStorage.getItem('gearRecycleBinObj')) || [];
 
     function saveRecycleBinState() {
         SafeStorage.setItem('gearRecycleBinObj', JSON.stringify(window.recycleBin));
@@ -2465,6 +2465,29 @@
     function closeCardDetailModal() {
         activeCardDetailLogId = null;
         document.getElementById('cardDetailModal').style.display = 'none';
+    }
+
+    function deleteActiveCardLog(id) {
+        if (currentRole !== 'admin') {
+            alert('Only administrators can delete active card shoot records.');
+            return;
+        }
+        showConfirmationModal({
+            title: 'Move to Recycle Bin?',
+            message: 'Move this active memory card shoot record to the Recycle Bin?',
+            icon: '🗑️',
+            confirmBtnText: 'Move to Bin',
+            confirmBtnClass: 'btn-danger',
+            onConfirm: () => {
+                const log = cardLogs.find(l => l.id === id);
+                if (log) {
+                    moveToRecycleBin(log, 'card-active');
+                    cardLogs = cardLogs.filter(l => l.id !== id);
+                    SafeStorage.setItem('gearCardLogsObj', JSON.stringify(cardLogs));
+                    renderDashboard();
+                }
+            }
+        });
     }
 
     function showConfirmationModal({ title, message, icon = '⚠️', confirmBtnText = 'Confirm', confirmBtnClass = 'btn-primary', onConfirm }) {
@@ -3677,29 +3700,6 @@
                     moveToRecycleBin(log, 'gear-active');
                     gearLogs = gearLogs.filter(l => l.id !== id);
                     SafeStorage.setItem('gearDashboardLogs', JSON.stringify(gearLogs));
-                    renderDashboard();
-                }
-            }
-        });
-    }
-
-    function deleteActiveCardLog(id) {
-        if (currentRole !== 'admin') {
-            alert('Only administrators can delete active card shoot records.');
-            return;
-        }
-        showConfirmationModal({
-            title: 'Move to Recycle Bin?',
-            message: 'Move this active memory card shoot record to the Recycle Bin?',
-            icon: '🗑️',
-            confirmBtnText: 'Move to Bin',
-            confirmBtnClass: 'btn-danger',
-            onConfirm: () => {
-                const log = cardLogs.find(l => l.id === id);
-                if (log) {
-                    moveToRecycleBin(log, 'card-active');
-                    cardLogs = cardLogs.filter(l => l.id !== id);
-                    SafeStorage.setItem('gearCardLogsObj', JSON.stringify(cardLogs));
                     renderDashboard();
                 }
             }
