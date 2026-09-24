@@ -1519,7 +1519,7 @@
                     <tr>
                         <th>Card Name</th>
                         <th style="width: 45px; text-align: center;">Qty</th>
-                        <th style="width: 70px; text-align: center;">Action</th>
+                        <th style="width: 70px; text-align: center;" id="cardReturnHeaderAction">Action</th>
                     </tr>
                 </thead>
                 <tbody id="cardCheckinItemsTableBody">
@@ -2525,16 +2525,26 @@
         const log = cardLogs.find(l => l.id === activeCardCheckinLogId);
         if (!log || !tbody) return;
 
-        const returnBar = document.getElementById('cardForceReturnBarContainer');
-        returnBar.innerHTML = `<button class="btn btn-success btn-sm" style="width: 100%;" onclick="completeCardReturnProcess()">✅ Return All Cards</button>`;
+        const isAdmin = currentRole === 'admin';
+        document.getElementById('cardReturnHeaderAction').style.display = isAdmin ? '' : 'none';
 
-        tbody.innerHTML = log.cards.map((c, idx) => `
-            <tr>
-                <td><strong>${c.name}</strong></td>
-                <td style="text-align: center; font-weight: bold; color: var(--warning);">${c.qty}</td>
-                <td style="text-align: center;"><button class="btn btn-sm btn-success" onclick="checkinSingleCardItem(${idx})">↩ Return</button></td>
-            </tr>
-        `).join('');
+        const returnBar = document.getElementById('cardForceReturnBarContainer');
+        if (isAdmin) {
+            returnBar.innerHTML = `<button class="btn btn-success btn-sm" style="width: 100%;" onclick="completeCardReturnProcess()">✅ Return All Cards</button>`;
+        } else {
+            returnBar.innerHTML = `<span style="font-size: 0.7rem; color: #94a3b8; text-align: center; display: block; width: 100%;">💡 Scan card barcode to check in items automatically.</span>`;
+        }
+
+        tbody.innerHTML = log.cards.map((c, idx) => {
+            const actionCell = isAdmin ? `<td style="text-align: center;"><button class="btn btn-sm btn-success" onclick="checkinSingleCardItem(${idx})">↩ Return</button></td>` : '';
+            return `
+                <tr>
+                    <td><strong>${c.name}</strong></td>
+                    <td style="text-align: center; font-weight: bold; color: var(--warning);">${c.qty}</td>
+                    ${actionCell}
+                </tr>
+            `;
+        }).join('');
     }
 
     function handleCardCheckinScanner(e) {
@@ -4264,7 +4274,7 @@
             cardTbody.innerHTML = activeCards.map(log => {
                 const timeOutDisplay = formatDateTime(log.timeOutDate, log.timeOutTime);
                 const cardsStr = log.cards.map(c => `• ${c.qty}x ${c.name}`).join('<br>');
-                const returnBtnHtml = isAdmin ? `<button class="btn btn-sm btn-success" type="button" onclick="openCardCheckinModal(${log.id}); return false;">↩ Return</button>` : '';
+                const returnBtnHtml = `<button class="btn btn-sm btn-success" type="button" onclick="openCardCheckinModal(${log.id}); return false;">↩ Return</button>`;
                 const deleteCardBtnHtml = isAdmin ? `<button class="btn btn-sm btn-danger" type="button" onclick="deleteActiveCardLog(${log.id}); return false;">🗑️ Delete</button>` : '';
                 return `
                     <tr>
