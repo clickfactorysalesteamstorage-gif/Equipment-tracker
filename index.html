@@ -1382,7 +1382,7 @@
         <span class="icon">📜</span>
         <span>History</span>
     </button>
-    <button class="bottom-nav-btn" id="mobTabNewSheetBtn" onclick="switchTab('new-entry-tab')">
+    <button class="bottom-nav-btn" id="mobTabNewSheetBtn" onclick="switchTab('cards-new-entry-tab')">
         <span class="icon">📋</span>
         <span>Booking</span>
     </button>
@@ -1502,14 +1502,14 @@
     <div class="scanner-card" style="max-width: 440px;">
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 6px;">
             <div>
-                <h3 style="font-size: 0.85rem; color: #10b981;">↩ Card Return Terminal</h3>
+                <h3 style="font-size: 0.85rem; color: #10b981;">↩ Card Return Terminal (Scanner Only)</h3>
                 <span style="font-size: 0.65rem; color: #94a3b8;">Client: <strong id="cardCheckinClientName" style="color: white;">-</strong></span>
             </div>
             <button class="btn btn-danger btn-sm" onclick="closeCardCheckinModal()">✕ Close</button>
         </div>
 
         <div style="margin: 8px 0;">
-            <input type="text" id="cardCheckinListener" autocomplete="off" placeholder="Scan card barcode to return..." style="width: 100%; padding: 8px; border-radius: var(--radius-sm); border: 2px solid var(--success); background: #1e293b; color: #34d399; font-size: 0.85rem; font-weight: bold;" onkeypress="handleCardCheckinScanner(event)" autofocus>
+            <input type="text" id="cardCheckinListener" autocomplete="off" placeholder="Scan card barcode to return..." style="width: 100%; padding: 8px; border-radius: var(--radius-sm); border: 2px solid var(--success); background: #1e293b; color: #34d399; font-size: 0.85rem; font-weight: bold;" onkeydown="handleCardCheckinKeydown(event)" onkeypress="handleCardCheckinScanner(event)" autofocus>
         </div>
 
         <h4 style="margin: 4px 0 2px 0; color: #94a3b8; font-size: 0.68rem;">Cards Remaining Out:</h4>
@@ -1528,7 +1528,7 @@
             </table>
         </div>
 
-        <div class="scan-terminal" id="cardCheckinTerminalLog">> Scan card barcode to check in...</div>
+        <div class="scan-terminal" id="cardCheckinTerminalLog">> Scan card barcode to check in (Manual typing disabled)...</div>
         
         <div class="actions-bar" style="margin-top: 8px;" id="cardForceReturnBarContainer">
             <!-- Return all cards button -->
@@ -2458,11 +2458,31 @@
         }).join('');
     }
 
+    let cardCheckinKeyTimes = [];
+    function handleCardCheckinKeydown(e) {
+        cardCheckinKeyTimes.push(Date.now());
+    }
+
     function handleCardCheckinScanner(e) {
         if (e.key === 'Enter') {
             e.preventDefault();
-            executeCardCheckinScan(e.target.value);
+            const inputVal = e.target.value.trim();
             e.target.value = '';
+
+            if (!inputVal) return;
+
+            if (cardCheckinKeyTimes.length > 2) {
+                const duration = cardCheckinKeyTimes[cardCheckinKeyTimes.length - 1] - cardCheckinKeyTimes[0];
+                const avgInterval = duration / (cardCheckinKeyTimes.length - 1);
+                if (avgInterval > 60) {
+                    logCardCheckinTerminal(`<span style="color: #f87171;">✕ Manual typing disabled. Please use barcode scanner.</span>`);
+                    cardCheckinKeyTimes = [];
+                    return;
+                }
+            }
+
+            cardCheckinKeyTimes = [];
+            executeCardCheckinScan(inputVal);
         }
     }
 
@@ -3036,7 +3056,7 @@
             mobBadge.className = 'role-pill role-admin';
 
             adminSelector.style.display = allowManualCheckout ? 'flex' : 'none';
-            if (cardAdminSelector) cardAdminSelector.style.display = 'none'; // Disabled type option per request
+            if (cardAdminSelector) cardAdminSelector.style.display = 'none';
             if (recycleBinBtn) recycleBinBtn.style.display = 'flex';
             document.getElementById('adminMetricsGrid').style.display = 'grid';
             
